@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name         twitch-auto-click
 // @namespace    http://github.com/gissehel/userscripts
-// @version      1.0.8
+// @version      1.0.9
 // @description  twitch-auto-click
 // @author       gissehel
+// @homepage     https://github.com/gissehel/userscripts
+// @supportURL   https://github.com/gissehel/userscripts/issues
 // @match        https://twitch.tv/*
 // @match        https://www.twitch.tv/*
 // @grant        none
