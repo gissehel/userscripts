@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         twitch-auto-click
 // @namespace    http://github.com/gissehel/userscripts
-// @version      1.0.9
+// @version      1.0.10
 // @description  twitch-auto-click
 // @author       gissehel
 // @homepage     https://github.com/gissehel/userscripts
@@ -17,11 +17,11 @@
     let lastBitsZone = null;
     const clickBits = () => {
         const bitsZone = document.querySelectorAll('.community-points-summary')[0];
-        if (bitsZone !== lastBitsZone) {
-            bitsZone.style.backgroundColor = '#ffeecc';
-        }
-        lastBitsZone = bitsZone
         if (bitsZone) {
+            if (bitsZone !== lastBitsZone) {
+                bitsZone.style.backgroundColor = '#ffeecc';
+            }
+            lastBitsZone = bitsZone
             const button = bitsZone.querySelectorAll('button')[1];
             if (button) {
                 button.click();
