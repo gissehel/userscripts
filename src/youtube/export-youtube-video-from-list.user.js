@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      3.0.2
+// @version      3.0.3
 // @description  Export youtube video information in markdown format
 // @match        https://www.youtube.com/*
 // @match        https://youtube.com/*
@@ -41,7 +41,7 @@ registerDomNodeMutatedUnique(() => getElements('ytd-rich-item-renderer'), (richI
                 if (preAction !== undefined) {
                     preAction()
                 }
-                const markdown = `- TODO ${videoTitle}\n  - {{video ${videoLink}}}\n`
+                const markdown = `- TODO ${videoTitle}\n  collapsed:: true\n  - {{video ${videoLink}}}\n`
                 buffer += markdown
                 console.log(`Copying [${buffer}]`)
                 copyTextToClipboard(buffer)
