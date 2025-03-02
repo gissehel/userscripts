@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      3.0.7
+// @version      3.0.8
 // @description  Export youtube video information in markdown format
 // @match        https://www.youtube.com/*
 // @match        https://youtube.com/*
@@ -20,10 +20,16 @@ addStyle('.eyvfl-mode-set .eyvfl-export-button-interval { background-color: #f0f
 
 HTMLElement.prototype.q=function(data) { return getSubElements(this, data) }
 const q = (data) => getSubElements(data)
+HTMLElement.prototype.titleOrContent = function() {
+    if (this.title && this.title != '') {
+        return this.title
+    }
+    return this.textContent 
+}
 const isShort = () => document.location.pathname.endsWith('/shorts')
 
 const getVideoTitleShort = (richItemRenderer) => richItemRenderer.q('h3 [role=text]')?.map(e=>e.textContent)?.join('')
-const getVideoTitleLong = (richItemRenderer) => richItemRenderer.q('#video-title-link')?.at(0)?.q('#video-title')?.slice(-1)?.at(0)?.title
+const getVideoTitleLong = (richItemRenderer) => richItemRenderer.q('#video-title-link')?.at(0)?.q('#video-title')?.slice(-1)?.at(0)?.titleOrContent()
 const getVideoLinkShort = (richItemRenderer) => richItemRenderer.q('a')?.at(0)?.href
 const getVideoLinkLong = (richItemRenderer) => getSubElements(richItemRenderer, 'a#thumbnail')?.at(0)?.href
 const getVideoContentShort = (link) => link
