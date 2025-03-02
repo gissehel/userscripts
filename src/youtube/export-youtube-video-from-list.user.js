@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      3.0.6
+// @version      3.0.7
 // @description  Export youtube video information in markdown format
 // @match        https://www.youtube.com/*
 // @match        https://youtube.com/*
@@ -29,9 +29,11 @@ const getVideoLinkLong = (richItemRenderer) => getSubElements(richItemRenderer, 
 const getVideoContentShort = (link) => link
 const getVideoContentLong = (link) => `{{video ${link}}}`
 
-const getVideoTitle = isShort() ? getVideoTitleShort : getVideoTitleLong
-const getVideoLink = isShort() ? getVideoLinkShort : getVideoLinkLong
-const getVideoContent = isShort() ? getVideoContentShort : getVideoContentLong
+const getShortLong = (shortFun, longFun) => (...args) => isShort() ? shortFun(...args) : longFun(...args)
+
+const getVideoTitle = getShortLong(getVideoTitleShort, getVideoTitleLong)
+const getVideoLink = getShortLong(getVideoLinkShort, getVideoLinkLong)
+const getVideoContent = getShortLong(getVideoContentShort, getVideoContentLong)
 
 let buffer = ''
 const elementCache = {}
