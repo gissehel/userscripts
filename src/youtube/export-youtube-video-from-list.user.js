@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      3.0.5
+// @version      3.0.6
 // @description  Export youtube video information in markdown format
 // @match        https://www.youtube.com/*
 // @match        https://youtube.com/*
@@ -20,7 +20,7 @@ addStyle('.eyvfl-mode-set .eyvfl-export-button-interval { background-color: #f0f
 
 HTMLElement.prototype.q=function(data) { return getSubElements(this, data) }
 const q = (data) => getSubElements(data)
-const isShort = document.location.pathname.endsWith('/shorts')
+const isShort = () => document.location.pathname.endsWith('/shorts')
 
 const getVideoTitleShort = (richItemRenderer) => richItemRenderer.q('h3 [role=text]')?.map(e=>e.textContent)?.join('')
 const getVideoTitleLong = (richItemRenderer) => richItemRenderer.q('#video-title-link')?.at(0)?.q('#video-title')?.slice(-1)?.at(0)?.title
@@ -29,9 +29,9 @@ const getVideoLinkLong = (richItemRenderer) => getSubElements(richItemRenderer, 
 const getVideoContentShort = (link) => link
 const getVideoContentLong = (link) => `{{video ${link}}}`
 
-const getVideoTitle = isShort ? getVideoTitleShort : getVideoTitleLong
-const getVideoLink = isShort ? getVideoLinkShort : getVideoLinkLong
-const getVideoContent = isShort ? getVideoContentShort : getVideoContentLong
+const getVideoTitle = isShort() ? getVideoTitleShort : getVideoTitleLong
+const getVideoLink = isShort() ? getVideoLinkShort : getVideoLinkLong
+const getVideoContent = isShort() ? getVideoContentShort : getVideoContentLong
 
 let buffer = ''
 const elementCache = {}
