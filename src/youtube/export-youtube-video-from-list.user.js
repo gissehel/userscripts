@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      3.0.4
+// @version      3.0.5
 // @description  Export youtube video information in markdown format
 // @match        https://www.youtube.com/*
 // @match        https://youtube.com/*
@@ -16,6 +16,7 @@
 addStyle('.eyvfl-export-button { width: 60px; height: 30px; position: absolute; bottom: 0px; right: 0px; }')
 addStyle('.eyvfl-export-button2 { width: 60px; height: 30px; position: absolute; bottom: 0px; right: 70px; }')
 addStyle('.eyvfl-export-button-interval { width: 60px; height: 30px; position: absolute; bottom: 0px; right: 140px; }')
+addStyle('.eyvfl-mode-set .eyvfl-export-button-interval { background-color: #f0f0d0 !important; }')
 
 HTMLElement.prototype.q=function(data) { return getSubElements(this, data) }
 const q = (data) => getSubElements(data)
