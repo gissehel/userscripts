@@ -1,9 +1,9 @@
 // ==UserScript==
-// @version      3.0.2
+// @version      3.0.3
 // @description  twitch-picture-in-picture
 // ==/UserScript==
 
-// @import{registerEventListener}
+// @import{registerClickListener}
 // @import{registerDomNodeMutatedUnique}
 // @import{createElementExtended}
 // @import{getElements}
@@ -16,7 +16,7 @@ registerDomNodeMutatedUnique(() => getElements('.top-nav__prime'), (nav_menu) =>
         onCreated: (pipNode) => {
             pipNode.style.fontWeight = 'bold'
             pipNode.style.cursor = 'pointer'
-            registerEventListener(pipNode, 'click', () => {
+            pipNode.registerClickListener(() => {
                 (
                     getElements('video').reduce(
                         (prev, current) => (prev.offsetHeight > current.offsetHeight) ? prev : current,

@@ -1,10 +1,9 @@
 // ==UserScript==
-// @version      3.0.1
+// @version      3.0.2
 // @description  blitzortung-link-to-webgeo
 // @match        https://map.blitzortung.org/*
 // ==/UserScript==
 
-// @import{registerEventListener}
 // @import{registerClickListener}
 // @import{registerDomNodeMutatedUnique}
 // @import{createElementExtended}
@@ -19,7 +18,7 @@ registerDomNodeMutatedUnique(() => document.querySelectorAll('#MenuButtonDiv'), 
         parent: menuBase.parentElement,
         classnames: ['MenuButtonDiv'],
         onCreated: (element) => {
-            registerClickListener(element, () => {
+            element.registerClickListener(() => {
                 const params = location.hash.substring(1).split('/')
                 if (params.length > 0) {
                     const [zoom, lat, lon] = params.map(x => Number(x))

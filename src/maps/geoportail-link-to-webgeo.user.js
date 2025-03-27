@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      3.0.1
+// @version      3.0.2
 // @description  geoportail-link-to-webgeo
 // @match        https://geoportail.gouv.fr/*
 // @match        https://www.geoportail.gouv.fr/*
@@ -37,7 +37,7 @@ registerDomNodeMutatedUnique(() => document.querySelectorAll('#reverse-geocoding
                     ],
                     classnames: ['nav-link'],
                     onCreated: (link) => {
-                        registerClickListener(link, () => {
+                        link.registerClickListener(() => {
                             const coords = document.querySelectorAll('#reverse-geocoding-coords')[0]
                             if (coords) {
                                 const text = coords.textContent;

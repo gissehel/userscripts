@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      3.0.1
+// @version      3.0.2
 // @description  openstreetmap-link-to-webgeo
 // @match        https://openstreetmap.org/*
 // @match        https://www.openstreetmap.org/*
@@ -32,7 +32,7 @@ const navLink = createElementExtended('li', {
             ],
             classnames: ['nav-link'],
             onCreated: (link) => {
-                registerClickListener(link, () => {
+                link.registerClickListener(() => {
                     const urlArgs = document.URL.split('#')[1];
                     let osmPosition = null;
                     if (urlArgs) {

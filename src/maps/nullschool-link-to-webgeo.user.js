@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      3.0.1
+// @version      3.0.2
 // @description  nullschool-link-to-webgeo
 // @match        https://earth.nullschool.net/*
 // @match        https://classic.nullschool.net/*
@@ -45,7 +45,7 @@ const title = createElementExtended('h1', {
                 }),
             ],
             onCreated: (link) => {
-                registerClickListener(link, () => {
+                link.registerClickListener(() => {
                     const locs = location.hash.split('/').filter(x => x.startsWith('loc='));
                     if (locs.length > 0) {
                         const loc = locs[0].substring('loc='.length)

@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      3.0.1
+// @version      3.0.2
 // @description  windy-link-to-webgeo
 // @match        https://www.windy.com/*
 // @match        https://windy.com/*
@@ -36,7 +36,7 @@ registerDomNodeMutatedUnique(() => [...document.body.querySelectorAll('#overlay'
         ],
         nextSibling: toggleOverlays,
         onCreated: (link) => {
-            registerClickListener(link, () => {
+            link.registerClickListener(() => {
                 const params = document.URL.split('?')[1].split(',').filter(x => x.indexOf(':') === -1)
                 if (params.length >= 3) {
                     const [lat, lon, zoom] = params.slice(params.length - 3)

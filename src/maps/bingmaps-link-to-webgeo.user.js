@@ -1,12 +1,11 @@
 // ==UserScript==
-// @version      3.0.1
+// @version      3.0.2
 // @description  bingmaps-link-to-webgeo
 // @match        https://bing.com/maps
 // @match        https://www.bing.com/maps
 // ==/UserScript==
 
 // @import{addStyle}
-// @import{registerEventListener}
 // @import{registerClickListener}
 // @import{registerDomNodeMutated}
 // @import{registerDomNodeMutatedUnique}
@@ -35,7 +34,7 @@ registerDomNodeMutatedUnique(() => document.querySelectorAll('.top-right.subcont
                     })
                 ],
                 onCreated: (image) => {
-                    registerClickListener(image, () => {
+                    image.registerClickListener(() => {
                         const bingPosition = Object.fromEntries(document.URL.split('?')[1].split('&').map(data => data.split('=')))
                         if (bingPosition) {
                             const [lat, lon] = bingPosition.cp.split('%7E')
