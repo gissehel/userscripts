@@ -1,13 +1,14 @@
 // ==UserScript==
-// @version      1.0.1
+// @version      1.0.2
 // @description  no-home-tab-for-youtube
 // @match        https://youtube.com/*
 // @match        https://www.youtube.com/*
 // ==/UserScript==
 
 
-const main = () => {
+const onHomeTabChangeToVideos = () => {
     const parts = location.href.split('/')
+    console.log('onHomeTabChangeToVideos', parts)
 
     if (parts.length === 4 || parts.length === 5) {
         if (parts[0] !== 'https:' || parts[1] !== '' || parts[2] !== 'www.youtube.com') {
@@ -26,4 +27,19 @@ const main = () => {
         location.href = parts.join('/')
     }
 }
-main()
+
+let lastUrl = null;
+
+function urlChangeHandler() {
+    if (location.href !== lastUrl) {
+        lastUrl = location.href;
+        console.log('URL changed to:', lastUrl);
+        onHomeTabChangeToVideos()
+    }
+}
+window.addEventListener('popstate', urlChangeHandler);
+window.addEventListener('hashchange', urlChangeHandler);
+
+setInterval(urlChangeHandler, 500);
+
+onHomeTabChangeToVideos()
