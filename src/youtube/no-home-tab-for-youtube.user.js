@@ -1,10 +1,8 @@
 // ==UserScript==
-// @version      1.0.0
+// @version      1.0.1
 // @description  no-home-tab-for-youtube
-// @match        https://youtube.com/*@[^/]+
-// @match        https://youtube.com/*@[^/]+/featured
-// @match        https://www.youtube.com/*@[^/]+
-// @match        https://www.youtube.com/*@[^/]+/featured
+// @match        https://youtube.com/*
+// @match        https://www.youtube.com/*
 // ==/UserScript==
 
 
