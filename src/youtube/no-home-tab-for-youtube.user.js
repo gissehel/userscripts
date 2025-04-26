@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.2
+// @version      1.0.3
 // @description  no-home-tab-for-youtube
 // @match        https://youtube.com/*
 // @match        https://www.youtube.com/*
@@ -17,6 +17,9 @@ const onHomeTabChangeToVideos = () => {
         if (parts[3].length === 0) {
             return
         }
+        if (parts[3][0] !== '@') {
+            return
+        }
         if (parts.length === 5 && parts[4] !== 'featured') {
             return
         }
@@ -24,7 +27,9 @@ const onHomeTabChangeToVideos = () => {
             parts.pop(-1)
         }
         parts.push('videos')
-        location.href = parts.join('/')
+        const newUrl = parts.join('/')
+        console.log(`Redirecting from ${location.href} to ${newUrl}`)
+        location.href = newUrl
     }
 }
 
