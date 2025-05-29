@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      3.0.8
+// @version      3.0.9
 // @description  Export youtube video information in markdown format
 // @match        https://www.youtube.com/*
 // @match        https://youtube.com/*
@@ -13,9 +13,10 @@
 // @import{createElementExtended}
 // @import{bindOnClick}
 
-addStyle('.eyvfl-export-button { width: 60px; height: 30px; position: absolute; bottom: 0px; right: 0px; }')
-addStyle('.eyvfl-export-button2 { width: 60px; height: 30px; position: absolute; bottom: 0px; right: 70px; }')
-addStyle('.eyvfl-export-button-interval { width: 60px; height: 30px; position: absolute; bottom: 0px; right: 140px; }')
+addStyle('.eyvfl-button { width: 44px; height: 30px; position: absolute; bottom: 0px; padding-inline-start: 3px; padding-inline-end: 3px; }')
+addStyle('.eyvfl-export-button { right: 0px; }')
+addStyle('.eyvfl-export-button2 { right: 50px; }')
+addStyle('.eyvfl-export-button-interval { right: 100px; }')
 addStyle('.eyvfl-mode-set .eyvfl-export-button-interval { background-color: #f0f0d0 !important; }')
 
 HTMLElement.prototype.q=function(data) { return getSubElements(this, data) }
@@ -69,9 +70,9 @@ registerDomNodeMutatedUnique(() => getElements('ytd-rich-item-renderer'), (richI
     elementCache[itemId] = richItemRenderer
     const localItemId = itemId
 
-    const buttonCreator = (label, classname, preAction) => createElementExtended('button', {
+    const buttonCreator = (label, classnames, preAction) => createElementExtended('button', {
         parent: richItemRenderer,
-        classnames: [classname],
+        classnames: classnames,
         text: label,
         onCreated: (button) => {
             bindOnClick(button, () => {
@@ -82,11 +83,11 @@ registerDomNodeMutatedUnique(() => getElements('ytd-rich-item-renderer'), (richI
         }
     })
 
-    buttonCreator('➡️📋', 'eyvfl-export-button', () => buffer = '')
-    buttonCreator('➕📋', 'eyvfl-export-button2')
+    buttonCreator('➡️📋', ['eyvfl-button', 'eyvfl-export-button'], () => buffer = '')
+    buttonCreator('➕📋', ['eyvfl-button', 'eyvfl-export-button2'])
     createElementExtended('button', {
         parent: richItemRenderer,
-        classnames: ['eyvfl-export-button-interval'],
+        classnames: ['eyvfl-button', 'eyvfl-export-button-interval'],
         text: '↔️📋',
         onCreated: (button) => {
             bindOnClick(button, () => {
