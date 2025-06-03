@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.2
+// @version      1.0.3
 // @description  github-io-pages-hotkey-for-code
 // @match        https://*.github.io/
 // @match        https://*.github.io/*
@@ -22,6 +22,19 @@ const findRepo = (url) => {
     return null;
 }
 
+const findMainRepo = (url) => {
+    const pageEnding = '.github.io'
+    const match = url.match(/^https?:\/\/([^/]+)/);
+    if (match) {
+        const host = match[1];
+        if (host && host.endsWith(pageEnding)) {
+            const user = host.slice(0, -pageEnding.length);
+            return `https://github.com/${user}/${host}`
+        }
+    }
+    return null;
+}
+
 const action = () => {
     const url = findRepo(document.location.href)
     if (url) {
@@ -29,7 +42,18 @@ const action = () => {
     }
     return true;
 }
+
+const actionForMainRepo = () => {
+    const url = findMainRepo(document.location.href)
+    if (url) {
+        openLinkInNewTab(url)
+    }
+    return true;
+}
+
 const element = document.body;
 const key = { code: 'KeyG', altKey: true };
+const keyForMainRepo = { code: 'KeyG', altKey: true, shiftKey: true };
 const phase = 'down';
 addOnKey({action, element, key, phase})
+addOnKey({actionForMainRepo, element, keyForMainRepo, phase})
