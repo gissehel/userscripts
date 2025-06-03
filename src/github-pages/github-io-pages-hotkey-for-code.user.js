@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.3
+// @version      1.0.4
 // @description  github-io-pages-hotkey-for-code
 // @match        https://*.github.io/
 // @match        https://*.github.io/*
@@ -56,4 +56,4 @@ const key = { code: 'KeyG', altKey: true };
 const keyForMainRepo = { code: 'KeyG', altKey: true, shiftKey: true };
 const phase = 'down';
 addOnKey({action, element, key, phase})
-addOnKey({actionForMainRepo, element, keyForMainRepo, phase})
+addOnKey({action: actionForMainRepo, element, key: keyForMainRepo, phase})
