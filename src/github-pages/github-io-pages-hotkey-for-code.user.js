@@ -1,11 +1,12 @@
 // ==UserScript==
-// @version      1.0.1
+// @version      1.0.2
 // @description  github-io-pages-hotkey-for-code
 // @match        https://*.github.io/
 // @match        https://*.github.io/*
 // ==/UserScript==
 
 // @import{addOnKey}
+// @import{openLinkInNewTab}
 
 const findRepo = (url) => {
     const pageEnding = '.github.io'
@@ -24,7 +25,7 @@ const findRepo = (url) => {
 const action = () => {
     const url = findRepo(document.location.href)
     if (url) {
-        document.location.href = url
+        openLinkInNewTab(url)
     }
     return true;
 }
