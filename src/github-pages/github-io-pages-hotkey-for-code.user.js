@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.0
+// @version      1.0.1
 // @description  github-io-pages-hotkey-for-code
 // @match        https://*.github.io/
 // @match        https://*.github.io/*
@@ -9,7 +9,7 @@
 
 const findRepo = (url) => {
     const pageEnding = '.github.io'
-    const match = url.match(/^https?:\/\/([^/]+)\/([^/]+)\/([^/]+)/);
+    const match = url.match(/^https?:\/\/([^/]+)\/([^/]+)/);
     if (match) {
         const host = match[1];
         const project = match[2];
