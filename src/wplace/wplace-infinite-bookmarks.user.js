@@ -1,11 +1,10 @@
 // ==UserScript==
-// @name         WPlace Unlimited Favorites⭐
-// @description  Unlimited favorites storage on [WPlace.live], with backup & restore functionality, full Blue Marble support, integrated UI type -- This script is a fork for i18n support of https://greasyfork.org/fr/scripts/547101
+// @description  WPlace Unlimited Favorites⭐ - Unlimited favorites storage on [WPlace.live], with backup & restore functionality, full Blue Marble support, integrated UI type -- This script is a fork for i18n support of https://greasyfork.org/fr/scripts/547101
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM.setValue
 // @grant        GM.getValue
-// @version      1.0.1
+// @version      1.0.2
 // @license      MIT
 // ==/UserScript==
 
