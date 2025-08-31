@@ -1,6 +1,6 @@
 // ==UserScript==
 // @description  WPlace cross on paint ❌🌍
-// @version      1.0.3
+// @version      1.0.4
 // @license      MIT
 // ==/UserScript==
 
@@ -71,6 +71,13 @@ registerEventListener(map, 'mousemove', (e) => {
         }, 100)
     } else {
         updateCross(e, rect, randomId)
+    }
+})
+
+registerEventListener(document, 'keydown', (e) => {
+    console.log({e})
+    if (e.key === 'c' && (e.altKey && !e.metaKey && !e.ctrlKey && !e.shiftKey)) {
+        toggleCross()
     }
 })
 
