@@ -1,6 +1,6 @@
 // ==UserScript==
 // @description  WPlace cross on paint ❌🌍
-// @version      1.0.6
+// @version      1.0.7
 // @license      MIT
 // ==/UserScript==
 
@@ -9,6 +9,8 @@
 // @import{registerDomNodeMutatedUnique}
 // @import{registerEventListener}
 // @import{getElements}
+
+const semifatness = 1
 
 const map = getElements('#map')[0]
 
@@ -24,8 +26,8 @@ const crossY = createCrossPart('y')
 
 addStyle(`
     .wplace-cross-on-paint { position: absolute; z-index: 1000; pointer-events: none; user-select: none; background-color: yellow; mix-blend-mode: difference; }
-    .wplace-cross-on-paint-x { width: 3px; height: 100%; }
-    .wplace-cross-on-paint-y { width: 100%; height: 3px; }
+    .wplace-cross-on-paint-x { width: ${2*semifatness+1}px; height: 100%; }
+    .wplace-cross-on-paint-y { width: 100%; height: ${2*semifatness+1}px; }
     .wplace-cross-disabled { display: none; }
 `)
 
@@ -52,8 +54,8 @@ const updateCross = (e, rect, randomId) => {
     if (!enabled) return
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
-    crossX.style.left = `${x}px`
-    crossY.style.top = `${y}px`
+    crossX.style.left = `${x+semifatness}px`
+    crossY.style.top = `${y+semifatness}px`
     lastId = randomId
     lastTime = Date.now()
 }
