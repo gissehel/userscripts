@@ -1,6 +1,6 @@
 // ==UserScript==
 // @description  WPlace cross on paint ❌🌍
-// @version      1.0.1
+// @version      1.0.2
 // @license      MIT
 // ==/UserScript==
 
@@ -23,16 +23,38 @@ const crossX = createCrossPart('x')
 const crossY = createCrossPart('y')
 
 addStyle(`
-    .wplace-cross-on-paint { position: absolute; z-index: 1000; pointer-events: none; user-select: none; background-color: white; mix-blend-mode: difference; }
-    .wplace-cross-on-paint-x { width: 1px; height: 100%; }
-    .wplace-cross-on-paint-y { width: 100%; height: 1px; }
+    .wplace-cross-on-paint { position: absolute; z-index: 1000; pointer-events: none; user-select: none; background-color: yellow; mix-blend-mode: difference; }
+    .wplace-cross-on-paint-x { width: 3px; height: 100%; }
+    .wplace-cross-on-paint-y { width: 100%; height: 3px; }
     .wplace-cross-disabled { display: none; }
 `)
 
-registerEventListener(map, 'mousemove', (e) => {
-    const rect = map.getBoundingClientRect()
+let lastId = null
+let nextId = null
+let lastTime = null
+
+const updateCross = (e, rect, randomId) => {
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
     crossX.style.left = `${x}px`
     crossY.style.top = `${y}px`
+    lastId = randomId
+    lastTime = Date.now()
+}
+
+registerEventListener(map, 'mousemove', (e) => {
+    const randomId = Math.floor(Math.random() * 1000000000)
+    const currentTime = Date.now()
+    nextId = randomId
+    const rect = map.getBoundingClientRect()
+
+    if (lastTime && (currentTime - lastTime) < 50) {
+        setTimeout(() => {
+            if (nextId === randomId && lastId !== randomId) {
+                updateCross(e, rect, randomId)
+            }
+        }, 100)
+    } else {
+        updateCross(e, rect, randomId)
+    }
 })
