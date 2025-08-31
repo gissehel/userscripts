@@ -1,6 +1,6 @@
 // ==UserScript==
 // @description  WPlace cross on paint ❌🌍
-// @version      1.0.0
+// @version      1.0.1
 // @license      MIT
 // ==/UserScript==
 
@@ -12,12 +12,12 @@
 
 const map = getElements('#map')[0]
 
-const createCrossPart = (partname) => {
+const createCrossPart = (partname) =>
     createElementExtended('div', {
         classnames: ['wplace-cross-on-paint', `wplace-cross-on-paint-${partname}`],
         parent: map
     })
-}
+
 
 const crossX = createCrossPart('x')
 const crossY = createCrossPart('y')
