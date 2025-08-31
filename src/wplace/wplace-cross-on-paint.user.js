@@ -1,6 +1,6 @@
 // ==UserScript==
 // @description  WPlace cross on paint ❌🌍
-// @version      1.0.5
+// @version      1.0.6
 // @license      MIT
 // ==/UserScript==
 
@@ -35,6 +35,8 @@ let lastId = null
 let nextId = null
 let lastTime = null
 
+const delay = 20
+
 const toggleCross = () => {
     enabled = !enabled
     if (enabled) {
@@ -63,12 +65,12 @@ registerEventListener(map, 'mousemove', (e) => {
     nextId = randomId
     const rect = map.getBoundingClientRect()
 
-    if (lastTime && (currentTime - lastTime) < 50) {
+    if (lastTime && (currentTime - lastTime) < delay) {
         setTimeout(() => {
             if (nextId === randomId && lastId !== randomId) {
                 updateCross(e, rect, randomId)
             }
-        }, 100)
+        }, delay)
     } else {
         updateCross(e, rect, randomId)
     }
