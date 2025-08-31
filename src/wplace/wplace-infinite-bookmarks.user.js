@@ -5,7 +5,7 @@
 // @grant        GM_getValue
 // @grant        GM.setValue
 // @grant        GM.getValue
-// @version      1.0.0
+// @version      1.0.1
 // @license      MIT
 // ==/UserScript==
 
@@ -130,9 +130,16 @@ const i18n = {
     }
 };
 
-const langKey = userLang.split("-")[0];
+const getLang = (i18n) => {
+    const userLang = (navigator.languages && navigator.languages.length)
+        ? navigator.languages[0]
+        : navigator.language;
+    const langKey = userLang.split("-")[0];
 
-const _ = i18n[langKey] || i18n['en'];
+    return i18n[langKey] || i18n['en'];
+}
+
+const _ = getLang(i18n);
 
 class WPlaceExtendedFavorites {
     constructor() {
@@ -301,7 +308,7 @@ class WPlaceExtendedFavorites {
         modal.querySelector('#import-btn').addEventListener('click', () => this.importFavorites());
     }
 
-   // Export Function
+    // Export Function
     async exportFavorites() {
         try {
             const favorites = await this.getFavorites();
@@ -362,9 +369,9 @@ class WPlaceExtendedFavorites {
                 // Duplicate check (exclude those with the same coordinates)
                 const newFavorites = importData.favorites.filter(importFav => {
                     return !currentFavorites.some(existing =>
-                                                  Math.abs(existing.lat - importFav.lat) < 0.001 &&
-                                                  Math.abs(existing.lng - importFav.lng) < 0.001
-                                                 );
+                        Math.abs(existing.lat - importFav.lat) < 0.001 &&
+                        Math.abs(existing.lng - importFav.lng) < 0.001
+                    );
                 });
 
                 // Reassign new IDs (integers)
