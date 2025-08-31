@@ -4,7 +4,7 @@
 // @grant        GM_getValue
 // @grant        GM.setValue
 // @grant        GM.getValue
-// @version      1.0.2
+// @version      1.0.3
 // @license      MIT
 // ==/UserScript==
 
@@ -222,7 +222,7 @@ class WPlaceExtendedFavorites {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" class="size-4.5">
             <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
         </svg>
-        保存
+        ${_.save_button}
     `;
         button.addEventListener('click', () => this.addFavorite());
         container.appendChild(button);
