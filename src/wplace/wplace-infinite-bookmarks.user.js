@@ -13,7 +13,6 @@
 
 const i18n = {
     ja: {
-        "favorite_button": "お気に入り",
         "save_button": "保存",
         "modal_title": "お気に入り",
         "export": "エクスポート",
@@ -42,7 +41,6 @@ const i18n = {
         "add_favorites": "下の「保存」ボタンから追加してください",
     },
     en: {
-        "favorite_button": "Favorite",
         "save_button": "Save",
         "modal_title": "Favorites",
         "export": "Export",
@@ -71,7 +69,6 @@ const i18n = {
         "add_favorites": "Please add from the 'Save' button below",
     },
     fr: {
-        "favorite_button": "Favori",
         "save_button": "Enregistrer",
         "modal_title": "Favoris",
         "export": "Exporter",
@@ -100,7 +97,6 @@ const i18n = {
         "add_favorites": "Veuillez ajouter depuis le bouton 'Enregistrer' ci-dessous",
     },
     es: {
-        "favorite_button": "Favorito",
         "save_button": "Guardar",
         "modal_title": "Favoritos",
         "export": "Exportar",
@@ -156,7 +152,7 @@ class WPlaceExtendedFavorites {
         const buttonConfigs = [
             {
                 id: 'favorite-btn',
-                selector: `[title="${_.favorite_button}"]`,
+                selector: `[title="${_.modal_title}"]`,
                 containerSelector: 'button[title="Toggle art opacity"]',
                 create: this.createFavoriteButton.bind(this)
             },
@@ -250,7 +246,7 @@ class WPlaceExtendedFavorites {
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" class="size-5">
                     <path d="m354-287 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-120l65-281L80-590l288-25 112-265 112 265 288 25-218 189 65 281-247-149-247 149Zm247-350Z"/>
                 </svg>
-                <h3 class="text-lg font-bold">お気に入り</h3>
+                <h3 class="text-lg font-bold">${_.modal_title}</h3>
             </div>
 
             <!-- en: Export/Import Buttons -->
