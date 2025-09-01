@@ -1,6 +1,6 @@
 // ==UserScript==
 // @description  WPlace cross on paint ❌🌍
-// @version      1.0.7
+// @version      1.0.8
 // @license      MIT
 // ==/UserScript==
 
@@ -36,6 +36,7 @@ let enabled = true
 let lastId = null
 let nextId = null
 let lastTime = null
+let buttonCross = null
 
 const delay = 20
 
@@ -44,9 +45,17 @@ const toggleCross = () => {
     if (enabled) {
         crossX.classList.remove('wplace-cross-disabled')
         crossY.classList.remove('wplace-cross-disabled')
+        if (buttonCross) {
+            buttonCross.classList.add('btn-primary', 'btn-soft')
+            buttonCross.classList.remove('text-base-content/80')
+        }
     } else {
         crossX.classList.add('wplace-cross-disabled')
         crossY.classList.add('wplace-cross-disabled')
+        if (buttonCross) {
+            buttonCross.classList.remove('btn-primary', 'btn-soft')
+            buttonCross.classList.add('text-base-content/80')
+        }
     }
 }
 
@@ -88,16 +97,16 @@ const createCrossButton = (container, config) => {
     const parent = container.parentElement;
     if (!parent) return;
 
-    const button = document.createElement('button');
-    button.className = 'btn btn-lg sm:btn-xl btn-square shadow-md text-base-content/80 ml-2 z-30';
-    button.title = 'Enable/Disable cross on paint';
-    button.innerHTML = `
+    buttonCross = document.createElement('button');
+    buttonCross.className = 'btn btn-lg sm:btn-xl btn-square shadow-md btn-primary btn-soft ml-2 z-30';
+    buttonCross.title = 'Enable/Disable cross on paint';
+    buttonCross.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="-64 -64 128 128" fill="currentColor" class="size-5">
             <path d="M 6 6 64 6 64 -6 6 -6 6 -64 -6 -64 -6 -6 -64 -6 -64 6 -6 6 -6 64 6 64 Z"/>
         </svg>
     `;
-    button.addEventListener('click', () => toggleCross());
-    parent.appendChild(button);
+    buttonCross.addEventListener('click', () => toggleCross());
+    parent.appendChild(buttonCross);
     console.log('❌ Cross button added');
 }
 
