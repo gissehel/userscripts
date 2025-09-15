@@ -1,7 +1,7 @@
 {
     "match": [
         "https://pressreader.com/*",
-        "https://www.pressreader.com/*"
+        "https://www.pressreader.com/*",
         "https://www-pressreader-com.bnf.idm.oclc.org/*"
     ],
     "icon" : "https://www.google.com/s2/favicons?sz=64&domain=pressreader.com"
