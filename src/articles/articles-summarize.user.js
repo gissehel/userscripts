@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.20
+// @version         1.0.21
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -70,12 +70,12 @@ const baseOptions = {
         {
             name: "ChatGPT",
             url: "https://chatgpt.com/",
-            domaine: "chatgpt.com",
+            domain: "chatgpt.com",
         },
         {
             name: "Claude",
             url: "https://claude.ai/new",
-            domaine: "claude.ai",
+            domain: "claude.ai",
         },
     ],
 };
