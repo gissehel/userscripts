@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.3
+// @version         1.0.4
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com

@@ -10,6 +10,7 @@ const monkeyGetSetValue = (key, value) => {
     const storedValue = GM_getValue(key);
     if (storedValue === undefined && value !== undefined) {
         GM_setValue(key, value);
+        return value;
     }
     return storedValue;
 }
