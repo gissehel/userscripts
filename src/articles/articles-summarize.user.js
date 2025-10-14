@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.17
+// @version         1.0.18
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -58,6 +58,18 @@ const baseOptions = {
         "Do not add separators between sections; the bullet points alone should convey the structure.",
         "",
         "Here is the article:",
+    ],
+    llmEngines: [
+        {
+            name: "ChatGPT",
+            url: "https://chatgpt.com/",
+            domaine: "chatgpt.com",
+        },
+        {
+            name: "Claude",
+            url: "https://claude.ai/new",
+            domaine: "claude.ai",
+        },
     ],
 };
 
@@ -118,28 +130,28 @@ const createPanel = () => {
         },
         parent: document.body,
         classnames: ['articles-summarize-panel'],
-        children: [
+        children: options.llmEngines.map((engine) =>
             createElementExtended('a', {
                 children: [
                     createElementExtended('img', {
                         attributes: {
-                            src: 'https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com',
-                            alt: 'ChatGPT',
-                            title: 'ChatGPT',
+                            src: 'https://www.google.com/s2/favicons?sz=64&domain='+engine.domain,
+                            alt: engine.name,
+                            title: engine.name,
                         },
                         style: { width: '16px', height: '16px', verticalAlign: 'middle', marginRight: '5px', marginLeft: '5px' },
                     }),
                 ],
-                attributes: { href: 'https://chatgpt.com/', target: '_blank', rel: 'noopener noreferrer' },
+                attributes: { href: engine.url, target: '_blank', rel: 'noopener noreferrer' },
                 style: { textDecoration: 'none', color: 'black', fontWeight: 'bold', marginBottom: '5px', marginTop: '5px', display: 'inline-block' },
                 onCreated: (el) => {
                     bindOnClick(el, async () => {
                         await cleanupAndCopyArticle();
-                        openLinkInNewTab('https://chatgpt.com/');
+                        openLinkInNewTab(engine.url);
                     });
                 },
             }),
-        ],
+        ),
     });
 }
 
