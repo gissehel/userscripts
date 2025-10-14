@@ -20,7 +20,7 @@ const createElementExtended = (name, params) => {
     if (!params) {
         params = {}
     }
-    const { attributes, text, children, parent, classnames, id, prevSibling, nextSibling, onCreated } = params
+    const { attributes, text, children, parent, prependIn, classnames, id, prevSibling, nextSibling, onCreated } = params
     if (attributes) {
         for (let attributeName in attributes) {
             element.setAttribute(attributeName, attributes[attributeName])
@@ -36,6 +36,9 @@ const createElementExtended = (name, params) => {
     }
     if (parent) {
         parent.appendChild(element)
+    }
+    if (prependIn) {
+        prependIn.prepend(element)
     }
     if (classnames) {
         for (let classname of classnames) {
