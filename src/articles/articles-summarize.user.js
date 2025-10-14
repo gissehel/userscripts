@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.19
+// @version         1.0.20
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -124,7 +124,7 @@ const createPanel = () => {
             position: 'fixed',
             top: '10px',
             right: '10px',
-            zIndex: 10007,
+            zIndex: 2147483621,
             backgroundColor: 'white',
             border: '1px solid black',
             padding: '10px',
