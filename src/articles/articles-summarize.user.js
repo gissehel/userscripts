@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.4
+// @version         1.0.5
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
@@ -12,7 +12,7 @@
 // @import{getElements}
 // @import{copyNodeToClipboard}
 // @import{getDomain}
-// @import{waitWindowFocus}
+// @import{waitUserActivation}
 // @import{monkeySetValue}
 // @import{monkeyGetSetOptions}
 
@@ -70,7 +70,7 @@ const cleanupAndCopyArticle = async () => {
 
     ensureGptInstructionsElement(mainArticle);
 
-    await waitWindowFocus();
+    await waitUserActivation();
 
     await copyNodeToClipboard(mainArticle);
 }
