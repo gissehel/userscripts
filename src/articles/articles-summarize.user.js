@@ -1,10 +1,11 @@
 // ==UserScript==
-// @version         1.0.21
+// @version         1.0.22
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
 // @match           https://nouveau-europresse-com.bnf.idm.oclc.org/Search/ResultMobile/*
 // @match           https://www.liberation.fr/*
+// @match           https://www.lefigaro.fr/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -51,6 +52,14 @@ const siteInfos = {
     "liberation.fr": {
         toremove: [
             '.skAfM',
+        ],
+        article: 'article',
+    },
+    "lefigaro.fr": {
+        toremove: [
+            'figure',
+            '.fig-crosslinking',
+            '.fig-free',
         ],
         article: 'article',
     },
