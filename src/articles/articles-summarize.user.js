@@ -1,9 +1,10 @@
 // ==UserScript==
-// @version         1.0.18
+// @version         1.0.19
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
 // @match           https://nouveau-europresse-com.bnf.idm.oclc.org/Search/ResultMobile/*
+// @match           https://www.liberation.fr/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -46,7 +47,13 @@ const siteInfos = {
     "oclc.org": {
         toremove: [],
         article: '.docOcurrContainer',
-    }
+    },
+    "liberation.fr": {
+        toremove: [
+            '.skAfM',
+        ],
+        article: 'article',
+    },
 }
 
 const baseOptions = {
