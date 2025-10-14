@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.15
+// @version         1.0.16
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -109,6 +109,7 @@ const createPanel = () => {
             fontSize: '14px',
             fontFamily: 'Arial, sans-serif',
             borderRadius: '5px',
+            opacity: '0.7',
         },
         parent: document.body,
         classnames: ['articles-summarize-panel'],
