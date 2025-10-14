@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.25
+// @version         1.0.26
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -22,20 +22,10 @@
 // @import{bindOnClick}
 // @import{openLinkInNewTab}
 
+// Exemples pour test:
+// https://www.livescience.com/animals/cats/cat-behavior/why-do-cats-paw-at-things
+
 const siteInfos = {
-    "livescience.com": {
-        toremove: [
-            'aside',
-            'figure',
-            '.fancy-box',
-            '.hero-image-wrapper',
-            '.byline',
-            '#article-body script',
-            '.slice-container-newsletterForm',
-            '.ad-unit',
-        ],
-        article: '#article-body',
-    },
     "lemonde.fr": {
         toremove: [
             'figure',
@@ -71,6 +61,22 @@ const siteInfos = {
             '.fig-quote',
         ],
         article: 'article',
+    },
+    "livescience.com": {
+        toremove: [
+            'aside',
+            'figure',
+            '.fancy-box',
+            '.hero-image-wrapper',
+            '.byline',
+            '#article-body script',
+            '.slice-container-newsletterForm',
+            '.ad-unit',
+            '.slice-container',
+            '.imageGallery-wrapper',
+            '.slice-container-imageGallery',
+        ],
+        article: '#article-body',
     },
 }
 
@@ -121,11 +127,14 @@ const ensureGptInstructionsElement = (mainArticle) => {
 }
 
 const cleanupArticle = (siteInfo) => {
+    if (!siteInfo) {
+        siteInfo = siteInfos[getDomain()];
+    }
     siteInfo.toremove.map(p => getElements(p).map(x => x.remove()));
 }
 
 
-                
+
 
 const cleanupAndCopyArticle = async () => {
     // await waitUserActivation();
@@ -155,28 +164,51 @@ const createPanel = () => {
         },
         parent: document.body,
         classnames: ['articles-summarize-panel'],
-        children: options.llmEngines.map((engine) =>
+        children: [
+            ...options.llmEngines.map((engine) =>
+                createElementExtended('a', {
+                    children: [
+                        createElementExtended('img', {
+                            attributes: {
+                                src: 'https://www.google.com/s2/favicons?sz=64&domain=' + engine.domain,
+                                alt: engine.name,
+                                title: engine.name,
+                            },
+                            style: { width: '16px', height: '16px', verticalAlign: 'middle', marginRight: '5px', marginLeft: '5px' },
+                        }),
+                    ],
+                    attributes: { href: engine.url, target: '_blank', rel: 'noopener noreferrer' },
+                    style: { textDecoration: 'none', color: 'black', fontWeight: 'bold', marginBottom: '5px', marginTop: '5px', display: 'inline-block' },
+                    onCreated: (el) => {
+                        bindOnClick(el, async () => {
+                            await cleanupAndCopyArticle();
+                            openLinkInNewTab(engine.url);
+                        });
+                    },
+                }),
+            ),
+            createElementExtended('hr'),
             createElementExtended('a', {
                 children: [
                     createElementExtended('img', {
                         attributes: {
-                            src: 'https://www.google.com/s2/favicons?sz=64&domain='+engine.domain,
-                            alt: engine.name,
-                            title: engine.name,
+                            src: 'https://cdn-icons-png.flaticon.com/512/2954/2954888.png', // From Flaticon [Clean icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/clean)
+                            alt: 'Cleanup',
+                            title: 'Cleanup',
                         },
                         style: { width: '16px', height: '16px', verticalAlign: 'middle', marginRight: '5px', marginLeft: '5px' },
                     }),
                 ],
-                attributes: { href: engine.url, target: '_blank', rel: 'noopener noreferrer' },
+                attributes: { href: '#', title: 'Cleanup' },
                 style: { textDecoration: 'none', color: 'black', fontWeight: 'bold', marginBottom: '5px', marginTop: '5px', display: 'inline-block' },
                 onCreated: (el) => {
                     bindOnClick(el, async () => {
-                        await cleanupAndCopyArticle();
-                        openLinkInNewTab(engine.url);
+                        cleanupArticle();
                     });
                 },
             }),
-        ),
+                
+        ]
     });
 }
 
