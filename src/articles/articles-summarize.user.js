@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.29
+// @version         1.0.30
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -37,6 +37,8 @@ const siteInfos = {
             'section.catcher',
             'section.author',
             'section.article__reactions',
+            'section.js-services-inread',
+            'section.inread',
         ],
         article: '.article__content',
     },
