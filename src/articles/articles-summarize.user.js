@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.13
+// @version         1.0.14
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
@@ -115,7 +115,7 @@ const createPanel = () => {
                     }),
                 ],
                 attributes: { href: 'https://chatgpt.com/', target: '_blank', rel: 'noopener noreferrer' },
-                style: { textDecoration: 'none', color: 'black', fontWeight: 'bold', marginBottom: '5px', marginLeft: '5px', display: 'inline-block' },
+                style: { textDecoration: 'none', color: 'black', fontWeight: 'bold', marginBottom: '5px', marginTop: '5px', display: 'inline-block' },
                 onCreated: (el) => {
                     bindOnClick(el, async () => {
                         await cleanupAndCopyArticle();
