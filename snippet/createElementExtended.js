@@ -20,15 +20,15 @@ const createElementExtended = (name, params) => {
     if (!params) {
         params = {}
     }
-    const { attributes, text, children, parent, prependIn, classnames, id, styles, prevSibling, nextSibling, onCreated } = params
+    const { attributes, text, children, parent, prependIn, classnames, id, style, prevSibling, nextSibling, onCreated } = params
     if (attributes) {
         for (let attributeName in attributes) {
             element.setAttribute(attributeName, attributes[attributeName])
         }
     }
-    if (styles) {
-        for (let key in styles) {
-            element.styles[key] = styles[key];
+    if (style) {
+        for (let key in style) {
+            element.styles[key] = style[key];
         }
     }
     if (text) {
