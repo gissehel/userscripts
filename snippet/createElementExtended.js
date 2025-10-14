@@ -28,7 +28,7 @@ const createElementExtended = (name, params) => {
     }
     if (style) {
         for (let key in style) {
-            element.styles[key] = style[key];
+            element.style[key] = style[key];
         }
     }
     if (text) {
