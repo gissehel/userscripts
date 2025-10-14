@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.10
+// @version         1.0.12
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
@@ -15,6 +15,7 @@
 // @import{waitUserActivation}
 // @import{monkeySetValue}
 // @import{monkeyGetSetOptions}
+// @import{bindOnClick}
 
 const siteInfos = {
     "livescience.com": {
@@ -70,18 +71,59 @@ const cleanupArticle = (siteInfo) => {
     siteInfo.toremove.map(p => getElements(p).map(x => x.remove()));
 }
 
+
+                
+
 const cleanupAndCopyArticle = async () => {
-    await waitUserActivation();
-
+    // await waitUserActivation();
     const siteInfo = siteInfos[getDomain()];
-
     const mainArticle = getElements(siteInfo.article)[0];
-
     cleanupArticle(siteInfo);
-
     ensureGptInstructionsElement(mainArticle);
-
     await copyNodeToClipboard(mainArticle);
 }
 
-readyPromise.then(cleanupAndCopyArticle)
+const createPanel = () => {
+    createElementExtended('div', {
+        style: {
+            position: 'fixed',
+            top: '10px',
+            right: '10px',
+            zIndex: 10007,
+            backgroundColor: 'white',
+            border: '1px solid black',
+            padding: '10px',
+            boxShadow: '2px 2px 5px rgba(0,0,0,0.5)',
+            maxWidth: '200px',
+            fontSize: '14px',
+            fontFamily: 'Arial, sans-serif',
+            borderRadius: '5px',
+        },
+        parent: document.body,
+        classnames: ['articles-summarize-panel'],
+        children: [
+            createElementExtended('a', {
+                children: [
+                    createElementExtended('img', {
+                        attributes: {
+                            src: 'https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com',
+                            alt: 'ChatGPT',
+                            title: 'ChatGPT',
+                        },
+                        style: { width: '16px', height: '16px', verticalAlign: 'middle', marginRight: '5px' },
+                    }),
+                ],
+                attributes: { href: 'https://chat.openai.com/', target: '_blank', rel: 'noopener noreferrer' },
+                style: { textDecoration: 'none', color: 'black', fontWeight: 'bold', marginBottom: '5px', display: 'inline-block' },
+                onCreated: (el) => {
+                    bindOnClick(el, () => {
+                        cleanupAndCopyArticle();
+                    });
+                },
+            }),
+        ],
+    });
+}
+
+createPanel();
+
