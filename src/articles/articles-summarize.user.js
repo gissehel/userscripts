@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.23
+// @version         1.0.24
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -58,12 +58,16 @@ const siteInfos = {
     "lefigaro.fr": {
         toremove: [
             'figure',
+            '.fig-wrapper',
             '.fig-crosslinking',
             '.fig-free',
             '.fig-wrapper-follow-button',
             '.fig-tags',
             '.fig-sharebar',
             '.ext-player',
+            '.fig-a11y-skip',
+            '.a11y-hidden',
+            '.fig-ad-content',
         ],
         article: 'article',
     },
