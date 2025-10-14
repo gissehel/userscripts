@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.7
+// @version         1.0.8
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
@@ -57,11 +57,11 @@ const ensureGptInstructionsElement = (mainArticle) => {
 
     gptInstructionsElement = createElementExtended('div', {
         styles: {
-            fontSize: "1px",
-            color: "white",
-            height: "1px",
-        },
-        textContent: gptInstructions,
+                fontSize: "1px",
+                color: "white",
+                height: "1px",
+            },
+        text: gptInstructions,
         prependIn: mainArticle,
     });
 }
