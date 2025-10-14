@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.5
+// @version         1.0.6
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
@@ -18,7 +18,16 @@
 
 const siteInfos = {
     "livescience.com": {
-        toremove: ['aside', 'figure', '.fancy-box', '.hero-image-wrapper', '.byline', '#article-body script', '.slice-container-newsletterForm'],
+        toremove: [
+            'aside',
+            'figure',
+            '.fancy-box',
+            '.hero-image-wrapper',
+            '.byline',
+            '#article-body script',
+            '.slice-container-newsletterForm',
+            '.ad-unit',
+        ],
         article: '#article-body',
     },
 }
