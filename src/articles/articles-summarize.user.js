@@ -1,9 +1,10 @@
 // ==UserScript==
-// @version         1.0.27
+// @version         1.0.29
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
 // @match           https://nouveau-europresse-com.bnf.idm.oclc.org/Search/ResultMobile/*
+// @match           https://nouveau-europresse-com.bnf.idm.oclc.org/Document/*
 // @match           https://www.liberation.fr/*
 // @match           https://www.lefigaro.fr/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
@@ -23,7 +24,11 @@
 // @import{openLinkInNewTab}
 
 // Exemples pour test:
-// https://www.livescience.com/animals/cats/cat-behavior/why-do-cats-paw-at-things
+// https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html
+// https://www.lemonde.fr/planete/article/2025/09/01/les-emissions-de-gaz-a-effet-de-serre-continuent-leur-progression-malgre-les-bons-chiffres-chinois_6637986_3244.html
+// https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html
+// https://www.lefigaro.fr/conjoncture/taxe-sur-les-holdings-contribution-sur-les-hauts-revenus-les-premieres-mesures-du-budget-lecornu-devoilees-20251014
+// https://www.livescience.com/planet-earth/earthquakes/link-between-cascadia-and-san-andreas-fault-earthquakes-discovered-30-years-after-lost-vessel-stumbled-across-key-data
 
 const siteInfos = {
     "lemonde.fr": {
@@ -59,6 +64,8 @@ const siteInfos = {
             '.a11y-hidden',
             '.fig-ad-content',
             '.fig-quote',
+            '.fig-body-link',
+            '.fig-table-contents',
         ],
         article: 'article',
     },
@@ -75,7 +82,7 @@ const siteInfos = {
             '.slice-container',
             '.imageGallery-wrapper',
             '.slice-container-imageGallery',
-            'hr',
+            '#article-body hr',
         ],
         title: '.news-article header h1',
         abstract: '.news-article header .byline-social .strapline',
@@ -203,7 +210,7 @@ const createPanel = () => {
             ),
             createIconLink(
                 'https://cdn-icons-png.flaticon.com/512/2570/2570600.png', // From Flaticon [Clean icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/clean)
-                'Cleanup', 
+                'Copy prompt', 
                 '#', 
                 async () => { await cleanupAndCopyArticle(); }
             ),
