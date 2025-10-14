@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.1
+// @version         1.0.2
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
@@ -13,6 +13,8 @@
 // @import{copyNodeToClipboard}
 // @import{getDomain}
 // @import{waitWindowFocus}
+// @import{monkeySetValue}
+// @import{monkeyGetSetOptions}
 
 const siteInfos = {
     "livescience.com": {
@@ -33,7 +35,7 @@ const baseOptions = {
     ],
 };
 
-const options = Object.fromEntries(Object.entries(baseOptions).map(([k, v]) => [k, GM_getValue(k, v)]));
+const options = monkeyGetSetOptions(baseOptions);
 
 let gptInstructionsElement = null;
 
@@ -69,7 +71,7 @@ const cleanupAndCopyArticle = async () => {
 
     await waitWindowFocus();
 
-    copyNodeToClipboard(mainArticle);
+    await copyNodeToClipboard(mainArticle);
 }
 
 readyPromise.then(cleanupAndCopyArticle)
