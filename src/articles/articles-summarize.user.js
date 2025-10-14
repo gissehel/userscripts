@@ -1,8 +1,9 @@
 // ==UserScript==
-// @version         1.0.16
+// @version         1.0.17
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
+// @match           https://nouveau-europresse-com.bnf.idm.oclc.org/Search/ResultMobile/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -41,6 +42,10 @@ const siteInfos = {
             'section.article__reactions',
         ],
         article: '.article__content',
+    },
+    "oclc.org": {
+        toremove: [],
+        article: '.docOcurrContainer',
     }
 }
 
