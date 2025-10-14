@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.12
+// @version         1.0.13
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
@@ -16,6 +16,7 @@
 // @import{monkeySetValue}
 // @import{monkeyGetSetOptions}
 // @import{bindOnClick}
+// @import{openInNewTab}
 
 const siteInfos = {
     "livescience.com": {
@@ -110,14 +111,15 @@ const createPanel = () => {
                             alt: 'ChatGPT',
                             title: 'ChatGPT',
                         },
-                        style: { width: '16px', height: '16px', verticalAlign: 'middle', marginRight: '5px' },
+                        style: { width: '16px', height: '16px', verticalAlign: 'middle', marginRight: '5px', marginLeft: '5px' },
                     }),
                 ],
-                attributes: { href: 'https://chat.openai.com/', target: '_blank', rel: 'noopener noreferrer' },
-                style: { textDecoration: 'none', color: 'black', fontWeight: 'bold', marginBottom: '5px', display: 'inline-block' },
+                attributes: { href: 'https://chatgpt.com/', target: '_blank', rel: 'noopener noreferrer' },
+                style: { textDecoration: 'none', color: 'black', fontWeight: 'bold', marginBottom: '5px', marginLeft: '5px', display: 'inline-block' },
                 onCreated: (el) => {
-                    bindOnClick(el, () => {
-                        cleanupAndCopyArticle();
+                    bindOnClick(el, async () => {
+                        await cleanupAndCopyArticle();
+                        openLinkInNewTab('https://chatgpt.com/');
                     });
                 },
             }),
