@@ -11,23 +11,8 @@
 // @import{createElementExtended}
 // @import{getElements}
 // @import{copyNodeToClipboard}
-
-const getDomain=()=>document.location.hostname.split('.').slice(-2).join('.')
-
-const waitWindowFocus = async () => {
-  return new Promise((resolve) => {
-    if (document.hasFocus()) {
-      resolve()
-      return
-    }
-    const listener = () => {
-      window.removeEventListener("focus", listener)
-      resolve()
-    }
-    window.addEventListener("focus", listener)
-  })
-}
-
+// @import{getDomain}
+// @import{waitWindowFocus}
 
 const siteInfos = {
     "livescience.com": {
@@ -52,7 +37,7 @@ const options = Object.fromEntries(Object.entries(baseOptions).map(([k, v]) => [
 
 let gptInstructionsElement = null;
 
-const ensureGptInstructionsElement = () => {
+const ensureGptInstructionsElement = (mainArticle) => {
     const gptInstructions = options.prompts.join('\n ').replace('{{language}}', options.language);
 
     if (gptInstructionsElement) {
@@ -80,9 +65,11 @@ const cleanupAndCopyArticle = async () => {
 
     cleanupArticle(siteInfo);
 
-    ensureGptInstructionsElement();
+    ensureGptInstructionsElement(mainArticle);
 
-    waitWindowFocus().then(() => copyNodeToClipboard(mainArticle));
+    await waitWindowFocus();
+
+    copyNodeToClipboard(mainArticle);
 }
 
 readyPromise.then(cleanupAndCopyArticle)
