@@ -16,7 +16,7 @@
 // @import{monkeySetValue}
 // @import{monkeyGetSetOptions}
 // @import{bindOnClick}
-// @import{openInNewTab}
+// @import{openLinkInNewTab}
 
 const siteInfos = {
     "livescience.com": {
