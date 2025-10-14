@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.26
+// @version         1.0.27
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -75,7 +75,10 @@ const siteInfos = {
             '.slice-container',
             '.imageGallery-wrapper',
             '.slice-container-imageGallery',
+            'hr',
         ],
+        title: '.news-article header h1',
+        abstract: '.news-article header .byline-social .strapline',
         article: '#article-body',
     },
 }
@@ -145,6 +148,26 @@ const cleanupAndCopyArticle = async () => {
     await copyNodeToClipboard(mainArticle);
 }
 
+const createIconLink = (iconUrl, name, defaultLink, asyncCode) => {
+    return createElementExtended('a', {
+        children: [
+            createElementExtended('img', {
+                attributes: {
+                    src: iconUrl,
+                    alt: name,
+                    title: name,
+                },
+                style: { width: '16px', height: '16px', verticalAlign: 'middle', marginRight: '5px', marginLeft: '5px' },
+            }),
+        ],
+        attributes: { href: defaultLink, title: name },
+        style: { textDecoration: 'none', color: 'black', fontWeight: 'bold', marginBottom: '5px', marginTop: '5px', display: 'inline-block' },
+        onCreated: (el) => {
+            bindOnClick(el, asyncCode);
+        },
+    });
+}
+
 const createPanel = () => {
     createElementExtended('div', {
         style: {
@@ -166,48 +189,24 @@ const createPanel = () => {
         classnames: ['articles-summarize-panel'],
         children: [
             ...options.llmEngines.map((engine) =>
-                createElementExtended('a', {
-                    children: [
-                        createElementExtended('img', {
-                            attributes: {
-                                src: 'https://www.google.com/s2/favicons?sz=64&domain=' + engine.domain,
-                                alt: engine.name,
-                                title: engine.name,
-                            },
-                            style: { width: '16px', height: '16px', verticalAlign: 'middle', marginRight: '5px', marginLeft: '5px' },
-                        }),
-                    ],
-                    attributes: { href: engine.url, target: '_blank', rel: 'noopener noreferrer' },
-                    style: { textDecoration: 'none', color: 'black', fontWeight: 'bold', marginBottom: '5px', marginTop: '5px', display: 'inline-block' },
-                    onCreated: (el) => {
-                        bindOnClick(el, async () => {
-                            await cleanupAndCopyArticle();
-                            openLinkInNewTab(engine.url);
-                        });
-                    },
-                }),
+                createIconLink('https://www.google.com/s2/favicons?sz=64&domain=' + engine.domain, engine.name, engine.url, async () => {
+                    await cleanupAndCopyArticle();
+                    openLinkInNewTab(engine.url);
+                })
             ),
             createElementExtended('hr'),
-            createElementExtended('a', {
-                children: [
-                    createElementExtended('img', {
-                        attributes: {
-                            src: 'https://cdn-icons-png.flaticon.com/512/2954/2954888.png', // From Flaticon [Clean icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/clean)
-                            alt: 'Cleanup',
-                            title: 'Cleanup',
-                        },
-                        style: { width: '16px', height: '16px', verticalAlign: 'middle', marginRight: '5px', marginLeft: '5px' },
-                    }),
-                ],
-                attributes: { href: '#', title: 'Cleanup' },
-                style: { textDecoration: 'none', color: 'black', fontWeight: 'bold', marginBottom: '5px', marginTop: '5px', display: 'inline-block' },
-                onCreated: (el) => {
-                    bindOnClick(el, async () => {
-                        cleanupArticle();
-                    });
-                },
-            }),
-                
+            createIconLink(
+                'https://cdn-icons-png.flaticon.com/512/2954/2954888.png', // From Flaticon [Clean icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/clean)
+                'Cleanup', 
+                '#', 
+                async () => { cleanupArticle(); }
+            ),
+            createIconLink(
+                'https://cdn-icons-png.flaticon.com/512/2570/2570600.png', // From Flaticon [Clean icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/clean)
+                'Cleanup', 
+                '#', 
+                async () => { await cleanupAndCopyArticle(); }
+            ),
         ]
     });
 }
