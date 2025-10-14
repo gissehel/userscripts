@@ -1,7 +1,8 @@
 // ==UserScript==
-// @version         1.0.14
+// @version         1.0.15
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
+// @match           https://www.lemonde.fr/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -32,6 +33,15 @@ const siteInfos = {
         ],
         article: '#article-body',
     },
+    "lemonde.fr": {
+        toremove: [
+            'figure',
+            'section.catcher',
+            'section.author',
+            'section.article__reactions',
+        ],
+        article: '.article__content',
+    }
 }
 
 const baseOptions = {
