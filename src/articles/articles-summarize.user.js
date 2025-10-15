@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.30
+// @version         1.0.31
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -24,11 +24,12 @@
 // @import{openLinkInNewTab}
 
 // Exemples pour test:
-// https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html
-// https://www.lemonde.fr/planete/article/2025/09/01/les-emissions-de-gaz-a-effet-de-serre-continuent-leur-progression-malgre-les-bons-chiffres-chinois_6637986_3244.html
-// https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html
-// https://www.lefigaro.fr/conjoncture/taxe-sur-les-holdings-contribution-sur-les-hauts-revenus-les-premieres-mesures-du-budget-lecornu-devoilees-20251014
-// https://www.livescience.com/planet-earth/earthquakes/link-between-cascadia-and-san-andreas-fault-earthquakes-discovered-30-years-after-lost-vessel-stumbled-across-key-data
+// * https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html
+// * https://www.lemonde.fr/planete/article/2025/09/01/les-emissions-de-gaz-a-effet-de-serre-continuent-leur-progression-malgre-les-bons-chiffres-chinois_6637986_3244.html
+// * https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html
+// * https://www.liberation.fr/politique/reforme-des-retraites-493-deficit-ce-quil-faut-retenir-de-la-declaration-de-politique-general-de-sebastien-lecornu-20251014_6Q5XRISHGVAO5OT7HVTXF3RIQQ/
+// * https://www.lefigaro.fr/conjoncture/taxe-sur-les-holdings-contribution-sur-les-hauts-revenus-les-premieres-mesures-du-budget-lecornu-devoilees-20251014
+// * https://www.livescience.com/planet-earth/earthquakes/link-between-cascadia-and-san-andreas-fault-earthquakes-discovered-30-years-after-lost-vessel-stumbled-across-key-data
 
 const siteInfos = {
     "lemonde.fr": {
@@ -107,11 +108,19 @@ const baseOptions = {
             name: "ChatGPT",
             url: "https://chatgpt.com/",
             domain: "chatgpt.com",
+            icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABfUlEQVQ4ja3TPUiXURgF8N9rQQZ9SgmF0JAFgllB/fGDMAxpECGiIVqkoYIEIRpaguaWliDChkQcTGhKsZSioGwosqE1KoOUoCIdlMhquM8bL3/ERZ/p3ufeezjPOeeywsqW6K3FMRyN/RO8iPU8/i4HkKEHTRhBFc7jPRYwjTt4lz9YUwZwCGdwGYvowEfcxSg24CJe41sRIMMpXMcrzOEqBjCGE2jAPWzBPjyDigBoQRdexpw1QXsXBuPODG7gAHbmlHOATtwviPUb7diBB9iNT7iGrwGwtTjCSUxiHfZjNgS7gnGUcAHbg8WeWL/JGUzieIjzJ4TKz0TvlmRhCY9wsMjgA86iHrfxFkdwGG0h8MMAncVGbMZ4DrCAVmyTQvQDv0Kbp/gZI21CHRola6eKNL/ECJdQHXRPYwq1+Iz18bgfz5XVXgyjW/K8Hb3ok5JZgyEpbP+rPMr1OCfZVynZ14vvUioncFPhPyz1mbKgCs2SiFlo8VjKyOrVP+YNUzrWZGSLAAAAAElFTkSuQmCC",
         },
         {
             name: "Claude",
             url: "https://claude.ai/new",
             domain: "claude.ai",
+            icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACZ0lEQVQ4jY2TzWvUVxiFn3N/k5mkCn4gVRQ/sRobSMUmoFbcqNBFF404TSLiRsFiNw2ETKybYKGOreDGhV10pZBoFMGCxT9AKKhIhNRkGhURTCgSWyyJE+d3TxdOJIlgPbvz3vM+773ce2GOSoW2zlJX+55pP9iTzw51tTXNzU0rzDRPOvJ1xiet+LPz+QQgeakDUrz2XoCVZ/onDb8Aa4fXJi2vq1qH9RDgQSG/arjQeqtUaNs/3ZMBuF9o254QOyqVTKfD5PEQs19ZPma4UrI+JHjg0bdfLpwi3ADqUfSsHWTEpNHuJBPvyLXN0ZwQbPmzq7UFe4XQwFRt7jxQD7qwoXipdxbgo2Lf3bSSbAYPyvF6EKsRj6M4brHMMbZgvgD+eJnWfD3z2Jpp3NMTShP3jyKKwLxquQzkgBSxDTMls8XQ4BCua6i7/XPhrYqMG54b/pH8AXASWDODX6nCskL3TPw9TXQuYzwU7NUxaGEgLlEkC8oZzGw9x1xF3HSIz5yGvzb90DeoOSFGuvPrU4dTmGbEciCpLt22dBn7swA7DIuQOzPTjU868nUTNeH71By1OSsBOAfaDCwH1mA3pnVx30YaKqXy8IanudGRN4CJbLiNqDhqJ3KzYRdSUZFRxHygUeLvZDL8ei99sPeT071Db66xqv0vxhc0JUlaIziRUWxV9MeWxioxdgDLbI0jX6xNyldnvQOAjacuDmQX/zs/OvTaOrS+2D9CUJNgrOGn/jHgG+HuGLK/VaIPvgUASMqvJHy4/se+15/H/lSKY9UBfUgHnC2/qAL/X6VC65GH37UvfVfmP/6zA9ZpeVnhAAAAAElFTkSuQmCC",
+        },
+        {
+            name: "Mistal",
+            url: "https://chat.mistral.ai/",
+            domain: "mistral.ai",
+            icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABIUlEQVQ4jcWSsU4CURBFz112a0vEQk2gsdktpJaEioo/YKkt/ARt/AMb613/gMqaWgpoZRMlEbSkJr6xYYmBXUxsmGpy57w7k5kHhw7lyWcvundYUx6DWjJ5LIIX/fDaHF0PvRw/jW8B/LzosCbQwfRa2s50AdZx2EbyC6jwI45uPNmylkzSdefYmY7Awm16x8CMlrCWQQaka+1OZnXbhosnyJ0IvvqXdYBvtwrKsHIDOP12q+meOgDeX8B/DNKKFzQktXNBUrviBQ3WO9lrIGlZTUaZJ3+2geTPqskok7Tc4Rdx9ABgRhfsDDSWGBqsDN4ABOeCwIwrsAj0LjEA0LwXFl0HRHaSThoA8zicYtSLMB94Ln6vxa98aFj5Dz1o/ACvJ2CcRIlDwAAAAABJRU5ErkJggg==",
         },
     ],
 };
@@ -198,7 +207,7 @@ const createPanel = () => {
         classnames: ['articles-summarize-panel'],
         children: [
             ...options.llmEngines.map((engine) =>
-                createIconLink('https://www.google.com/s2/favicons?sz=64&domain=' + engine.domain, engine.name, engine.url, async () => {
+                createIconLink(engine.icon ? engine.icon : 'https://www.google.com/s2/favicons?sz=64&domain=' + engine.domain, engine.name, engine.url, async () => {
                     await cleanupAndCopyArticle();
                     openLinkInNewTab(engine.url);
                 })
