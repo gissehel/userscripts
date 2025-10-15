@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.31
+// @version         1.0.32
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -7,6 +7,7 @@
 // @match           https://nouveau-europresse-com.bnf.idm.oclc.org/Document/*
 // @match           https://www.liberation.fr/*
 // @match           https://www.lefigaro.fr/*
+// @match           https://www.20minutes.fr/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -29,6 +30,7 @@
 // * https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html
 // * https://www.liberation.fr/politique/reforme-des-retraites-493-deficit-ce-quil-faut-retenir-de-la-declaration-de-politique-general-de-sebastien-lecornu-20251014_6Q5XRISHGVAO5OT7HVTXF3RIQQ/
 // * https://www.lefigaro.fr/conjoncture/taxe-sur-les-holdings-contribution-sur-les-hauts-revenus-les-premieres-mesures-du-budget-lecornu-devoilees-20251014
+// * https://www.20minutes.fr/paris/4179419-20251015-si-seine-atteignant-9-10-paris-assiste-exercice-simulation-crue-ratp
 // * https://www.livescience.com/planet-earth/earthquakes/link-between-cascadia-and-san-andreas-fault-earthquakes-discovered-30-years-after-lost-vessel-stumbled-across-key-data
 
 const siteInfos = {
@@ -70,6 +72,18 @@ const siteInfos = {
             '.fig-body-link',
             '.fig-table-contents',
         ],
+        article: 'article',
+    },
+    "20minutes.fr": {
+        toremove: [
+            'figure',
+            'article header',
+            '.c-ad-placeholder',
+            '.c-link',
+            '.c-read-also-banner',
+        ],
+        title: 'section header h1',
+        abstract: 'section header span:last-child',
         article: 'article',
     },
     "livescience.com": {
