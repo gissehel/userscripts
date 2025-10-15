@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.32
+// @version         1.0.33
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -8,6 +8,7 @@
 // @match           https://www.liberation.fr/*
 // @match           https://www.lefigaro.fr/*
 // @match           https://www.20minutes.fr/*
+// @match           https://www.leparisien.fr/*
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -31,6 +32,7 @@
 // * https://www.liberation.fr/politique/reforme-des-retraites-493-deficit-ce-quil-faut-retenir-de-la-declaration-de-politique-general-de-sebastien-lecornu-20251014_6Q5XRISHGVAO5OT7HVTXF3RIQQ/
 // * https://www.lefigaro.fr/conjoncture/taxe-sur-les-holdings-contribution-sur-les-hauts-revenus-les-premieres-mesures-du-budget-lecornu-devoilees-20251014
 // * https://www.20minutes.fr/paris/4179419-20251015-si-seine-atteignant-9-10-paris-assiste-exercice-simulation-crue-ratp
+// * https://www.leparisien.fr/economie/retraites/suspension-de-la-reforme-des-retraites-un-trimestre-de-moins-a-travailler-cest-toujours-bon-a-prendre-15-10-2025-PUMPIITUC5H2RAAPRYLK524CSQ.php
 // * https://www.livescience.com/planet-earth/earthquakes/link-between-cascadia-and-san-andreas-fault-earthquakes-discovered-30-years-after-lost-vessel-stumbled-across-key-data
 
 const siteInfos = {
@@ -85,6 +87,16 @@ const siteInfos = {
         title: 'section header h1',
         abstract: 'section header span:last-child',
         article: 'article',
+    },
+    "leparisien.fr": {
+        toremove: [
+            '.dailymotion-suggestion_container',
+            '.article-read-also_container',
+            'figure',
+        ],
+        title: 'header h1',
+        abstract: 'header .subheadline',
+        article: '.article-section',
     },
     "livescience.com": {
         toremove: [
