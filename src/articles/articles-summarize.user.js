@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.36
+// @version         1.0.37
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -51,7 +51,7 @@ const siteInfos = {
         ],
         article: '.article__content',
     },
-    "oclc.org": {
+    "nouveau-europresse-com.bnf.idm.oclc.org": {
         toremove: [],
         article: '.docOcurrContainer',
     },
@@ -198,7 +198,7 @@ const ensureGptInstructionsElement = (mainArticle) => {
 
 const cleanupArticle = (siteInfo) => {
     if (!siteInfo) {
-        siteInfo = siteInfos[getDomain()];
+        siteInfo = siteInfos[getDomain()] || siteInfos[document.location.hostname];
     }
     siteInfo.toremove.map(p => getElements(p).map(x => x.remove()));
 }
