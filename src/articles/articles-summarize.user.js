@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.35
+// @version         1.0.36
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -132,7 +132,7 @@ const siteInfos = {
     "www.mediapart.fr": {
         toremove: [
             'figure',
-            'aside.highlight',
+            'aside',
         ],
         title: 'h1#page-title',
         abstract: 'p.news__heading__top__intro',
