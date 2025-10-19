@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.37
+// @version         1.0.38
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -196,9 +196,12 @@ const ensureGptInstructionsElement = (mainArticle) => {
     });
 }
 
+
+const getSiteInfo = () => siteInfos[getDomain()] || siteInfos[document.location.hostname];
+
 const cleanupArticle = (siteInfo) => {
     if (!siteInfo) {
-        siteInfo = siteInfos[getDomain()] || siteInfos[document.location.hostname];
+        siteInfo = getSiteInfo();
     }
     siteInfo.toremove.map(p => getElements(p).map(x => x.remove()));
 }
@@ -208,7 +211,7 @@ const cleanupArticle = (siteInfo) => {
 
 const cleanupAndCopyArticle = async () => {
     // await waitUserActivation();
-    const siteInfo = siteInfos[getDomain()];
+    const siteInfo = getSiteInfo();
     const mainArticle = getElements(siteInfo.article)[0];
     cleanupArticle(siteInfo);
     ensureGptInstructionsElement(mainArticle);
