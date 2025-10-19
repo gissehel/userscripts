@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.33
+// @version         1.0.34
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -9,6 +9,7 @@
 // @match           https://www.lefigaro.fr/*
 // @match           https://www.20minutes.fr/*
 // @match           https://www.leparisien.fr/*
+// @match           https://sciencepost.fr/*/
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -34,6 +35,7 @@
 // * https://www.20minutes.fr/paris/4179419-20251015-si-seine-atteignant-9-10-paris-assiste-exercice-simulation-crue-ratp
 // * https://www.leparisien.fr/economie/retraites/suspension-de-la-reforme-des-retraites-un-trimestre-de-moins-a-travailler-cest-toujours-bon-a-prendre-15-10-2025-PUMPIITUC5H2RAAPRYLK524CSQ.php
 // * https://www.livescience.com/planet-earth/earthquakes/link-between-cascadia-and-san-andreas-fault-earthquakes-discovered-30-years-after-lost-vessel-stumbled-across-key-data
+// * https://sciencepost.fr/des-archeologues-se-sont-mis-a-cuisiner-comme-neandertal-et-ont-decouvert-quelque-chose-de-troublant/
 
 const siteInfos = {
     "lemonde.fr": {
@@ -116,6 +118,14 @@ const siteInfos = {
         title: '.news-article header h1',
         abstract: '.news-article header .byline-social .strapline',
         article: '#article-body',
+    },
+    "sciencepost.fr": {
+        toremove: [
+            'figure',
+        ],
+        title: 'h1.entry-title',
+        abstract: 'div.entry-content p strong:first-child',
+        article: 'div.entry-content',
     },
 }
 
