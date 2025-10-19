@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.34
+// @version         1.0.35
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -9,6 +9,8 @@
 // @match           https://www.lefigaro.fr/*
 // @match           https://www.20minutes.fr/*
 // @match           https://www.leparisien.fr/*
+// @match           https://www.mediapart.fr/journal/*/*/*
+// @match           https://www-mediapart-fr.bnf.idm.oclc.org/journal/*/*/*
 // @match           https://sciencepost.fr/*/
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @grant        GM_getValue
@@ -127,7 +129,18 @@ const siteInfos = {
         abstract: 'div.entry-content p strong:first-child',
         article: 'div.entry-content',
     },
+    "www.mediapart.fr": {
+        toremove: [
+            'figure',
+            'aside.highlight',
+        ],
+        title: 'h1#page-title',
+        abstract: 'p.news__heading__top__intro',
+        article: '.news__body__center__article',
+    },
 }
+
+siteInfos["www-mediapart-fr.bnf.idm.oclc.org"] = siteInfos["www.mediapart.fr"];
 
 const baseOptions = {
     language: 'English',
