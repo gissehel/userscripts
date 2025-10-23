@@ -35,8 +35,22 @@ const createElementExtended = (name, params) => {
         element.textContent = text;
     }
     if (children) {
+        const addChild = (child) => {
+            if (child) {
+                if (typeof child === 'string') {
+                    element.appendChild(document.createTextNode(child))
+                } else if (Array.isArray(child)) {
+                    for (let subChild of child) {
+                        addChild(subChild)
+                    }
+                } else {
+                    element.appendChild(child)
+                }
+            }
+        }
+
         for (let child of children) {
-            element.appendChild(child)
+            addChild(child)
         }
     }
     if (parent) {
