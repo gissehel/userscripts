@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.38
+// @version         1.0.39
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -90,7 +90,7 @@ const siteInfos = {
         ],
         title: 'section header h1',
         abstract: 'section header span:last-child',
-        article: 'article',
+        article: 'article.o-paper__content',
     },
     "leparisien.fr": {
         toremove: [
@@ -176,10 +176,12 @@ const baseOptions = {
 
 const options = monkeyGetSetOptions(baseOptions);
 
+const getGptInstructions = (options) => options.prompts.join('\n ').replace('{{language}}', options.language);
+
 let gptInstructionsElement = null;
 
 const ensureGptInstructionsElement = (mainArticle) => {
-    const gptInstructions = options.prompts.join('\n ').replace('{{language}}', options.language);
+    const gptInstructions = getGptInstructions(options);
 
     if (gptInstructionsElement) {
         gptInstructionsElement.remove();
@@ -205,9 +207,6 @@ const cleanupArticle = (siteInfo) => {
     }
     siteInfo.toremove.map(p => getElements(p).map(x => x.remove()));
 }
-
-
-
 
 const cleanupAndCopyArticle = async () => {
     // await waitUserActivation();
