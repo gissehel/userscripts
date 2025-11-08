@@ -1,138 +1,14 @@
 // ==UserScript==
-// @version         1.0.0
+// @version         1.0.1
 // @description     bnf-search-services : Amélioration de l'ergonomie de la liste base de recherches de la BnF
 // @match           https://bdl.bnf.fr/bases-de-donnees-par-titre
 // ==/UserScript==
 
 // @import{addStyle}
+// @import{registerClickListener}
 // @import{createElementExtended}
 // @import{getSubElements}
 // @import{getElements}
-
-registerEventListener = (element, eventType, callback, options) => {
-    if (element.addEventListener) {
-        element.addEventListener(eventType, callback, options);
-        if (typeof options === 'object' && !Array.isArray(options) && options !== null) {
-            if (options.executeAtRegister) {
-                setTimeout(() => callback(), 0)
-            }
-        }
-    }
-    return () => {
-        if (element.removeEventListener) {
-            element.removeEventListener(eventType, callback, options);
-        }
-    }
-}
-HTMLElement.prototype.registerEventListener = function (type, callback, options) { return registerEventListener(this, type, callback, options); }
-EventTarget.prototype.registerEventListener = function (type, callback, options) { return registerEventListener(this, type, callback, options); }
-
-registerClickListener = (eventTarget, callback, options) => {
-    return registerEventListener(eventTarget, 'click', (e) => {
-        e.preventDefault()
-        const result = callback(e)
-        if (result === false) {
-            return false
-        }
-        return true
-    }, options);
-}
-HTMLElement.prototype.registerClickListener = function (type, callback, options) { return registerClickListener(this, type, callback, options); }
-EventTarget.prototype.registerClickListener = function (type, callback, options) { return registerClickListener(this, type, callback, options); }
-
-createElementExtended = (name, params) => {
-    /** @type{HTMLElement} */
-    const element = document.createElement(name)
-    if (!params) {
-        params = {}
-    }
-    const { attributes, text, children, parent, prependIn, classnames, id, style, prevSibling, nextSibling, onCreated } = params
-    if (attributes) {
-        for (let attributeName in attributes) {
-            element.setAttribute(attributeName, attributes[attributeName])
-        }
-    }
-    if (style) {
-        for (let key in style) {
-            element.style[key] = style[key];
-        }
-    }
-    if (text) {
-        element.textContent = text;
-    }
-    if (children) {
-        const addChild = (child) => {
-            if (child) {
-                if (typeof child === 'string') {
-                    element.appendChild(document.createTextNode(child))
-                } else if (Array.isArray(child)) {
-                    for (let subChild of child) {
-                        addChild(subChild)
-                    }
-                } else {
-                    element.appendChild(child)
-                }
-            }
-        }
-
-        for (let child of children) {
-            addChild(child)
-        }
-    }
-    if (parent) {
-        parent.appendChild(element)
-    }
-    if (prependIn) {
-        prependIn.prepend(element)
-    }
-    if (classnames) {
-        for (let classname of classnames) {
-            element.classList.add(classname)
-        }
-    }
-    if (id) {
-        element.id = id
-    }
-    if (prevSibling) {
-        prevSibling.parentElement.insertBefore(element, prevSibling.nextSibling)
-    }
-    if (nextSibling) {
-        nextSibling.parentElement.insertBefore(element, nextSibling)
-    }
-    if (onCreated) {
-        onCreated(element)
-    }
-    return element
-}
-
-
-addStyle = (() => {
-    let styleElement = null;
-    let styleContent = null;
-
-    /**
-     * Add a new css string to the page
-     * 
-     * @param {string} styleText The CSS string to pass
-     * @returns {void}
-     */
-    return (styleText) => {
-        if (styleElement === null) {
-            styleElement = document.createElement('style');
-            styleContent = "";
-            document.head.appendChild(styleElement);
-        } else {
-            styleContent += "\n";
-        }
-
-        styleContent += styleText;
-        styleElement.textContent = styleContent;
-    };
-})();
-
-
-getSubElements = (element, query) => [...element.querySelectorAll(query)]
-getElements = (query) => getSubElements(document, query)
 
 addStyle(`
     body { overflow-y: scroll; }
