@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.39
+// @version         1.0.40
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -87,6 +87,7 @@ const siteInfos = {
             '.c-ad-placeholder',
             '.c-link',
             '.c-read-also-banner',
+            'article.o-paper__content footer',
         ],
         title: 'section header h1',
         abstract: 'section header span:last-child',
