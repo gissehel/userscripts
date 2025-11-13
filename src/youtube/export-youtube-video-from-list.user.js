@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      3.0.9
+// @version      3.0.10
 // @description  Export youtube video information in markdown format
 // @match        https://www.youtube.com/*
 // @match        https://youtube.com/*
@@ -34,7 +34,8 @@ const getVideoTitleLong = (richItemRenderer) => richItemRenderer.q('#video-title
 const getVideoLinkShort = (richItemRenderer) => richItemRenderer.q('a')?.at(0)?.href
 const getVideoLinkLong = (richItemRenderer) => getSubElements(richItemRenderer, 'a#thumbnail')?.at(0)?.href
 const getVideoContentShort = (link) => link
-const getVideoContentLong = (link) => `{{video ${link}}}`
+// const getVideoContentLong = (link) => `{{video ${link}}}`
+const getVideoContentLong = (link) => link
 
 const getShortLong = (shortFun, longFun) => (...args) => isShort() ? shortFun(...args) : longFun(...args)
 
@@ -52,7 +53,8 @@ const addBufferOnElement = (richItemRenderer, preAction) => {
     if (preAction !== undefined) {
         preAction()
     }
-    const markdown = `- TODO ${videoTitle}\n  collapsed:: true\n  - ${videoContent}\n`
+    // const markdown = `- TODO ${videoTitle}\n  collapsed:: true\n  - ${videoContent}\n`
+    const markdown = `- TODO [${videoTitle}](${videoContent})\n`
     buffer += markdown
 }
 
