@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.8
+// @version      1.0.9
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -27,7 +27,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const moveDirection = (attrName, delta) => {
         const viewer = getElements('img.viewer-move')[0];
         if (viewer) {
-            viewer.style[attrName] = `${Number(removePx(viewer.style[attrName]))-10}px` 
+            viewer.style[attrName] = `${Number(removePx(viewer.style[attrName]))+delta}px` 
         }
 
     };
