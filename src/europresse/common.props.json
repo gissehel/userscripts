@@ -1,0 +1,6 @@
+{
+    "match": [
+        "https://nouveau-europresse-com.*.idm.oclc.org/*"
+    ],
+    "icon" : "https://www.europresse.com/app/uploads/2023/07/favicon-europress.svg"
+}
