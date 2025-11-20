@@ -12,6 +12,10 @@ const getKeyKey = ({ code, key, ctrlKey, shiftKey, altKey, metaKey }) => {
     return `${code}|${key}|${ctrlKey ? '1' : '0'}|${shiftKey ? '1' : '0'}|${altKey ? '1' : '0'}|${metaKey ? '1' : '0'}`
 }
 
+const removePx = (x) => {
+  if (x.substr(-2) == "px") { return x.substr(0, x.length-2) } else { return x }
+}
+
 registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_button) => {
     const next_button = getElements('#nextPdf')[0]
     const prev_button = getElements('#prevPdf')[0]
