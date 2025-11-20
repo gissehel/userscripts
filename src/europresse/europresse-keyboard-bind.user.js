@@ -4,7 +4,7 @@
 // ==/UserScript==
 
 // @import{registerDomNodeMutatedUnique}
-// @import{registerEventListerner}
+// @import{registerEventListener}
 // @import{getElements}
 
 registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_button) => {
@@ -13,7 +13,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const zoom_in_button = getElements('#zoomin')[0]
     const zoom_out_button = getElements('#zoomout')[0]
 
-    registerEventListerner(document.body, 'keydown', (event) => {
+    registerEventListener(document.body, 'keydown', (event) => {
         if (event.key === 'ArrowRight') {
             next_button.click()
             return true
