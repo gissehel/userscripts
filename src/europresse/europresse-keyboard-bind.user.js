@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.6
+// @version      1.0.7
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -32,29 +32,32 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const moveUp = () => moveDirection('marginTop', -10);
     const moveDown = () => moveDirection('marginTop', 10);
     const actions = {
-        [getKeyKey({ code: 'KeyL' })]: () => next_button.click(),
+        [getKeyKey({ key: 'l' })]: () => next_button.click(),
         [getKeyKey({ key: 'ArrowRight' })]: () => next_button.click(),
-        [getKeyKey({ code: 'KeyH' })]: () => prev_button.click(),
+        [getKeyKey({ code: 'Space' })]: () => next_button.click(),
+        [getKeyKey({ key: 'h' })]: () => prev_button.click(),
         [getKeyKey({ key: 'ArrowLeft' })]: () => prev_button.click(),
-        [getKeyKey({ code: 'KeyJ' })]: () => zoom_in_button.click(),
+        [getKeyKey({ key: 'j' })]: () => zoom_in_button.click(),
         [getKeyKey({ key: '+' })]: () => zoom_in_button.click(),
-        [getKeyKey({ code: 'KeyK' })]: () => zoom_out_button.click(),
+        [getKeyKey({ key: 'k' })]: () => zoom_out_button.click(),
         [getKeyKey({ key: '-' })]: () => zoom_out_button.click(),
-        [getKeyKey({ code: 'KeyR' })]: () => reset_zoom_button.click(),
-        [getKeyKey({ key: '0' })]: () => reset_zoom_button.click(),
-        [getKeyKey({ code: 'KeyP' })]: () => pdf_pages_panel_btn.click(),
-        [getKeyKey({ code: 'KeyS' })]: () => downloadImage(),
+        [getKeyKey({ key: 'r' })]: () => reset_zoom_button.click(),
+        [getKeyKey({ code: 'Numpad0' })]: () => reset_zoom_button.click(),
+        [getKeyKey({ key: 'p' })]: () => pdf_pages_panel_btn.click(),
+        [getKeyKey({ key: 's' })]: () => downloadImage(),
         [getKeyKey({ key: 'ArrowUp', shiftKey: true })]: () => moveUp(),
         [getKeyKey({ key: 'ArrowDown', shiftKey: true })]: () => moveDown(),
         [getKeyKey({ key: 'ArrowLeft', shiftKey: true })]: () => moveLeft(),
         [getKeyKey({ key: 'ArrowRight', shiftKey: true })]: () => moveRight(),        
     }
     registerEventListener(document.body, 'keydown', (event) => {
-        let result = false
+        let result = false;
         ['code','key'].forEach((prop) => {
-            const key = getKeyKey({ ...event, [prop]: undefined })
-            if (actions[key]) {
-                actions[key]()
+            
+            const {code, key, ctrlKey, shiftKey, altKey, metaKey} = event
+            const keyKey = getKeyKey({ code, key, ctrlKey, shiftKey, altKey, metaKey, [prop]: undefined })
+            if (actions[keyKey]) {
+                actions[keyKey]()
                 result = true
             }
         })
