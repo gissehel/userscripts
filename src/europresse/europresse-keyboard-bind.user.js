@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.5
+// @version      1.0.6
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -8,6 +8,10 @@
 // @import{getElements}
 // @import{downloadDataUrl}
 
+const getKeyKey = ({ code, key, ctrlKey, shiftKey, altKey, metaKey }) => {
+    return `${code}|${key}|${ctrlKey ? '1' : '0'}|${shiftKey ? '1' : '0'}|${altKey ? '1' : '0'}|${metaKey ? '1' : '0'}`
+}
+
 registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_button) => {
     const next_button = getElements('#nextPdf')[0]
     const prev_button = getElements('#prevPdf')[0]
@@ -15,38 +19,45 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const zoom_out_button = getElements('#zoomout')[0]
     const reset_zoom_button = getElements('#reset')[0]
     const pdf_pages_panel_btn = getElements('span.pdf-pages-panel-btn')[0]
+    const downloadImage = () => downloadDataUrl(getElements('.imagePdf')[0].src, `europresse-${_docNameList[_docIndex]}`)
+    const moveDirection = (attrName, delta) => {
+        const viewer = getElements('img.viewer-move')[0];
+        if (viewer) {
+            viewer.style[attrName] = `${Number(removePx(viewer.style[attrName]))-10}px` 
+        }
 
+    };
+    const moveLeft = () => moveDirection('marginLeft', -10);
+    const moveRight = () => moveDirection('marginLeft', 10);
+    const moveUp = () => moveDirection('marginTop', -10);
+    const moveDown = () => moveDirection('marginTop', 10);
+    const actions = {
+        [getKeyKey({ code: 'KeyL' })]: () => next_button.click(),
+        [getKeyKey({ key: 'ArrowRight' })]: () => next_button.click(),
+        [getKeyKey({ code: 'KeyH' })]: () => prev_button.click(),
+        [getKeyKey({ key: 'ArrowLeft' })]: () => prev_button.click(),
+        [getKeyKey({ code: 'KeyJ' })]: () => zoom_in_button.click(),
+        [getKeyKey({ key: '+' })]: () => zoom_in_button.click(),
+        [getKeyKey({ code: 'KeyK' })]: () => zoom_out_button.click(),
+        [getKeyKey({ key: '-' })]: () => zoom_out_button.click(),
+        [getKeyKey({ code: 'KeyR' })]: () => reset_zoom_button.click(),
+        [getKeyKey({ key: '0' })]: () => reset_zoom_button.click(),
+        [getKeyKey({ code: 'KeyP' })]: () => pdf_pages_panel_btn.click(),
+        [getKeyKey({ code: 'KeyS' })]: () => downloadImage(),
+        [getKeyKey({ key: 'ArrowUp', shiftKey: true })]: () => moveUp(),
+        [getKeyKey({ key: 'ArrowDown', shiftKey: true })]: () => moveDown(),
+        [getKeyKey({ key: 'ArrowLeft', shiftKey: true })]: () => moveLeft(),
+        [getKeyKey({ key: 'ArrowRight', shiftKey: true })]: () => moveRight(),        
+    }
     registerEventListener(document.body, 'keydown', (event) => {
-        if (event.key === 'ArrowRight' || event.code === 'KeyL' || event.code === 'Space') {
-            next_button.click()
-            return true
-        }
-        if (event.key === 'ArrowLeft' || event.code === 'KeyH') {
-            prev_button.click()
-            return true
-        }
-        if (event.key === '+' || event.code === 'KeyJ') {
-            zoom_in_button.click()
-            return true
-        }
-        if (event.key === '-' || event.code === 'KeyK') {
-            zoom_out_button.click()
-            return true
-        }
-        if (event.key === '0' || event.code === 'KeyR') {
-            reset_zoom_button.click()
-            return true
-        }
-        if (event.code === 'KeyP') {
-            pdf_pages_panel_btn.click()
-            return true
-        }
-        if (event.code === 'KeyS') {
-            downloadDataUrl(getElements('.imagePdf')[0].src, `europresse-${_docNameList[_docIndex]}`)
-            return true
-        }
-        return false
+        let result = false
+        ['code','key'].forEach((prop) => {
+            const key = getKeyKey({ ...event, [prop]: undefined })
+            if (actions[key]) {
+                actions[key]()
+                result = true
+            }
+        })
+        return result
     })
-    
-
 })
