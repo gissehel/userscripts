@@ -1,4 +1,5 @@
 /**
+ * Downloads a url as a file
  * 
  * @param {String} url The url to download
  * @param {String} filename The filename to use to save the file
