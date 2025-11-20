@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.9
+// @version      1.0.10
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -43,8 +43,10 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
         [getKeyKey({ key: 'ArrowLeft' })]: () => prev_button.click(),
         [getKeyKey({ key: 'j' })]: () => zoom_in_button.click(),
         [getKeyKey({ key: '+' })]: () => zoom_in_button.click(),
+        [getKeyKey({ key: 'ArrowDown' })]: () => zoom_in_button.click(),
         [getKeyKey({ key: 'k' })]: () => zoom_out_button.click(),
         [getKeyKey({ key: '-' })]: () => zoom_out_button.click(),
+        [getKeyKey({ key: 'ArrowUp' })]: () => zoom_out_button.click(),
         [getKeyKey({ key: 'r' })]: () => reset_zoom_button.click(),
         [getKeyKey({ code: 'Numpad0' })]: () => reset_zoom_button.click(),
         [getKeyKey({ key: 'p' })]: () => pdf_pages_panel_btn.click(),
