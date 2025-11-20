@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.1
+// @version      1.0.2
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -12,6 +12,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const prev_button = getElements('#prevPdf')[0]
     const zoom_in_button = getElements('#zoomin')[0]
     const zoom_out_button = getElements('#zoomout')[0]
+    const reset_zoom_button = getElements('#reset')[0]
     const pdf_pages_panel_btn = getElements('span.pdf-pages-panel-btn')[0]
     const pdf_pages_panel_btn_close = getElements('i.pdf-pages-panel-btn')[0]
     registerEventListener(document.body, 'keydown', (event) => {
@@ -31,12 +32,12 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
             zoom_out_button.click()
             return true
         }
-        if (event.code === 'KeyP') {
-            pdf_pages_panel_btn.click()
+        if (event.key === '0' || event.code === 'KeyR') {
+            reset_zoom_button.click()
             return true
         }
-        if (event.code === 'KeyX') {
-            pdf_pages_panel_btn_close.click()
+        if (event.code === 'KeyP') {
+            pdf_pages_panel_btn.click()
             return true
         }
         return false
