@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.3
+// @version      1.0.4
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -15,7 +15,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const zoom_out_button = getElements('#zoomout')[0]
     const reset_zoom_button = getElements('#reset')[0]
     const pdf_pages_panel_btn = getElements('span.pdf-pages-panel-btn')[0]
-    const imageContainer = document.querySelectorAll('.imagePdf')[0]
+
     registerEventListener(document.body, 'keydown', (event) => {
         if (event.key === 'ArrowRight' || event.code === 'KeyL' || event.code === 'Space') {
             next_button.click()
@@ -42,7 +42,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
             return true
         }
         if (event.code === 'KeyS') {
-            downloadDataUrl(imageContainer.src, `europresse-${_docNameList[_docIndex]}`)
+            downloadDataUrl(getElements('.imagePdf')[0].src, `europresse-${_docNameList[_docIndex]}`)
             return true
         }
         return false
