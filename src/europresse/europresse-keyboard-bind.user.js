@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.10
+// @version      1.0.11
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -22,7 +22,6 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const zoom_in_button = getElements('#zoomin')[0]
     const zoom_out_button = getElements('#zoomout')[0]
     const reset_zoom_button = getElements('#reset')[0]
-    const pdf_pages_panel_btn = getElements('span.pdf-pages-panel-btn')[0]
     const downloadImage = () => downloadDataUrl(getElements('.imagePdf')[0].src, `europresse-${_docNameList[_docIndex]}`)
     const moveDirection = (attrName, delta) => {
         const viewer = getElements('img.viewer-move')[0];
@@ -31,37 +30,75 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
         }
 
     };
+    const next_action = () => next_button.click();
+    const prev_action = () => prev_button.click();
+    const zoom_in_action = () => zoom_in_button.click();
+    const zoom_out_action = () => zoom_out_button.click();
+    const reset_zoom_action = () => reset_zoom_button.click();
     const moveLeft = () => moveDirection('marginLeft', -10);
     const moveRight = () => moveDirection('marginLeft', 10);
     const moveUp = () => moveDirection('marginTop', -10);
     const moveDown = () => moveDirection('marginTop', 10);
     const actions = {
-        [getKeyKey({ key: 'l' })]: () => next_button.click(),
-        [getKeyKey({ key: 'ArrowRight' })]: () => next_button.click(),
-        [getKeyKey({ code: 'Space' })]: () => next_button.click(),
-        [getKeyKey({ key: 'h' })]: () => prev_button.click(),
-        [getKeyKey({ key: 'ArrowLeft' })]: () => prev_button.click(),
-        [getKeyKey({ key: 'j' })]: () => zoom_in_button.click(),
-        [getKeyKey({ key: '+' })]: () => zoom_in_button.click(),
-        [getKeyKey({ key: 'ArrowDown' })]: () => zoom_in_button.click(),
-        [getKeyKey({ key: 'k' })]: () => zoom_out_button.click(),
-        [getKeyKey({ key: '-' })]: () => zoom_out_button.click(),
-        [getKeyKey({ key: 'ArrowUp' })]: () => zoom_out_button.click(),
-        [getKeyKey({ key: 'r' })]: () => reset_zoom_button.click(),
-        [getKeyKey({ code: 'Numpad0' })]: () => reset_zoom_button.click(),
-        [getKeyKey({ key: 'p' })]: () => pdf_pages_panel_btn.click(),
-        [getKeyKey({ key: 's' })]: () => downloadImage(),
-        [getKeyKey({ key: 'ArrowUp', shiftKey: true })]: () => moveUp(),
-        [getKeyKey({ key: 'ArrowDown', shiftKey: true })]: () => moveDown(),
-        [getKeyKey({ key: 'ArrowLeft', shiftKey: true })]: () => moveLeft(),
-        [getKeyKey({ key: 'ArrowRight', shiftKey: true })]: () => moveRight(),        
     }
+    const addAction = (action, ...keyStructs ) => {
+        keyStructs.forEach( (keyStruct) => {
+            actions[getKeyKey(keyStruct)] = action
+        })
+    }
+    addAction(zoom_in_action,
+        { key: 'ArrowDown', shiftKey: true },
+        { key: 'j' },
+        { key: '+' },
+        { key: '+', shiftKey: true },
+        { code: 'Numpad2' },
+    )
+    addAction(zoom_out_action,
+        { key: 'ArrowUp', shiftKey: true },
+        { key: 'k' },
+        { key: '-' },
+        { key: '-', shiftKey: true },
+        { code: 'Numpad8' },
+    )
+    addAction(next_action,
+        { key: 'l' },
+        { key: 'ArrowRight', shiftKey: true },
+        { code: 'Space' },
+        { code: 'Numpad6' },
+    )
+    addAction(prev_action,
+        { key: 'h' },
+        { key: 'ArrowLeft', shiftKey: true },
+        { key: 'Backspace' },
+        { code: 'Numpad4' },
+    )
+    addAction(reset_zoom_action,
+        { key: 'r' },
+        { code: 'Numpad0' },
+    )
+    addAction(downloadImage,
+        { key: 's' },
+    )
+    addAction(moveUp,
+        { key: 'ArrowDown' },
+    )
+    addAction(moveDown,
+        { key: 'ArrowUp' },
+    )
+    addAction(moveLeft,
+        { key: 'ArrowRight' },
+    )
+    addAction(moveRight,
+        { key: 'ArrowLeft' },
+    )
+
     registerEventListener(document.body, 'keydown', (event) => {
         let result = false;
         ['code','key'].forEach((prop) => {
             
             const {code, key, ctrlKey, shiftKey, altKey, metaKey} = event
             const keyKey = getKeyKey({ code, key, ctrlKey, shiftKey, altKey, metaKey, [prop]: undefined })
+            console.log('keyKey', keyKey)
             if (actions[keyKey]) {
                 actions[keyKey]()
                 result = true
