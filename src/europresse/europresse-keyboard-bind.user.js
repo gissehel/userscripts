@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.11
+// @version      1.0.12
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -22,6 +22,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const zoom_in_button = getElements('#zoomin')[0]
     const zoom_out_button = getElements('#zoomout')[0]
     const reset_zoom_button = getElements('#reset')[0]
+    const pdf_pages_panel_btn = getElements('span.pdf-pages-panel-btn')[0]
     const downloadImage = () => downloadDataUrl(getElements('.imagePdf')[0].src, `europresse-${_docNameList[_docIndex]}`)
     const moveDirection = (attrName, delta) => {
         const viewer = getElements('img.viewer-move')[0];
@@ -35,6 +36,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const zoom_in_action = () => zoom_in_button.click();
     const zoom_out_action = () => zoom_out_button.click();
     const reset_zoom_action = () => reset_zoom_button.click();
+    const togglePdfPagesPanel = () => pdf_pages_panel_btn.click();
     const moveLeft = () => moveDirection('marginLeft', -10);
     const moveRight = () => moveDirection('marginLeft', 10);
     const moveUp = () => moveDirection('marginTop', -10);
@@ -74,10 +76,16 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     )
     addAction(reset_zoom_action,
         { key: 'r' },
+        { code: 'Numpad5' },
         { code: 'Numpad0' },
     )
     addAction(downloadImage,
         { key: 's' },
+        { key: '/' },
+    )
+    addAction(togglePdfPagesPanel,
+        { key: 'p' },
+        { key: '*' },
     )
     addAction(moveUp,
         { key: 'ArrowDown' },
