@@ -4,5 +4,5 @@
  * @param {string} string The string to cleanup
  * @returns {string} The cleaned string
  */
-const cleanupString = (string) => string.trim().replace(/\s+/g, ' ')
+const cleanupString = (string) => string?.trim()?.replace(/\s+/g, ' ')
 

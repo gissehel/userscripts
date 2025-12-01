@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.4
+// @version      1.0.5
 // @description  thecorner-list
 // @match        https://clients.boursobank.com/thecorner/toutes-les-offres
 // ==/UserScript==
@@ -8,6 +8,8 @@
 // @import{registerDomNodeMutatedUnique}
 // @import{cleanupString}
 // @import{downloadData}
+
+NodeList.prototype.at = function(index) { return [...this]?.at(index) }
 
 const isNumOnly = (str) => [...str].filter(c => c < '0' || c > '9').length === 0
 const isFrDecimal = (str) => {
@@ -135,12 +137,12 @@ registerDomNodeMutatedUnique(() => document.querySelectorAll('#marketplaceProduc
             info.id = card.getAttribute('data-product-id')
             for (let attribute of ['name', 'description']) {
                 getSubElements(card, `.boursoshop-universe-product__${attribute}`).map((element) => {
-                    info[attribute] = cleanupString(element.textContent)
+                    info[attribute] = cleanupString(element?.textContent)
                 })
             }
             for (let attribute of ['CTA', 'tag']) {
                 getSubElements(card, `.boursoshop-universe-product__${attribute}`).map((element) => {
-                    info[attribute] = cleanupString(element.childNodes[0].childNodes[0].textContent)
+                    info[attribute] = cleanupString(element?.childNodes?.at(0)?.childNodes?.at(0)?.textContent)
                 })
             }
             const favorite_icon = getSubElements(card, '.boursoshop-universe-product__favorite i.c-icon')[0]
