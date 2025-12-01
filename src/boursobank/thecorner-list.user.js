@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.5
+// @version      1.0.6
 // @description  thecorner-list
 // @match        https://clients.boursobank.com/thecorner/toutes-les-offres
 // ==/UserScript==
@@ -93,6 +93,9 @@ const getExtraInfo = (str) => {
 const get_influx_dict = (dict) => Object.entries(dict).map(([key, value]) => `${key}=${value}`).join(',')
 
 const get_influx_line = (infos, { id, name, description, CTA, tag, favorite }) => {
+    if (!CTA) {
+        return undefined
+    }
     const { minRedux, maxRedux, amount } = getExtraInfo(CTA)
 
     const fields = {}
@@ -115,7 +118,7 @@ const get_influx_line = (infos, { id, name, description, CTA, tag, favorite }) =
 }
 
 const get_influx_content = (infos) => {
-    const lines = infos.items.map(item => get_influx_line(infos, item))
+    const lines = infos.items.map(item => get_influx_line(infos, item)).filter(line => line !== undefined)
     return lines.join('\n')
 }
 
