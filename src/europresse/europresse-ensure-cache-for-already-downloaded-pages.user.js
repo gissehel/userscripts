@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.9
+// @version      1.0.10
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -13,7 +13,8 @@ const exportOnWindow = (dict) => {
 }
 
 imageCache = {};
-exportOnWindow({ imageCache });
+imageCachePromises = {};
+exportOnWindow({ imageCache, imageCachePromises });
 
 const getImageCount = (imageName) => {
     return new Promise((resolve, reject) => {
@@ -54,6 +55,7 @@ const getImage = (index, imageName) => {
 }
 exportOnWindow({ getImage });
 
+
 const ensureImageCached = async (index, imageName, size) => {
     if (!imageCache[imageName] || !imageCache[imageName][index]) {
         const data = await getImage(index, imageName);
@@ -72,24 +74,40 @@ const ensureImageCached = async (index, imageName, size) => {
 }
 exportOnWindow({ ensureImageCached });
 
+let currentPromise = null;
 const ensurePageCached = async (imageIndex) => {
-    if (imageIndex < 0 || imageIndex >= _docNameList.length) {
+    if (currentPromise) {
+        await currentPromise;
+    }
+    if (imageCachePromises[imageName]) {
+        await imageCachePromises[imageName];
         return;
     }
-    const imageName = _docNameList[imageIndex];
-    if (imageCache[imageName]) {
-        return;
+    if (currentPromise) {
+        await currentPromise;
     }
-    const imageCount = await getImageCount(imageName);
-    for (let index = 0; index < imageCount; index++) {
-        await ensureImageCached(index, imageName, imageCount);
-    }
+    currentPromise = (async () => {
+        if (imageIndex < 0 || imageIndex >= _docNameList.length) {
+            return;
+        }
+        const imageName = _docNameList[imageIndex];
+        if (imageCache[imageName]) {
+            return;
+        }
+        const imageCount = await getImageCount(imageName);
+        for (let index = 0; index < imageCount; index++) {
+            await ensureImageCached(index, imageName, imageCount);
+        }
+        console.log(`ensurePageCached done for ${imageName} with ${imageCount} image(s)`);
+    })();
+    imageCachePromises[imageName] = currentPromise;
+    await currentPromise;
 }
 exportOnWindow({ ensurePageCached });
 
 const ensureImageCountReady = async (imageIndex) => {
     const imageName = _docNameList[imageIndex];
-    if (! imageCache[imageName]) {
+    if (!imageCache[imageName]) {
         await ensurePageCached(imageIndex)
     }
     return imageCache[imageName].length;
