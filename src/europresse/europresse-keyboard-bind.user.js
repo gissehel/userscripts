@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.12
+// @version      1.0.13
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -26,9 +26,14 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const downloadImage = () => downloadDataUrl(getElements('.imagePdf')[0].src, `europresse-${_docNameList[_docIndex]}`)
     const moveDirection = (attrName, delta) => {
         const viewer = getElements('img.viewer-move')[0];
-        if (viewer) {
-            viewer.style[attrName] = `${Number(removePx(viewer.style[attrName]))+delta}px` 
+        if (attrName === 'marginLeft') {
+            _pdfViewer.moveTo(viewer.offsetLeft + delta,viewer.offsetTop)
+        } else if (attrName === 'marginTop') {
+            _pdfViewer.moveTo(viewer.offsetLeft,viewer.offsetTop + delta)
         }
+        // if (viewer) {
+        //     viewer.style[attrName] = `${Number(removePx(viewer.style[attrName]))+delta}px` 
+        // }
 
     };
     const next_action = () => next_button.click();
