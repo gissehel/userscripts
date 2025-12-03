@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.15
+// @version      1.0.16
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -16,44 +16,60 @@ const removePx = (x) => {
     if (x.substr(-2) == "px") { return x.substr(0, x.length - 2) } else { return x }
 }
 
+const Direction = {
+    LEFT: 'LEFT',
+    RIGHT: 'RIGHT',
+    TOP: 'TOP',
+    BOTTOM: 'BOTTOM',
+}
+
 registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_button) => {
     const next_button = getElements('#nextPdf')[0]
     const prev_button = getElements('#prevPdf')[0]
-    // const zoom_in_button = getElements('#zoomin')[0]
-    // const zoom_out_button = getElements('#zoomout')[0]
     const reset_zoom_button = getElements('#reset')[0]
     const pdf_pages_panel_btn = getElements('span.pdf-pages-panel-btn')[0]
     const downloadImage = () => downloadDataUrl(getElements('.imagePdf')[0].src, `europresse-${_docNameList[_docIndex]}`)
-    const moveDirection = (attrName, delta) => {
+    const moveDirection = (direction, delta) => {
         const viewer = getElements('img.viewer-move')[0];
         window.viewer = viewer;
-        if (attrName === 'marginLeft') {
+        if (direction === Direction.LEFT) {
             _pdfViewer.moveTo(viewer.offsetLeft + delta, viewer.offsetTop)
-        } else if (attrName === 'marginTop') {
+        } else if (direction === Direction.RIGHT) {
+            _pdfViewer.moveTo(viewer.offsetLeft - delta, viewer.offsetTop)
+        } else if (direction === Direction.TOP) {   
             _pdfViewer.moveTo(viewer.offsetLeft, viewer.offsetTop + delta)
+        } else if (direction === Direction.BOTTOM) {
+            _pdfViewer.moveTo(viewer.offsetLeft, viewer.offsetTop - delta)
         }
-        // if (viewer) {
-        //     viewer.style[attrName] = `${Number(removePx(viewer.style[attrName]))+delta}px` 
-        // }
-
     };
+    const recentMoveHistory = [];
+    window.recentMoveHistory = recentMoveHistory;
+    const moveDirectionWithAcceleration = (direction) => {
+        const accelerationRatio = 1.1;
+        const baseDelta = 10;
+        const historyTimeout = 1000; // ms
+        const timestamp = (new Date()).getTime();
+        const historyField = { timestamp, direction }
+        recentMoveHistory.forEach((item) => {
+            if (item.direction !== direction || (timestamp - item.timestamp) > historyTimeout) {
+                recentMoveHistory.remove(item);
+            }
+        });
+        recentMoveHistory.push(historyField);
+        let currentDelta = baseDelta*(accelerationRatio**(recentMoveHistory.length-1));
+        moveDirection(direction, currentDelta);
+    }
     const zoomDelta = 0.1;
-    const zoom_in_action = () => {
-        _pdfViewer.zoom(zoomDelta);
-    }
-    const zoom_out_action = () => {
-        _pdfViewer.zoom(-zoomDelta);
-    }
+    const zoom_in_action = () => _pdfViewer.zoom(zoomDelta)
+    const zoom_out_action = () => _pdfViewer.zoom(-zoomDelta)
     const next_action = () => next_button.click();
     const prev_action = () => prev_button.click();
-    // const zoom_in_action = () => zoom_in_button.click();
-    // const zoom_out_action = () => zoom_out_button.click();
     const reset_zoom_action = () => reset_zoom_button.click();
     const togglePdfPagesPanel = () => pdf_pages_panel_btn.click();
-    const moveLeft = () => moveDirection('marginLeft', -10);
-    const moveRight = () => moveDirection('marginLeft', 10);
-    const moveUp = () => moveDirection('marginTop', -10);
-    const moveDown = () => moveDirection('marginTop', 10);
+    const moveLeft = () => moveDirectionWithAcceleration(Direction.LEFT);
+    const moveRight = () => moveDirectionWithAcceleration(Direction.RIGHT);
+    const moveUp = () => moveDirectionWithAcceleration(Direction.TOP);
+    const moveDown = () => moveDirectionWithAcceleration(Direction.BOTTOM);
     const actions = {
     }
     const addAction = (action, ...keyStructs) => {
