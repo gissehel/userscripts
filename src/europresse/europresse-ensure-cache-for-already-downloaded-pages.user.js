@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.18
+// @version      1.0.19
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -19,27 +19,29 @@ class Semaphore {
         this.queue = [];
     }
 
-    async acquire() {
+    async acquire(name = '') {
+        // console.log(`acquire - ${name} (${this.queue.length})`)
         if (this.current < this.maxConcurrent) {
             this.current++;
             return Promise.resolve();
         }
 
         return new Promise(resolve => {
-            this.queue.push(resolve);
+            this.queue.push(() => {
+                // console.log(`unlocked - ${name} (${this.queue.length})`)
+                resolve();
+            });
         });
     }
 
-    async _release() {
+    release(name = '') {
+        // console.log(`release - ${name} (${this.queue.length})`)
         if (this.queue.length > 0) {
-            const next = this.queue.shift();
-            next();
+          const next = this.queue.shift();
+          next();
+        } else {
+          this.current--;
         }
-        this.current--;
-    }
-
-    release() {
-        this._release();
     }
 }
 
