@@ -1,19 +1,20 @@
 // ==UserScript==
-// @version      1.0.0
+// @version      1.0.1
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
 const legacyRenderPdf = renderPdf;
+const legacyOpenPdf = openPdf;
 
 imageCache = {};
 window.imageCache = imageCache;
 
-const ensureImageCached = (imageName) => {
-    if (imageCache[imageName]) {
+const ensureImageCached = (index, imageName, size) => {
+    if (imageCache[imageName] && imageCache[imageName][index]) {
         return Promise.resolve();
     }
     const time = (new Date).getTime();
-    const url = `/Pdf/ImageBytes?imageIndex=0&id=${imageName}&cache=${time}`;
+    const url = `/Pdf/ImageBytes?imageIndex=${index}&id=${imageName}&cache=${time}`;
     const jqueryPromise = $.ajax({
         type: "POST",
         url: url,
@@ -22,7 +23,13 @@ const ensureImageCached = (imageName) => {
     });
     return new Promise( (resolve, reject) => {
         jqueryPromise.done( (data) => {
-            imageCache[imageName] = data;
+            if (!imageCache[imageName]) {
+                imageCache[imageName] = new Array(size);
+            }
+            if (imageCache[imageName].length < index) {
+                imageCache[imageName].length = index + 1;
+            }
+            imageCache[imageName][index] = data;
             resolve();
         });
         jqueryPromise.fail( (err) => {
@@ -33,8 +40,8 @@ const ensureImageCached = (imageName) => {
 
 renderPdf = (n, t) => {
     for (var u = "", r = $(".viewer-move").length !== 0 ? $(".viewer-move").offset() : null, i = 0; i < n; i++) {
-        ensureImageCached(t).then(() => {
-            const n = imageCache[t];
+        ensureImageCached(i, t, n).then(() => {
+            const n = imageCache[t].data;
             u += "<div id='rawimagewrapper'><img id='imagePdf" + i + "' class='imagePdf' src='data:image/png;base64," + n + "' /><\/div>";
             $("#pdfDocument").html(u);
             _pdfViewer = new Viewer(document.getElementById("rawimagewrapper"),{
@@ -57,4 +64,45 @@ renderPdf = (n, t) => {
             })
         })
     }
+}
+
+const ensureImageIndexReady = (imageName) => {
+    if (imageCache[imageName]) {
+        return Promise.resolve(imageCache[imageName].length);
+    }
+    const jqueryPromise = $.ajax({
+        type: "GET",
+        url: "/Pdf/ImageList?docName=" + encodeURIComponent(imageName),
+        contentType: "application/json; charset=utf-8",
+        dataType: "html"
+    });
+    return new Promise( (resolve, reject) => {
+        jqueryPromise.done( (data) => {
+            const index = parseInt(data);
+            resolve(index);
+        });
+        jqueryPromise.fail( (err) => {
+            reject(err);
+        });
+    });
+}
+
+function openPdf(n) {
+    _animTimer = setTimeout(function() {
+        showWaitingAnim()
+    }, _animSpeed);
+    ensureImageIndexReady(_docNameList[_docIndex]).then( (t) => {
+        var i = parseInt(t);
+        i > 1 && (i = 1);
+        renderPdf(i, _docNameList[_docIndex]);
+        onSwipePdf();
+        clearTimeout(_animTimer);
+        $("#pdf").css({
+            opacity: 1
+        });
+        $("#loading").fadeOut().remove();
+        scrollImages(0, 0);
+        updateNavigationState();
+        selectCurrentPage(n)
+    } );
 }
