@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.14
+// @version      1.0.15
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -37,12 +37,12 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
         // }
 
     };
-    const zoomGoldenRatio = 1.6180339887;
+    const zoomDelta = 0.1;
     const zoom_in_action = () => {
-        _pdfViewer.zoomTo(_ratio * zoomGoldenRatio);
+        _pdfViewer.zoom(zoomDelta);
     }
     const zoom_out_action = () => {
-        _pdfViewer.zoomTo(_ratio / zoomGoldenRatio);
+        _pdfViewer.zoom(-zoomDelta);
     }
     const next_action = () => next_button.click();
     const prev_action = () => prev_button.click();

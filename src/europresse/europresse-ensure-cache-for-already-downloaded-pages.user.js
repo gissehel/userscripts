@@ -136,7 +136,7 @@ async function openPdf(n) {
     }, _animSpeed);
     await ensureCurrentPageCached();
 
-    const imageCount = await ensureImageCountReady(_docNameList[_docIndex]);
+    const imageCount = await ensureImageCountReady(_docIndex);
 
     if (imageCount > 1) {
         imageCount = 1
