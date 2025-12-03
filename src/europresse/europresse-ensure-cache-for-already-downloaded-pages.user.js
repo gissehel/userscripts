@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.1
+// @version      1.0.2
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -37,11 +37,12 @@ const ensureImageCached = (index, imageName, size) => {
         });
     } );
 }
+window.ensureImageCached = ensureImageCached;
 
 renderPdf = (n, t) => {
     for (var u = "", r = $(".viewer-move").length !== 0 ? $(".viewer-move").offset() : null, i = 0; i < n; i++) {
         ensureImageCached(i, t, n).then(() => {
-            const n = imageCache[t].data;
+            const n = imageCache[t][i];
             u += "<div id='rawimagewrapper'><img id='imagePdf" + i + "' class='imagePdf' src='data:image/png;base64," + n + "' /><\/div>";
             $("#pdfDocument").html(u);
             _pdfViewer = new Viewer(document.getElementById("rawimagewrapper"),{
@@ -86,6 +87,7 @@ const ensureImageIndexReady = (imageName) => {
         });
     });
 }
+window.ensureImageIndexReady = ensureImageIndexReady;
 
 function openPdf(n) {
     _animTimer = setTimeout(function() {
@@ -106,3 +108,4 @@ function openPdf(n) {
         selectCurrentPage(n)
     } );
 }
+window.openPdf = openPdf;
