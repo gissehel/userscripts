@@ -20,7 +20,7 @@ const getImageCount = (imageName) => {
     return new Promise((resolve, reject) => {
         const jqueryPromise = $.ajax({
             type: "GET",
-            url: "/Pdf/ImageList?docName=" + encodeURIComponent(imageName),
+            url: `/Pdf/ImageList?docName=${encodeURIComponent(imageName)}`,
             contentType: "application/json; charset=utf-8",
             dataType: "html"
         });
@@ -28,9 +28,7 @@ const getImageCount = (imageName) => {
             const index = parseInt(data);
             resolve(data);
         })
-        jqueryPromise.fail((err) => {
-            reject(err);
-        });
+        jqueryPromise.fail((err) => reject(err));
     })
 }
 exportOnWindow({ getImageCount });
@@ -45,12 +43,8 @@ const getImage = (index, imageName) => {
             contentType: "application/json; charset=utf-8",
             data: {}
         });
-        jqueryPromise.done((data) => {
-            resolve(data);
-        })
-        jqueryPromise.fail((err) => {
-            reject(err);
-        });
+        jqueryPromise.done((data) => resolve(data));
+        jqueryPromise.fail((err) => reject(err));
     })
 }
 exportOnWindow({ getImage });
