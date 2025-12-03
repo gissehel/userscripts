@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.2
+// @version      1.0.3
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -11,7 +11,7 @@ window.imageCache = imageCache;
 
 const ensureImageCached = (index, imageName, size) => {
     if (imageCache[imageName] && imageCache[imageName][index]) {
-        return Promise.resolve();
+        return Promise.resolve(imageCache[imageName][index]);
     }
     const time = (new Date).getTime();
     const url = `/Pdf/ImageBytes?imageIndex=${index}&id=${imageName}&cache=${time}`;
@@ -30,7 +30,7 @@ const ensureImageCached = (index, imageName, size) => {
                 imageCache[imageName].length = index + 1;
             }
             imageCache[imageName][index] = data;
-            resolve();
+            resolve(data);
         });
         jqueryPromise.fail( (err) => {
             reject(err);
@@ -41,8 +41,7 @@ window.ensureImageCached = ensureImageCached;
 
 renderPdf = (n, t) => {
     for (var u = "", r = $(".viewer-move").length !== 0 ? $(".viewer-move").offset() : null, i = 0; i < n; i++) {
-        ensureImageCached(i, t, n).then(() => {
-            const n = imageCache[t][i];
+        ensureImageCached(i, t, n).then((n) => {
             u += "<div id='rawimagewrapper'><img id='imagePdf" + i + "' class='imagePdf' src='data:image/png;base64," + n + "' /><\/div>";
             $("#pdfDocument").html(u);
             _pdfViewer = new Viewer(document.getElementById("rawimagewrapper"),{
