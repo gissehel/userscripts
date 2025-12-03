@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.13
+// @version      1.0.14
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -11,6 +11,39 @@ const exportOnWindow = (dict) => {
         window[key] = dict[key];
     }
 }
+
+class Semaphore {
+  constructor(maxConcurrent = 1) {
+    this.maxConcurrent = maxConcurrent;
+    this.current = 0;
+    this.queue = [];
+  }
+
+  async acquire() {
+    if (this.current < this.maxConcurrent) {
+      this.current++;
+      return Promise.resolve();
+    }
+
+    // If all keys are in use, get in line and wait
+    return new Promise(resolve => {
+      this.queue.push(resolve);
+    });
+  }
+
+  // When someone returns a key
+  release() {
+    this.current--;
+
+    // If there's people waiting AND we have available keys
+    if (this.queue.length > 0 && this.current < this.maxConcurrent) {
+      this.current++;
+      const next = this.queue.shift();
+      next();
+    }
+  }
+}
+
 
 imageCache = {};
 imageCachePromises = {};
@@ -69,11 +102,14 @@ const ensureImageCached = async (index, imageName, size) => {
 exportOnWindow({ ensureImageCached });
 
 let currentPromise = null;
+let cacheSemaphore = new Semaphore(1);
+
 const ensurePageCached = async (imageIndex) => {
     const imageName = _docNameList[imageIndex];
     if (imageCache[imageName]) {
         return;
     }
+    await cacheSemaphore.acquire();
     if (currentPromise) {
         await currentPromise;
     }
@@ -99,6 +135,8 @@ const ensurePageCached = async (imageIndex) => {
     })();
     imageCachePromises[imageName] = currentPromise;
     await currentPromise;
+    currentPromise = null;
+    cacheSemaphore.release();
 }
 exportOnWindow({ ensurePageCached });
 
