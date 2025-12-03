@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.17
+// @version      1.0.18
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -31,9 +31,9 @@ class Semaphore {
     }
 
     async _release() {
-        while (this.queue.length > 0) {
+        if (this.queue.length > 0) {
             const next = this.queue.shift();
-            await next();
+            next();
         }
         this.current--;
     }
