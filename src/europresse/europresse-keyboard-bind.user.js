@@ -1,7 +1,11 @@
 // ==UserScript==
-// @version      1.0.17
+// @version      1.0.18
 // @description  europresse-keyboard-bind
 // ==/UserScript==
+
+const moveAccelerationRatio = 1.1;
+const moveBaseDelta = 10;
+const moveHistoryTimeout = 3000; // ms
 
 // @import{registerDomNodeMutatedUnique}
 // @import{registerEventListener}
@@ -45,9 +49,6 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const recentMoveHistory = [];
     window.recentMoveHistory = recentMoveHistory;
     const moveDirectionWithAcceleration = (direction) => {
-        const accelerationRatio = 1.1;
-        const baseDelta = 10;
-        const historyTimeout = 1000; // ms
         const timestamp = (new Date()).getTime();
         const historyField = { timestamp, direction }
         recentMoveHistory.forEach((item) => {
