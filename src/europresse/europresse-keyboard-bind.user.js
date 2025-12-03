@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.20
+// @version      1.0.21
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -143,7 +143,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
 
             const { code, key, ctrlKey, shiftKey, altKey, metaKey } = event
             const keyKey = getKeyKey({ code, key, ctrlKey, shiftKey, altKey, metaKey, [prop]: undefined })
-            console.log('keyKey', keyKey)
+            // console.log('keyKey', keyKey)
             if (actions[keyKey]) {
                 actions[keyKey]()
                 result = true
