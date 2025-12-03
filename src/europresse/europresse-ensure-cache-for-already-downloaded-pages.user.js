@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.15
+// @version      1.0.16
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -102,6 +102,7 @@ exportOnWindow({ ensureImageCached });
 
 let currentPromise = null;
 let cacheSemaphore = new Semaphore(1);
+exportOnWindow({ cacheSemaphore });
 
 const ensurePageCached = async (imageIndex) => {
     const imageName = _docNameList[imageIndex];
