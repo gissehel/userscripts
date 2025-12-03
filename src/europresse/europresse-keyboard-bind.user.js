@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.18
+// @version      1.0.19
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -52,7 +52,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
         const timestamp = (new Date()).getTime();
         const historyField = { timestamp, direction }
         recentMoveHistory.forEach((item) => {
-            if (item.direction !== direction || (timestamp - item.timestamp) > historyTimeout) {
+            if (item.direction !== direction || (timestamp - item.timestamp) > moveHistoryTimeout) {
                 const index = recentMoveHistory.indexOf(item)
                 if (index >= 0) {
                     recentMoveHistory.splice(recentMoveHistory.indexOf(item),1)
@@ -60,7 +60,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
             }
         });
         recentMoveHistory.push(historyField);
-        let currentDelta = baseDelta*(accelerationRatio**(recentMoveHistory.length-1));
+        let currentDelta = moveBaseDelta*(moveAccelerationRatio**(recentMoveHistory.length-1));
         moveDirection(direction, currentDelta);
     }
     const zoomDelta = 0.1;
