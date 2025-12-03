@@ -114,7 +114,7 @@ const ensurePageCached = async (imageIndex) => {
         return;
     }
 
-    await cacheSemaphore.acquire();
+    await cacheSemaphore.acquire(imageName);
 
     const imageCount = await getImageCount(imageName);
     for (let index = 0; index < imageCount; index++) {
@@ -123,7 +123,7 @@ const ensurePageCached = async (imageIndex) => {
 
     console.log(`ensurePageCached done for ${imageName} with ${imageCount} image(s)`);
 
-    cacheSemaphore.release();
+    cacheSemaphore.release(imageName);
 }
 exportOnWindow({ ensurePageCached });
 
