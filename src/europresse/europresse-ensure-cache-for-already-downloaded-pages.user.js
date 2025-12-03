@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.14
+// @version      1.0.15
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -25,22 +25,21 @@ class Semaphore {
       return Promise.resolve();
     }
 
-    // If all keys are in use, get in line and wait
     return new Promise(resolve => {
       this.queue.push(resolve);
     });
   }
 
-  // When someone returns a key
-  release() {
-    this.current--;
-
-    // If there's people waiting AND we have available keys
-    if (this.queue.length > 0 && this.current < this.maxConcurrent) {
-      this.current++;
-      const next = this.queue.shift();
-      next();
+  async _release() {
+    while (this.queue.length > 0) {
+        const next = this.queue.shift();
+        await next();
     }
+    this.current--;
+  }
+
+  release() {
+    this._release();
   }
 }
 
