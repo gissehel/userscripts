@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.19
+// @version      1.0.20
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -36,26 +36,30 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const moveDirection = (direction, delta) => {
         const viewer = getElements('img.viewer-move')[0];
         window.viewer = viewer;
-        if (direction === Direction.LEFT) {
-            _pdfViewer.moveTo(viewer.offsetLeft + delta, viewer.offsetTop)
-        } else if (direction === Direction.RIGHT) {
-            _pdfViewer.moveTo(viewer.offsetLeft - delta, viewer.offsetTop)
-        } else if (direction === Direction.TOP) {   
-            _pdfViewer.moveTo(viewer.offsetLeft, viewer.offsetTop + delta)
-        } else if (direction === Direction.BOTTOM) {
-            _pdfViewer.moveTo(viewer.offsetLeft, viewer.offsetTop - delta)
+        switch (direction) {
+            case Direction.LEFT:
+                _pdfViewer.moveTo(viewer.offsetLeft + delta, viewer.offsetTop); break;
+            case Direction.RIGHT:
+                _pdfViewer.moveTo(viewer.offsetLeft - delta, viewer.offsetTop); break;
+            case Direction.TOP:
+                _pdfViewer.moveTo(viewer.offsetLeft, viewer.offsetTop + delta); break;
+            case Direction.BOTTOM:
+                _pdfViewer.moveTo(viewer.offsetLeft, viewer.offsetTop - delta); break;
+            default:
+                console.error(`Unknown direction: ${direction}`);
+                break;
         }
     };
     const recentMoveHistory = [];
     window.recentMoveHistory = recentMoveHistory;
     const moveDirectionWithAcceleration = (direction) => {
         const timestamp = (new Date()).getTime();
-        const historyField = { timestamp, direction }
-        recentMoveHistory.forEach((item) => {
+        const historyField = { timestamp, direction };
+        [...recentMoveHistory].forEach((item) => {
             if (item.direction !== direction || (timestamp - item.timestamp) > moveHistoryTimeout) {
                 const index = recentMoveHistory.indexOf(item)
                 if (index >= 0) {
-                    recentMoveHistory.splice(recentMoveHistory.indexOf(item),1)
+                    recentMoveHistory.splice(index,1)
                 }
             }
         });
