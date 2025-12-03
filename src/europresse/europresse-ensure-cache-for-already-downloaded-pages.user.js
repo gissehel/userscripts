@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.5
+// @version      1.0.6
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -84,10 +84,10 @@ const ensurePageCached = async (imageIndex) => {
     if (imageIndex < 0 || imageIndex >= _docNameList.length) {
         return;
     }
-    const imageCount = await ensureImageCountReady(_docNameList[imageIndex]);
-    await Promise.all([...(Array(imageCount)).keys()].map(async (index) => {
+    const imageCount = await getImageCount(_docNameList[imageIndex]);
+    for (let index = 0; index < imageCount; index++) {
         await ensureImageCached(index, _docNameList[imageIndex], imageCount);
-    }));
+    }
 }
 exportOnWindow({ ensurePageCached });
 
@@ -149,3 +149,10 @@ async function openPdf(n) {
 
 }
 exportOnWindow({ openPdf });
+
+const loadAllPages = async () => {
+    for (let index = 0; index < _docNameList.length; index++) {
+        await ensurePageCached(index);
+    }
+}
+exportOnWindow({ loadAllPages });
