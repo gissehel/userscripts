@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.7
+// @version      1.0.8
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -72,27 +72,29 @@ const ensureImageCached = async (index, imageName, size) => {
 }
 exportOnWindow({ ensureImageCached });
 
-const ensureImageCountReady = async (imageName) => {
-    if (imageCache[imageName]) {
-        return Promise.resolve(imageCache[imageName].length);
-    }
-    return await getImageCount(imageName);
-}
-exportOnWindow({ ensureImageCountReady });
-
 const ensurePageCached = async (imageIndex) => {
     if (imageIndex < 0 || imageIndex >= _docNameList.length) {
         return;
     }
-    if (imageCache[_docNameList[imageIndex]]) {
+    const imageName = _docNameList[imageIndex];
+    if (imageCache[imageName]) {
         return;
     }
-    const imageCount = await getImageCount(_docNameList[imageIndex]);
+    const imageCount = await getImageCount(imageName);
     for (let index = 0; index < imageCount; index++) {
-        await ensureImageCached(index, _docNameList[imageIndex], imageCount);
+        await ensureImageCached(index, imageName, imageCount);
     }
 }
 exportOnWindow({ ensurePageCached });
+
+const ensureImageCountReady = async (imageIndex) => {
+    const imageName = _docNameList[imageIndex];
+    if (! imageCache[imageName]) {
+        await ensurePageCached(imageIndex)
+    }
+    return imageCache[imageName].length;
+}
+exportOnWindow({ ensureImageCountReady });
 
 const ensureCurrentPageCached = async () => {
     await ensurePageCached(_docIndex);
