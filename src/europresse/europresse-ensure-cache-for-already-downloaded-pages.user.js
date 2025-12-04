@@ -1,56 +1,18 @@
 // ==UserScript==
-// @version      1.0.21
+// @version      1.0.22
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
+// @import{delay}
+// @import{Semaphore}
+// @import{exportOnWindow}
+
 const legacyRenderPdf = renderPdf;
 const legacyOpenPdf = openPdf;
+exportOnWindow({ legacyRenderPdf, legacyOpenPdf });
 
-const exportOnWindow = (dict) => {
-    for (const key in dict) {
-        window[key] = dict[key];
-    }
-}
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-class Semaphore {
-    constructor(maxConcurrent = 1) {
-        this.maxConcurrent = maxConcurrent;
-        this.current = 0;
-        this.queue = [];
-    }
-
-    async acquire(name = '') {
-        // console.log(`acquire - ${name} (${this.queue.length})`)
-        if (this.current < this.maxConcurrent) {
-            this.current++;
-            return Promise.resolve();
-        }
-
-        return new Promise(resolve => {
-            this.queue.push(() => {
-                // console.log(`unlocked - ${name} (${this.queue.length})`)
-                resolve();
-            });
-        });
-    }
-
-    release(name = '') {
-        // console.log(`release - ${name} (${this.queue.length})`)
-        if (this.queue.length > 0) {
-          const next = this.queue.shift();
-          next();
-        } else {
-          this.current--;
-        }
-    }
-}
-
-
-imageCache = {};
-imageCachePromises = {};
-exportOnWindow({ imageCache, imageCachePromises });
+const imageCache = {};
+exportOnWindow({ imageCache });
 
 const getImageCount = (imageName) => {
     return new Promise((resolve, reject) => {
