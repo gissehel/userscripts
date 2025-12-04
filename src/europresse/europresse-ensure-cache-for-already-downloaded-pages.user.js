@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.23
+// @version      1.0.24
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js
 // ==/UserScript==
@@ -219,11 +219,11 @@ const downloadCBZofAllPages = async () => {
                 imgArray[i] = imgData.charCodeAt(i);
             }
             const mimeType = identifyImageMimeType(imgData);
-            zip.file(`${String(docIndex + 1).padStart(3, '0')}-${String(imageIndex + 1).padStart(3, '0')}.${extensionByMimeType[mimeType]}`, imgArray);
+            zip.file(`${String(docIndex + 1).padStart(3, '0')}-${String(imageIndex + 1).padStart(3, '0')}-${imageName}.${extensionByMimeType[mimeType]}`, imgArray);
         }
     }
     const content = await zip.generateAsync({ type: "blob" });
-    const zipFileName = `europresse-${_docNameList[0]}-to-${_docNameList[_docNameList.length - 1]}.cbz`;
+    const zipFileName = `europresse-${_docNameList[0]}.cbz`;
     const link = document.createElement('a');
     link.href = URL.createObjectURL(content);
     link.download = zipFileName;

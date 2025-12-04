@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.21
+// @version      1.0.22
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -78,6 +78,11 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const moveRight = () => moveDirectionWithAcceleration(Direction.RIGHT);
     const moveUp = () => moveDirectionWithAcceleration(Direction.TOP);
     const moveDown = () => moveDirectionWithAcceleration(Direction.BOTTOM);
+    const downloadCBZ = () => {
+        if (window.downloadCBZofAllPages) {
+            window.downloadCBZofAllPages();
+        }
+    }
     const actions = {
     }
     const addAction = (action, ...keyStructs) => {
@@ -123,6 +128,9 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     addAction(togglePdfPagesPanel,
         { key: 'p' },
         { key: '*' },
+    )
+    addAction(downloadCBZ,
+        { key: 'b' },
     )
     addAction(moveUp,
         { key: 'ArrowDown' },
