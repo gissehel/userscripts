@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.24
+// @version      1.0.25
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js
 // ==/UserScript==
@@ -174,6 +174,7 @@ const loadAllPages = async () => {
 exportOnWindow({ loadAllPages });
 
 const allLoaded = loadAllPages();
+exportOnWindow({ allLoaded });
 
 const getMagic2 = (data) => {
     let result = '';
@@ -183,6 +184,7 @@ const getMagic2 = (data) => {
     }
     return result
 }
+exportOnWindow({ getMagic2 });
 
 const identifyImageMimeType = (data) => {
     const magic2 = getMagic2(data);
@@ -197,6 +199,7 @@ const identifyImageMimeType = (data) => {
             return 'application/octet-stream';
     }
 }
+exportOnWindow({ identifyImageMimeType });
 
 const extensionByMimeType = {
     'image/png': 'png',
@@ -204,6 +207,7 @@ const extensionByMimeType = {
     'image/gif': 'gif',
     'application/octet-stream': 'raw'
 };
+exportOnWindow({ extensionByMimeType })
 
 const downloadCBZofAllPages = async () => {
     await allLoaded;
@@ -227,8 +231,6 @@ const downloadCBZofAllPages = async () => {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(content);
     link.download = zipFileName;
-    // document.body.appendChild(link);
     link.click();
-    // document.body.removeChild(link);
 }
 exportOnWindow({ downloadCBZofAllPages });
