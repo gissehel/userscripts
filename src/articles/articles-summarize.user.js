@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version         1.0.40
+// @version         1.0.41
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*
@@ -13,8 +13,6 @@
 // @match           https://www-mediapart-fr.bnf.idm.oclc.org/journal/*/*/*
 // @match           https://sciencepost.fr/*/
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
-// @grant        GM_getValue
-// @grant        GM_setValue
 // ==/UserScript==
 
 // @import{readyPromise}
@@ -23,8 +21,8 @@
 // @import{copyNodeToClipboard}
 // @import{getDomain}
 // @import{waitUserActivation}
-// @import{monkeySetValue}
 // @import{monkeyGetSetOptions}
+// @import{monkeySetValue}
 // @import{bindOnClick}
 // @import{openLinkInNewTab}
 

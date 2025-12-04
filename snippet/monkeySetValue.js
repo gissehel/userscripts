@@ -1,3 +1,4 @@
+// @grant{GM_setValue}
 /**
  * Définit une valeur dans le stockage de Tampermonkey/Greasemonkey/Violentmonkey/etc.
  * Juste un alias pour GM_setValue, pour etre cohérent avec monkeyGetSetValue.

@@ -1,4 +1,5 @@
-
+// @grant{GM_getValue}
+// @grant{GM_setValue}
 /**
  * Récupère ou définit une valeur dans le stockage de Tampermonkey/Greasemonkey/Violentmonkey/etc.
  * 
