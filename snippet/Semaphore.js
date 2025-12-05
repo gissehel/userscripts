@@ -31,7 +31,9 @@ class Semaphore {
 
         return new Promise(resolve => {
             this.queue.push(() => {
-                // console.log(`unlocked - ${name} (${this.queue.length})`)
+                if (this.debug) {
+                    console.log(`unlocked - ${name} (${this.queue.length})`)
+                }
                 resolve();
             });
         });
