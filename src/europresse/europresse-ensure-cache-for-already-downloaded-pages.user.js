@@ -1,16 +1,19 @@
 // ==UserScript==
-// @version      1.0.31
+// @version      1.0.32
 // @description  europresse-ensure-cache-for-already-downloaded-pages
-// @require      https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js
 // ==/UserScript==
 
 // @import{delay}
 // @import{Semaphore}
 // @import{exportOnWindow}
+// @import{downloadZip}
+
+exportOnWindow({ downloadZip });
 
 const legacyRenderPdf = renderPdf;
 const legacyOpenPdf = openPdf;
 exportOnWindow({ legacyRenderPdf, legacyOpenPdf });
+
 
 const imageCache = {};
 exportOnWindow({ imageCache });
@@ -210,18 +213,6 @@ const extensionByMimeType = {
     'application/octet-stream': 'raw'
 };
 exportOnWindow({ extensionByMimeType })
-
-const downloadZip = async (fileName, contentProvider) => {
-    const zip = new JSZip();
-    for await (const { path, data } of contentProvider()) {
-        zip.file(path, data);
-    }
-    const content = await zip.generateAsync({ type: "blob" });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content);
-    link.download = fileName;
-    link.click();
-}
 
 const pageProvider = async function* () {
     await allLoaded;
