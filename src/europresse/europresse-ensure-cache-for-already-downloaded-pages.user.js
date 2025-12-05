@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.30
+// @version      1.0.31
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js
 // ==/UserScript==
@@ -211,9 +211,20 @@ const extensionByMimeType = {
 };
 exportOnWindow({ extensionByMimeType })
 
-const downloadCBZofAllPages = async () => {
-    await allLoaded;
+const downloadZip = async (fileName, contentProvider) => {
     const zip = new JSZip();
+    for await (const { path, data } of contentProvider()) {
+        zip.file(path, data);
+    }
+    const content = await zip.generateAsync({ type: "blob" });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(content);
+    link.download = fileName;
+    link.click();
+}
+
+const pageProvider = async function* () {
+    await allLoaded;
     for (let docIndex = 0; docIndex < _docNameList.length; docIndex++) {
         const imageName = _docNameList[docIndex];
         const imageCount = imageCache[imageName].length;
@@ -225,15 +236,18 @@ const downloadCBZofAllPages = async () => {
                 imgArray[i] = imgData.charCodeAt(i);
             }
             const mimeType = identifyImageMimeType(imgData);
-            zip.file(`${String(docIndex + 1).padStart(3, '0')}-${String(imageIndex + 1).padStart(3, '0')}-${imageName.replaceAll('·', '-')}.${extensionByMimeType[mimeType]}`, imgArray);
+            yield {
+                path: `${String(docIndex + 1).padStart(3, '0')}-${String(imageIndex + 1).padStart(3, '0')}-${imageName.replaceAll('·', '-')}.${extensionByMimeType[mimeType]}`,
+                data: imgArray
+            };
         }
     }
-    const content = await zip.generateAsync({ type: "blob" });
-    const sourceName = document.querySelectorAll('.pdf-source-name')[0].textContent.replaceAll(',', '').replaceAll(' ', '_');
-    const zipFileName = `europresse-${sourceName}.cbz`;
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content);
-    link.download = zipFileName;
-    link.click();
+};
+exportOnWindow({ pageProvider });
+
+const downloadCBZofAllPages = async () => {
+    const name = document.querySelectorAll('.pdf-source-name')[0].textContent.replaceAll(',', '').replaceAll(' ', '_');
+    const zipFileName = `europresse-${name}.cbz`;
+    await downloadZip(zipFileName, pageProvider);
 }
 exportOnWindow({ downloadCBZofAllPages });
