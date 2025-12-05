@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.36
+// @version      1.0.37
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -155,7 +155,7 @@ exportOnWindow({ ensurePageCached });
 
 const ensureImageCached = async (index, imageName, size) => {
     if (!imageCache[imageName] || !imageCache[imageName][index]) {
-        ensurePageCached(_docNameList.indexOf(imageName));
+        await ensurePageCached(_docNameList.indexOf(imageName));
     }
     return imageCache[imageName][index];
 }
@@ -210,9 +210,7 @@ const renderPdf = async (n, t) => {
 exportOnWindow({ renderPdf });
 
 const openPdf = async (n) => {
-    _animTimer = setTimeout(function () {
-        showWaitingAnim()
-    }, _animSpeed);
+    await showWaitingScreen();
     await ensureCurrentPageCached();
 
     let imageCount = await ensureImageCountReady(_docIndex);
@@ -222,7 +220,7 @@ const openPdf = async (n) => {
     }
     renderPdf(imageCount, _docNameList[_docIndex]);
     onSwipePdf();
-    clearTimeout(_animTimer);
+    await hideWaitingScreen();
     $("#pdf").css({
         opacity: 1
     });
@@ -230,7 +228,6 @@ const openPdf = async (n) => {
     scrollImages(0, 0);
     updateNavigationState();
     selectCurrentPage(n)
-
 }
 exportOnWindow({ openPdf });
 // #endregion
