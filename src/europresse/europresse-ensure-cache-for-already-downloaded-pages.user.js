@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.32
+// @version      1.0.33
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -10,8 +10,8 @@
 
 exportOnWindow({ downloadZip });
 
-const legacyRenderPdf = renderPdf;
-const legacyOpenPdf = openPdf;
+const legacyRenderPdf = window.renderPdf;
+const legacyOpenPdf = window.openPdf;
 exportOnWindow({ legacyRenderPdf, legacyOpenPdf });
 
 
@@ -52,27 +52,10 @@ const getImage = (index, imageName) => {
 exportOnWindow({ getImage });
 
 
-const ensureImageCached = async (index, imageName, size) => {
-    if (!imageCache[imageName] || !imageCache[imageName][index]) {
-        const data = await getImage(index, imageName);
-
-        if (!imageCache[imageName]) {
-            imageCache[imageName] = new Array(size);
-        }
-
-        if (imageCache[imageName].length < index) {
-            imageCache[imageName].length = index + 1;
-        }
-
-        imageCache[imageName][index] = data;
-    }
-    return imageCache[imageName][index];
-}
-exportOnWindow({ ensureImageCached });
-
 let cacheSemaphore = new Semaphore(1);
 exportOnWindow({ cacheSemaphore });
 
+let uidcache = 0;
 const ensurePageCached = async (imageIndex) => {
     if (imageIndex < 0 || imageIndex >= _docNameList.length) {
         return;
@@ -82,23 +65,31 @@ const ensurePageCached = async (imageIndex) => {
         return;
     }
 
-    await cacheSemaphore.acquire(imageName);
+    const uidName = `${imageName}-${++uidcache}`;
+    await cacheSemaphore.acquire(uidName);
 
     if (imageCache[imageName]) {
-        cacheSemaphore.release(imageName);
+        cacheSemaphore.release(uidName);
         return;
     }
 
     const imageCount = await getImageCount(imageName);
-    for (let index = 0; index < imageCount; index++) {
-        await ensureImageCached(index, imageName, imageCount);
-    }
+    imageCache[imageName] = [...Array(imageCount).keys()].map((index)=> getImage(index, imageName))
 
     console.log(`ensurePageCached done for ${imageName} with ${imageCount} image(s)`);
 
-    cacheSemaphore.release(imageName);
+    cacheSemaphore.release(uidName);
 }
 exportOnWindow({ ensurePageCached });
+
+const ensureImageCached = async (index, imageName, size) => {
+    if (!imageCache[imageName] || !imageCache[imageName][index]) {
+        ensurePageCached(_docNameList.indexOf(imageName));
+    }
+    return imageCache[imageName][index];
+}
+exportOnWindow({ ensureImageCached });
+
 
 const ensureImageCountReady = async (imageIndex) => {
     const imageName = _docNameList[imageIndex];
@@ -111,7 +102,8 @@ exportOnWindow({ ensureImageCountReady });
 
 const ensureCurrentPageCached = async () => {
     await ensurePageCached(_docIndex);
-    ensurePageCached(_docIndex + 1).then(() => ensurePageCached(_docIndex - 1));
+    ensurePageCached(_docIndex + 1);
+    ensurePageCached(_docIndex - 1);
 }
 exportOnWindow({ ensureCurrentPageCached });
 
@@ -149,7 +141,7 @@ async function openPdf(n) {
     }, _animSpeed);
     await ensureCurrentPageCached();
 
-    const imageCount = await ensureImageCountReady(_docIndex);
+    let imageCount = await ensureImageCountReady(_docIndex);
 
     if (imageCount > 1) {
         imageCount = 1
