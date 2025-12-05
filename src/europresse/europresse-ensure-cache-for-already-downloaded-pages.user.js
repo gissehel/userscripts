@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.33
+// @version      1.0.34
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -74,7 +74,11 @@ const ensurePageCached = async (imageIndex) => {
     }
 
     const imageCount = await getImageCount(imageName);
-    imageCache[imageName] = [...Array(imageCount).keys()].map((index)=> getImage(index, imageName))
+    const cache = []
+    for (let index = 0; index < imageCount; index++) {
+        cache.push(await getImage(index, imageName));
+    }
+    imageCache[imageName] = cache;
 
     console.log(`ensurePageCached done for ${imageName} with ${imageCount} image(s)`);
 
