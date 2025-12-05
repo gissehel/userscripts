@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.22
+// @version      1.0.23
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 
@@ -83,6 +83,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
             window.downloadCBZofAllPages();
         }
     }
+    const accessArchive = () => document.location.pathname = "/PDF/ArchiveResult";
     const actions = {
     }
     const addAction = (action, ...keyStructs) => {
@@ -143,6 +144,9 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     )
     addAction(moveRight,
         { key: 'ArrowLeft' },
+    )
+    addAction(accessArchive,
+        { key: 'a' },
     )
 
     registerEventListener(document.body, 'keydown', (event) => {

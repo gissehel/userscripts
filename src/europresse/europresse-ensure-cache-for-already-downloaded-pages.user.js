@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.28
+// @version      1.0.29
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js
 // ==/UserScript==
@@ -166,9 +166,11 @@ async function openPdf(n) {
 exportOnWindow({ openPdf });
 
 const loadAllPages = async () => {
-    for (let index = 0; index < _docNameList.length; index++) {
-        await ensurePageCached(index);
-        // await delay(1000);
+    if (_docNameList) {
+        for (let index = 0; index < _docNameList.length; index++) {
+            await ensurePageCached(index);
+            // await delay(1000);
+        }
     }
 }
 exportOnWindow({ loadAllPages });
@@ -223,11 +225,11 @@ const downloadCBZofAllPages = async () => {
                 imgArray[i] = imgData.charCodeAt(i);
             }
             const mimeType = identifyImageMimeType(imgData);
-            zip.file(`${String(docIndex + 1).padStart(3, '0')}-${String(imageIndex + 1).padStart(3, '0')}-${imageName.replaceAll('·','-')}.${extensionByMimeType[mimeType]}`, imgArray);
+            zip.file(`${String(docIndex + 1).padStart(3, '0')}-${String(imageIndex + 1).padStart(3, '0')}-${imageName.replaceAll('·', '-')}.${extensionByMimeType[mimeType]}`, imgArray);
         }
     }
     const content = await zip.generateAsync({ type: "blob" });
-    const sourceName = document.querySelectorAll('.pdf-source-name')[0].textContent.replaceAll(',','').replaceAll(' ','_');
+    const sourceName = document.querySelectorAll('.pdf-source-name')[0].textContent.replaceAll(',', '').replaceAll(' ', '_');
     const zipFileName = `europresse-${sourceName}.cbz`;
     const link = document.createElement('a');
     link.href = URL.createObjectURL(content);
