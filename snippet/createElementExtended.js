@@ -4,6 +4,7 @@
  * @param {string} name The name of the element to create
  * @param {object} params The parameters to tweek the new element
  * @param {object.<string, string>} params.attributes The propeties of the new element
+ * @param {object.<string, string>} params.style The style properties of the new element
  * @param {string} params.text The textContent of the new element
  * @param {HTMLElement[]} params.children The children of the new element
  * @param {HTMLElement} params.parent The parent of the new element

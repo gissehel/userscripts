@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.34
+// @version      1.0.35
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -7,14 +7,81 @@
 // @import{Semaphore}
 // @import{exportOnWindow}
 // @import{downloadZip}
+// @import{createElementExtended}
 
-exportOnWindow({ downloadZip });
+exportOnWindow({ downloadZip, createElementExtended, delay, Semaphore });
 
+// #region Waiting screen management
+const createWaitingScreen = () => {
+    const waitingScreen = createElementExtended('div', {
+        id: 'waiting-screen',
+        style: {
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            right: '0',
+            bottom: '0',
+            backgroundColor: 'rgba(0, 0, 0)',
+            color: 'white',
+            display: 'none',
+            opacity: '0.7',
+        },
+        parent: document.body,
+        children: [
+            createElementExtended('div', {
+                style: {
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    fontSize: '30px',
+                    fontWeight: 'bold',
+                },
+                text: 'Loading, please wait...'
+            })
+        ]
+    });
+    return waitingScreen;
+}
+exportOnWindow({ createWaitingScreen });
+
+const waitingScreen = createWaitingScreen();
+const waitingScreenSemaphore = new Semaphore(1);
+exportOnWindow({ waitingScreen, waitingScreenSemaphore });
+
+let waitingTasksCount = 0;
+let waitingScreenSemaphoreIndex = 0;
+
+const showWaitingScreen = async () => {
+    const uid = `showWaitingScreen-${++waitingScreenSemaphoreIndex}`;
+    await waitingScreenSemaphore.acquire(uid);
+    if (waitingTasksCount === 0) {
+        waitingScreen.style.display = 'block';
+    }
+    waitingTasksCount++;
+    waitingScreenSemaphore.release(uid);
+}
+exportOnWindow({ showWaitingScreen });
+
+const hideWaitingScreen = async () => {
+    const uid = `hideWaitingScreen-${++waitingScreenSemaphoreIndex}`;
+    await waitingScreenSemaphore.acquire(uid);
+    waitingTasksCount--;
+    if (waitingTasksCount === 0) {
+        waitingScreen.style.display = 'none';
+    }
+    waitingScreenSemaphore.release(uid);
+}
+exportOnWindow({ hideWaitingScreen });
+// #endregion
+
+// #region preserve legacy functions
 const legacyRenderPdf = window.renderPdf;
 const legacyOpenPdf = window.openPdf;
 exportOnWindow({ legacyRenderPdf, legacyOpenPdf });
+// #endregion
 
-
+// #region cache management
 const imageCache = {};
 exportOnWindow({ imageCache });
 
@@ -110,8 +177,11 @@ const ensureCurrentPageCached = async () => {
     ensurePageCached(_docIndex - 1);
 }
 exportOnWindow({ ensureCurrentPageCached });
+// #endregion
 
-renderPdf = (n, t) => {
+// #region original functions overrides
+renderPdf = async (n, t) => {
+    await showWaitingScreen();
     for (var u = "", r = $(".viewer-move").length !== 0 ? $(".viewer-move").offset() : null, i = 0; i < n; i++) {
         ensureImageCached(i, t, n).then((n) => {
             u += "<div id='rawimagewrapper'><img id='imagePdf" + i + "' class='imagePdf' src='data:image/png;base64," + n + "' /><\/div>";
@@ -136,6 +206,7 @@ renderPdf = (n, t) => {
             })
         })
     }
+    await hideWaitingScreen();
 }
 exportOnWindow({ renderPdf });
 
@@ -163,7 +234,9 @@ async function openPdf(n) {
 
 }
 exportOnWindow({ openPdf });
+// #endregion
 
+// #region auto-cache all pages
 const loadAllPages = async () => {
     if (window['_docNameList']) {
         for (let index = 0; index < _docNameList.length; index++) {
@@ -176,7 +249,9 @@ exportOnWindow({ loadAllPages });
 
 const allLoaded = loadAllPages();
 exportOnWindow({ allLoaded });
+// #endregion
 
+// #region download CBZ
 const getMagic2 = (data) => {
     let result = '';
     for (let i = 0; i < 2; i++) {
@@ -238,3 +313,4 @@ const downloadCBZofAllPages = async () => {
     await downloadZip(zipFileName, pageProvider);
 }
 exportOnWindow({ downloadCBZofAllPages });
+// #endregion
