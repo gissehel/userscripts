@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.29
+// @version      1.0.30
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js
 // ==/UserScript==
@@ -166,7 +166,7 @@ async function openPdf(n) {
 exportOnWindow({ openPdf });
 
 const loadAllPages = async () => {
-    if (_docNameList) {
+    if (window['_docNameList']) {
         for (let index = 0; index < _docNameList.length; index++) {
             await ensurePageCached(index);
             // await delay(1000);
