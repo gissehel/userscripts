@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.1
+// @version      1.0.2
 // @description  europresse-technical-getInfo
 // @match        https://nouveau-eureka-cc.*.idm.oclc.org/WebPages/SourceDetails.aspx?*
 // ==/UserScript==
@@ -40,7 +40,7 @@ const getInfo = async () => {
 const downloadInfo = async () => {
     const info = await getInfo();
     code = info['Code de source'] || `unknown-${(new Date).getTime()}`;
-    downloadData(`europresse-info-${code}.json`, JSON.stringify(info, null, 4), { mimetype: 'application/json', encoding: 'utf-8' });
+    downloadData(`europresse-info-${code}.json`, JSON.stringify(info, null, 0), { mimetype: 'application/json', encoding: 'utf-8' });
 }
 
 downloadInfo();
