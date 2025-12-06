@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.37
+// @version      1.0.38
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
@@ -75,6 +75,138 @@ const hideWaitingScreen = async () => {
 exportOnWindow({ hideWaitingScreen });
 // #endregion
 
+// #region progressBar
+let progressBarItems = {}
+let progressBarItemsByIndex = []
+exportOnWindow({ progressBarItems, progressBarItemsByIndex });
+const progressBarColors = {
+    DEFAULT: '#ffffff',
+    LOADING: '#ffff00',
+    LOADED: '#bbbb00',
+    CURRENTDEFAULT: '#ffdddd',
+    CURRENTLOADING: '#ff8888',
+    CURRENT: '#ff0000',
+
+}
+const createProgressBar = () => {
+    const height = '3px';
+    const progressBarContainer = createElementExtended('div', {
+        id: 'progress-bar-container',
+        style: {
+            position: 'fixed',
+            bottom: '0px',
+            left: '0px',
+            right: '0px',
+            height,
+            backgroundColor: '#ffffff',
+            zIndex: '1000',
+        },
+        parent: document.body,
+        children: [
+            _docNameList.map((docName, index) => {
+                const progressBarItem = createElementExtended('div', {
+                    id: `progress-bar-item-${index}`,
+                    style: {
+                        height,
+                        backgroundColor: progressBarColors.DEFAULT,
+                        left: `${(index * 100) / _docNameList.length}%`,
+                        right: `${100 - ((index+1) * 100) / _docNameList.length}%`,
+                        opacity: '1',
+                        transition: 'background-color 0.3s ease',
+                        position: 'absolute',
+                    },
+                    onCreated: (el) => {
+                        const progressBarItem = {
+                            element: el,
+                            color: progressBarColors.DEFAULT,
+                        }
+                        progressBarItemsByIndex[index] = progressBarItem;
+                        progressBarItems[docName] = progressBarItem;
+                    }
+                });
+                return progressBarItem;
+            })
+        ]
+    });
+    return progressBarContainer;
+};
+exportOnWindow({ createProgressBar });
+
+let lastCurrent = null;
+const progressBarUpdateCurrent = (pageName) => {
+    if (lastCurrent) {
+        switch (lastCurrent.color) {
+            case progressBarColors.CURRENT:
+                lastCurrent.color = progressBarColors.LOADED;
+                break;
+            case progressBarColors.CURRENTLOADING:
+                lastCurrent.color = progressBarColors.LOADING;
+                break;
+            case progressBarColors.CURRENTDEFAULT:
+                lastCurrent.color = progressBarColors.DEFAULT;
+                break;
+            default:
+                break;
+        }
+        lastCurrent.element.style.backgroundColor = lastCurrent.color;
+    }
+    const current = progressBarItems[pageName];
+    if (current) {
+        switch (current.color) {
+            case progressBarColors.LOADED:
+                current.color = progressBarColors.CURRENT;
+                break;
+            case progressBarColors.LOADING:
+                current.color = progressBarColors.CURRENTLOADING;
+                break;
+            case progressBarColors.DEFAULT:
+                current.color = progressBarColors.CURRENTDEFAULT;
+                break;
+            default:
+                break;
+        }
+        current.element.style.backgroundColor = current.color;
+    }
+    lastCurrent = current;
+}
+exportOnWindow({ progressBarUpdateCurrent });
+const progressBarStartLoading = (pageName) => {
+    const item = progressBarItems[pageName];
+    if (item) {
+        switch (item.color) {
+            case progressBarColors.DEFAULT:
+                item.color = progressBarColors.LOADING;
+                break;
+            case progressBarColors.CURRENTDEFAULT:
+                item.color = progressBarColors.CURRENTLOADING;
+                break;
+            default:
+                break;
+        }
+        item.element.style.backgroundColor = item.color;
+    }
+}
+exportOnWindow({ progressBarStartLoading });
+const progressBarFinishLoading = (pageName) => {
+    const item = progressBarItems[pageName];
+    if (item) {
+        switch (item.color) {
+            case progressBarColors.LOADING:
+                item.color = progressBarColors.LOADED;
+                break;
+            case progressBarColors.CURRENTLOADING:
+                item.color = progressBarColors.CURRENT;
+                break;
+            default:
+                break;
+        }
+        item.element.style.backgroundColor = item.color;
+    }
+}
+exportOnWindow({ progressBarFinishLoading });
+createProgressBar();
+// #endregion
+
 // #region preserve legacy functions
 const legacyRenderPdf = window.renderPdf;
 const legacyOpenPdf = window.openPdf;
@@ -140,12 +272,14 @@ const ensurePageCached = async (imageIndex) => {
         return;
     }
 
+    progressBarStartLoading(imageName);
     const imageCount = await getImageCount(imageName);
     const cache = []
     for (let index = 0; index < imageCount; index++) {
         cache.push(await getImage(index, imageName));
     }
     imageCache[imageName] = cache;
+    progressBarFinishLoading(imageName);
 
     console.log(`ensurePageCached done for ${imageName} with ${imageCount} image(s)`);
 
@@ -183,6 +317,7 @@ exportOnWindow({ ensureCurrentPageCached });
 const renderPdf = async (n, t) => {
     await showWaitingScreen();
     for (var u = "", r = $(".viewer-move").length !== 0 ? $(".viewer-move").offset() : null, i = 0; i < n; i++) {
+        progressBarUpdateCurrent(t)
         const data = await ensureImageCached(i, t, n)
         u += "<div id='rawimagewrapper'><img id='imagePdf" + i + "' class='imagePdf' src='data:image/png;base64," + data + "' /><\/div>";
         $("#pdfDocument").html(u);
@@ -210,6 +345,7 @@ const renderPdf = async (n, t) => {
 exportOnWindow({ renderPdf });
 
 const openPdf = async (n) => {
+    progressBarUpdateCurrent(_docNameList[_docIndex])
     await showWaitingScreen();
     await ensureCurrentPageCached();
 
