@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.0
+// @version      1.0.1
 // @description  europresse-technical-getInfo
 // @match        https://nouveau-eureka-cc.*.idm.oclc.org/WebPages/SourceDetails.aspx?*
 // ==/UserScript==
@@ -8,6 +8,7 @@
 
 // @import{getElements}
 // @import{getUrlSearchParams}
+// @import{downloadData}
 
 const getInfo = async () => {
     const info = {};
