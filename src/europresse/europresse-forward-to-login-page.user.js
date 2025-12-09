@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.2
+// @version      1.0.3
 // @description  europresse-forward-to-login-page
 // ==/UserScript==
 
@@ -715,7 +715,7 @@ const main = async () => {
                                 href: `${site.url}${suffixUrl}`,
                                 target: '_blank'
                             },
-                            styles: {
+                            style: {
                                 display: 'block',
                             },
                             classnames: ['login-button__btn'],
