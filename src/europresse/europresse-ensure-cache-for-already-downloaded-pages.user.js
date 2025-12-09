@@ -3,8 +3,10 @@
 // @import{exportOnWindow}
 // @import{downloadZip}
 // @import{createElementExtended}
+// @import{OnceExecutorQueue}
 
 exportOnWindow({ downloadZip, createElementExtended, delay, Semaphore });
+exportOnWindow({ OnceExecutorQueue });
 
 // #region Waiting screen management
 const createWaitingScreen = () => {
@@ -68,6 +70,9 @@ const hideWaitingScreen = async () => {
     waitingScreenSemaphore.release(uid);
 }
 exportOnWindow({ hideWaitingScreen });
+
+const hideWaitingScreenQueue = new OnceExecutorQueue();
+exportOnWindow({ hideWaitingScreenQueue });
 // #endregion
 
 // #region progressBar
@@ -128,7 +133,9 @@ const createProgressBar = () => {
 exportOnWindow({ createProgressBar });
 
 let lastCurrent = null;
+let currentPageName = null;
 const progressBarUpdateCurrent = (pageName) => {
+    currentPageName = pageName;
     if (lastCurrent) {
         switch (lastCurrent.color) {
             case progressBarColors.CURRENT:
@@ -310,10 +317,19 @@ exportOnWindow({ ensureCurrentPageCached });
 
 // #region original functions overrides
 const renderPdf = async (n, t) => {
+    progressBarUpdateCurrent(t)
+    
     await showWaitingScreen();
+    if (t !== currentPageName) {
+        hideWaitingScreenQueue.executeAll();
+    }
+    const executor = hideWaitingScreenQueue.enqueue(async () => hideWaitingScreen());
     for (var u = "", r = $(".viewer-move").length !== 0 ? $(".viewer-move").offset() : null, i = 0; i < n; i++) {
-        progressBarUpdateCurrent(t)
         const data = await ensureImageCached(i, t, n)
+        if (t !== currentPageName) {
+            await executor.execute();
+            return;
+        }
         u += "<div id='rawimagewrapper'><img id='imagePdf" + i + "' class='imagePdf' src='data:image/png;base64," + data + "' /><\/div>";
         $("#pdfDocument").html(u);
         _pdfViewer = new Viewer(document.getElementById("rawimagewrapper"), {
@@ -335,14 +351,22 @@ const renderPdf = async (n, t) => {
             }
         })
     }
-    await hideWaitingScreen();
+    await executor.execute();
 }
 exportOnWindow({ renderPdf });
 
 const openPdf = async (n) => {
     progressBarUpdateCurrent(_docNameList[_docIndex])
     await showWaitingScreen();
+    if (_docNameList[_docIndex] !== currentPageName) {
+        hideWaitingScreenQueue.executeAll();
+    }
+    const executor = hideWaitingScreenQueue.enqueue(async () => hideWaitingScreen());
     await ensureCurrentPageCached();
+    if (_docNameList[_docIndex] !== currentPageName) {
+        await executor.execute();
+        return;
+    }
 
     let imageCount = await ensureImageCountReady(_docIndex);
 
@@ -351,7 +375,7 @@ const openPdf = async (n) => {
     }
     renderPdf(imageCount, _docNameList[_docIndex]);
     onSwipePdf();
-    await hideWaitingScreen();
+    await executor.execute();
     $("#pdf").css({
         opacity: 1
     });
