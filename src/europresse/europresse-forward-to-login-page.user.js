@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.3
+// @version      1.0.4
 // @description  europresse-forward-to-login-page
 // ==/UserScript==
 

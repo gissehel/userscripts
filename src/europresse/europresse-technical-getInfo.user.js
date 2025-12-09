@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.2
+// @version      1.0.3
 // @description  europresse-technical-getInfo
 // @match        https://nouveau-eureka-cc.*.idm.oclc.org/WebPages/SourceDetails.aspx?*
 // ==/UserScript==

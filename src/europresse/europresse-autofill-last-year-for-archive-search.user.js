@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.0
+// @version      1.0.1
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // @match        https://nouveau-europresse-com.*.idm.oclc.org/PDF/ArchiveResult?*
 // ==/UserScript==

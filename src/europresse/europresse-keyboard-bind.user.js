@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.23
+// @version      1.0.24
 // @description  europresse-keyboard-bind
 // ==/UserScript==
 

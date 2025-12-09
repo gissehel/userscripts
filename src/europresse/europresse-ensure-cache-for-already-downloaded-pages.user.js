@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.38
+// @version      1.0.39
 // @description  europresse-ensure-cache-for-already-downloaded-pages
 // ==/UserScript==
 
