@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.1
+// @version      1.0.2
 // @description  europresse-forward-to-login-page
 // ==/UserScript==
 
@@ -697,6 +697,12 @@ const main = async () => {
                 url: url
             });
         }
+        const returnURls = window.location.search.slice(1).split('&').filter(item=>item.startsWith('ReturnUrl='))
+        let suffixUrl = ''
+        if (returnURls.length > 0) {
+            const returnUrl = decodeURIComponent(returnURls[0].split('=')[1]);
+            suffixUrl = `&ReturnUrl=${encodeURIComponent(returnUrl)}`;
+        }
         const form = getElements('#loginform')[0];
         if (form) {
             sites.forEach(site => {
@@ -706,8 +712,11 @@ const main = async () => {
                     children: [
                         createElementExtended('a', {
                             attributes: {
-                                href: site.url,
+                                href: `${site.url}${suffixUrl}`,
                                 target: '_blank'
+                            },
+                            styles: {
+                                display: 'block',
                             },
                             classnames: ['login-button__btn'],
                             text: `${site.name}`
