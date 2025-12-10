@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version      1.0.4
+// @version      1.0.5
 // @description  europresse-forward-to-login-page
 // ==/UserScript==
 
@@ -713,7 +713,6 @@ const main = async () => {
                         createElementExtended('a', {
                             attributes: {
                                 href: `${site.url}${suffixUrl}`,
-                                target: '_blank'
                             },
                             style: {
                                 display: 'block',

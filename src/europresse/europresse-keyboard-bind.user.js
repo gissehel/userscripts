@@ -37,14 +37,10 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
         const viewer = getElements('img.viewer-move')[0];
         window.viewer = viewer;
         switch (direction) {
-            case Direction.LEFT:
-                _pdfViewer.moveTo(viewer.offsetLeft + delta, viewer.offsetTop); break;
-            case Direction.RIGHT:
-                _pdfViewer.moveTo(viewer.offsetLeft - delta, viewer.offsetTop); break;
-            case Direction.TOP:
-                _pdfViewer.moveTo(viewer.offsetLeft, viewer.offsetTop + delta); break;
-            case Direction.BOTTOM:
-                _pdfViewer.moveTo(viewer.offsetLeft, viewer.offsetTop - delta); break;
+            case Direction.LEFT:   _pdfViewer.moveTo(viewer.offsetLeft + delta, viewer.offsetTop); break;
+            case Direction.RIGHT:  _pdfViewer.moveTo(viewer.offsetLeft - delta, viewer.offsetTop); break;
+            case Direction.TOP:    _pdfViewer.moveTo(viewer.offsetLeft, viewer.offsetTop + delta); break;
+            case Direction.BOTTOM: _pdfViewer.moveTo(viewer.offsetLeft, viewer.offsetTop - delta); break;
             default:
                 console.error(`Unknown direction: ${direction}`);
                 break;
