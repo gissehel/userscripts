@@ -105,7 +105,7 @@ const createProgressBar = () => {
                         height,
                         backgroundColor: progressBarColors.DEFAULT,
                         left: `${(index * 100) / _docNameList.length}%`,
-                        right: `${100 - ((index+1) * 100) / _docNameList.length}%`,
+                        right: `${100 - ((index + 1) * 100) / _docNameList.length}%`,
                         opacity: '1',
                         transition: 'background-color 0.3s ease',
                         position: 'absolute',
@@ -250,21 +250,26 @@ let cacheSemaphore = new Semaphore(1);
 exportOnWindow({ cacheSemaphore });
 
 let uidcache = 0;
-const ensurePageCached = async (imageIndex) => {
-    if (imageIndex < 0 || imageIndex >= _docNameList.length) {
-        return;
-    }
-    const imageName = _docNameList[imageIndex];
-    if (imageCache[imageName]) {
-        return;
-    }
+let currentUrgence = null;
+const urgentWaitingCache = new Set();
 
+const getPageInCache = async (imageName, urgent) => {
     const uidName = `${imageName}-${++uidcache}`;
+    if (urgent) {
+        urgentWaitingCache.add(imageName);
+    }
     await cacheSemaphore.acquire(uidName);
-
     if (imageCache[imageName]) {
+        if (urgentWaitingCache.has(imageName)) {
+            urgentWaitingCache.delete(imageName);
+        }
         cacheSemaphore.release(uidName);
-        return;
+        return imageCache[imageName];
+    }
+
+    if (urgent && (!urgentWaitingCache.has(imageName))) {
+        cacheSemaphore.release(uidName);
+        return null;
     }
 
     progressBarStartLoading(imageName);
@@ -276,11 +281,40 @@ const ensurePageCached = async (imageIndex) => {
     imageCache[imageName] = cache;
     progressBarFinishLoading(imageName);
 
-    console.log(`ensurePageCached done for ${imageName} with ${imageCount} image(s)`);
+    console.log(`page in cache for ${imageName} with ${imageCount} image(s)`);
 
+    if (urgentWaitingCache.has(imageName)) {
+        urgentWaitingCache.delete(imageName);
+    }
     cacheSemaphore.release(uidName);
+    return imageCache[imageName];
+}
+
+const ensurePageCached = async (imageIndex) => {
+    if (imageIndex < 0 || imageIndex >= _docNameList.length) {
+        return;
+    }
+    const imageName = _docNameList[imageIndex];
+    if (imageCache[imageName]) {
+        return;
+    }
+
+    await getPageInCache(imageName, false);
 }
 exportOnWindow({ ensurePageCached });
+
+const getPageCached = async (imageIndex) => {
+    if (imageIndex < 0 || imageIndex >= _docNameList.length) {
+        return;
+    }
+    const imageName = _docNameList[imageIndex];
+    if (imageCache[imageName]) {
+        return;
+    }
+
+    return await getPageInCache(imageName, true);
+}
+exportOnWindow({ getPageCached });
 
 const ensureImageCached = async (index, imageName, size) => {
     if (!imageCache[imageName] || !imageCache[imageName][index]) {
@@ -301,9 +335,10 @@ const ensureImageCountReady = async (imageIndex) => {
 exportOnWindow({ ensureImageCountReady });
 
 const ensureCurrentPageCached = async () => {
-    await ensurePageCached(_docIndex);
+    const result = await getPageCached(_docIndex);
     ensurePageCached(_docIndex + 1);
     ensurePageCached(_docIndex - 1);
+    return result;
 }
 exportOnWindow({ ensureCurrentPageCached });
 // #endregion
@@ -339,17 +374,40 @@ const renderPdf = async (n, t) => {
 }
 exportOnWindow({ renderPdf });
 
+const renderCachedPdf = async (page) => {
+    const imageIndex = 0;
+    const imageData = page ? page[imageIndex] : '';
+    var rawImageWrapper = "";
+    var viewerMoveOffset = $(".viewer-move").length !== 0 ? $(".viewer-move").offset() : null;
+    rawImageWrapper += "<div id='rawimagewrapper'><img id='imagePdf" + imageIndex + "' class='imagePdf' src='data:image/png;base64," + imageData + "' /><\/div>";
+    $("#pdfDocument").html(rawImageWrapper);
+    _pdfViewer = new Viewer(document.getElementById("rawimagewrapper"), {
+        inline: true,
+        button: false,
+        title: false,
+        toolbar: false,
+        transition: false,
+        navbar: false,
+        zoomRatio: .7,
+        minZoomRatio: .25,
+        maxZoomRatio: 10,
+        viewed: function () {
+            _ratio !== null && _pdfViewer.zoomTo(_ratio);
+            viewerMoveOffset != null && _pdfViewer.moveTo(viewerMoveOffset.left, viewerMoveOffset.top)
+        },
+        zoomed: function (n) {
+            _ratio = n.detail.ratio
+        }
+    })
+}
+exportOnWindow({ renderCachedPdf });
+
 const openPdf = async (n) => {
     progressBarUpdateCurrent(_docNameList[_docIndex])
     await showWaitingScreen();
-    await ensureCurrentPageCached();
+    const page = await ensureCurrentPageCached();
 
-    let imageCount = await ensureImageCountReady(_docIndex);
-
-    if (imageCount > 1) {
-        imageCount = 1
-    }
-    renderPdf(imageCount, _docNameList[_docIndex]);
+    renderCachedPdf(page);
     onSwipePdf();
     await hideWaitingScreen();
     $("#pdf").css({
