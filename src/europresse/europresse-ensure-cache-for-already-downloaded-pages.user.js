@@ -1,8 +1,3 @@
-// ==UserScript==
-// @version      1.0.39
-// @description  europresse-ensure-cache-for-already-downloaded-pages
-// ==/UserScript==
-
 // @import{delay}
 // @import{Semaphore}
 // @import{exportOnWindow}

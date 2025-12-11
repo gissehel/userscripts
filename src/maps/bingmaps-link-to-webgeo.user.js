@@ -1,6 +1,4 @@
 // ==UserScript==
-// @version      3.0.2
-// @description  bingmaps-link-to-webgeo
 // @match        https://bing.com/maps
 // @match        https://www.bing.com/maps
 // ==/UserScript==

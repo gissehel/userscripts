@@ -1,6 +1,4 @@
 // ==UserScript==
-// @version      1.0.0
-// @description  wplace-link-to-webgeo
 // @match        https://wplace.live/*
 // ==/UserScript==
 

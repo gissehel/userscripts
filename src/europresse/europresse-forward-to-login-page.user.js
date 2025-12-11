@@ -1,8 +1,3 @@
-// ==UserScript==
-// @version      1.0.5
-// @description  europresse-forward-to-login-page
-// ==/UserScript==
-
 // @import{monkeyGetSetValue}
 // @import{createElementExtended}
 // @import{getElements}

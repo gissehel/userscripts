@@ -1,6 +1,4 @@
 // ==UserScript==
-// @version      3.0.2
-// @description  windy-link-to-webgeo
 // @match        https://www.windy.com/*
 // @match        https://windy.com/*
 // ==/UserScript==

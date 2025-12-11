@@ -1,6 +1,4 @@
 // ==UserScript==
-// @version      3.0.0
-// @description  youtube-pip
 // @match        https://youtube.com/*
 // @match        https://www.youtube.com/*
 // @match        https://m.youtube.com/*

@@ -1,5 +1,4 @@
 // ==UserScript==
-// @version      3.0.1
 // @description  Display all streamers followed in the side bar
 // ==/UserScript==
 

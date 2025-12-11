@@ -1,8 +1,3 @@
-// ==UserScript==
-// @version      3.0.3
-// @description  twitch-picture-in-picture
-// ==/UserScript==
-
 // @import{registerClickListener}
 // @import{registerDomNodeMutatedUnique}
 // @import{createElementExtended}

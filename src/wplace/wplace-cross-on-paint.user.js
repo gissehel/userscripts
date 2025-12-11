@@ -1,6 +1,5 @@
 // ==UserScript==
 // @description  WPlace cross on paint ❌🌍
-// @version      1.0.8
 // @license      MIT
 // ==/UserScript==
 

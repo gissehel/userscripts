@@ -1,5 +1,4 @@
 // ==UserScript==
-// @version      1.0.2
 // @description  Fix notion "set icon" that randomly don't set page icon to tab icon
 // ==/UserScript==
 

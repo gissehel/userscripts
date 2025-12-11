@@ -1,5 +1,4 @@
 // ==UserScript==
-// @version         1.0.1
 // @description     bnf-search-services : Amélioration de l'ergonomie de la liste base de recherches de la BnF
 // @match           https://bdl.bnf.fr/bases-de-donnees-par-titre
 // ==/UserScript==

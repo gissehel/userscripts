@@ -1,5 +1,4 @@
 // ==UserScript==
-// @version      3.0.10
 // @description  Export youtube video information in markdown format
 // @match        https://www.youtube.com/*
 // @match        https://youtube.com/*

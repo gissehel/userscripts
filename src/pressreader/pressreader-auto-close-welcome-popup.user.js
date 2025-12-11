@@ -1,8 +1,3 @@
-// ==UserScript==
-// @version      1.0.1
-// @description  pressreader-auto-close-welcome-popup
-// ==/UserScript==
-
 // @import{registerDomNodeMutatedUnique}
 // @import{getElements}
 

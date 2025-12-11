@@ -1,6 +1,4 @@
 // ==UserScript==
-// @version      3.0.2
-// @description  geoportail-link-to-webgeo
 // @match        https://geoportail.gouv.fr/*
 // @match        https://www.geoportail.gouv.fr/*
 // ==/UserScript==

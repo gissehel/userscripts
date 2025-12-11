@@ -1,5 +1,4 @@
 // ==UserScript==
-// @version         1.0.41
 // @description     articles-summarize : Create prompt to summarize articles
 // @match           https://www.livescience.com/*
 // @match           https://www.lemonde.fr/*

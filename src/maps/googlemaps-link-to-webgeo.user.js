@@ -1,6 +1,4 @@
 // ==UserScript==
-// @version      3.0.2
-// @description  googlemaps-link-to-webgeo
 // @match        https://google.com/maps/*
 // @match        https://www.google.com/maps/*
 // @match        https://google.com/maps

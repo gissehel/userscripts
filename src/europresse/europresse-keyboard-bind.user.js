@@ -1,8 +1,3 @@
-// ==UserScript==
-// @version      1.0.24
-// @description  europresse-keyboard-bind
-// ==/UserScript==
-
 const moveAccelerationRatio = 1.1;
 const moveBaseDelta = 10;
 const moveHistoryTimeout = 3000; // ms

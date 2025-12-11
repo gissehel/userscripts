@@ -1,6 +1,4 @@
 // ==UserScript==
-// @version      1.0.6
-// @description  thecorner-list
 // @match        https://clients.boursobank.com/thecorner/toutes-les-offres
 // ==/UserScript==
 

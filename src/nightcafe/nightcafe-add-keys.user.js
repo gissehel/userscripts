@@ -1,5 +1,4 @@
 // ==UserScript==
-// @version      3.0.10
 // @description  Add keys to nightcafe.studio. Alt+s : Like/Unlike ; Alt+f : Shade or Unshade the liked images
 // ==/UserScript==
 

@@ -1,6 +1,4 @@
 // ==UserScript==
-// @version      3.0.2
-// @description  openstreetmap-link-to-webgeo
 // @match        https://openstreetmap.org/*
 // @match        https://www.openstreetmap.org/*
 // ==/UserScript==

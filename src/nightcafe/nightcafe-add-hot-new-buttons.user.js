@@ -1,8 +1,3 @@
-// ==UserScript==
-// @version      3.0.1
-// @description  Add buttons for 'Hot' and 'New' explorer entries
-// ==/UserScript==
-
 // @import{createElementExtended}
 // @import{registerDomNodeMutatedUnique}
 

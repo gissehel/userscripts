@@ -1,6 +1,4 @@
 // ==UserScript==
-// @version      3.0.2
-// @description  blitzortung-link-to-webgeo
 // @match        https://map.blitzortung.org/*
 // ==/UserScript==
 

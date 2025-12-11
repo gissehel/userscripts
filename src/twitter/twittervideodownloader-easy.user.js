@@ -1,6 +1,4 @@
 // ==UserScript==
-// @version      3.0.1
-// @description  twittervideodownloader-easy
 // @match        http://twittervideodownloader.com/*
 // @match        https://twittervideodownloader.com/*
 // @icon         https://abs.twimg.com/favicons/twitter.2.ico

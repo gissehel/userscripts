@@ -1,8 +1,3 @@
-// ==UserScript==
-// @version      1.0.1
-// @description  threads-image-downloader
-// ==/UserScript==
-
 // @import{createElementExtended}
 // @import{registerDomNodeMutatedUnique}
 

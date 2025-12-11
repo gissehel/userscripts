@@ -1,6 +1,4 @@
 // ==UserScript==
-// @version      1.0.4
-// @description  github-io-pages-hotkey-for-code
 // @match        https://*.github.io/
 // @match        https://*.github.io/*
 // ==/UserScript==

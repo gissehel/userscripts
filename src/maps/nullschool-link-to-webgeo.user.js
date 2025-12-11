@@ -1,6 +1,4 @@
 // ==UserScript==
-// @version      3.0.2
-// @description  nullschool-link-to-webgeo
 // @match        https://earth.nullschool.net/*
 // @match        https://classic.nullschool.net/*
 // ==/UserScript==
