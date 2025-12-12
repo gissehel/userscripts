@@ -40,9 +40,8 @@ const createWaitingScreen = () => {
 }
 exportOnWindow({ createWaitingScreen });
 
-const waitingScreen = createWaitingScreen();
 const waitingScreenSemaphore = new Semaphore(1);
-exportOnWindow({ waitingScreen, waitingScreenSemaphore });
+exportOnWindow({ waitingScreenSemaphore });
 
 let waitingTasksCount = 0;
 let waitingScreenSemaphoreIndex = 0;
@@ -50,8 +49,8 @@ let waitingScreenSemaphoreIndex = 0;
 const showWaitingScreen = async () => {
     const uid = `showWaitingScreen-${++waitingScreenSemaphoreIndex}`;
     await waitingScreenSemaphore.acquire(uid);
-    if (waitingTasksCount === 0) {
-        waitingScreen.style.display = 'block';
+    if (waitingTasksCount === 0 && window.waitingScreen) {
+        window.waitingScreen.style.display = 'block';
     }
     waitingTasksCount++;
     waitingScreenSemaphore.release(uid);
@@ -62,8 +61,8 @@ const hideWaitingScreen = async () => {
     const uid = `hideWaitingScreen-${++waitingScreenSemaphoreIndex}`;
     await waitingScreenSemaphore.acquire(uid);
     waitingTasksCount--;
-    if (waitingTasksCount === 0) {
-        waitingScreen.style.display = 'none';
+    if (waitingTasksCount === 0 && window.waitingScreen) {
+        window.waitingScreen.style.display = 'none';
     }
     waitingScreenSemaphore.release(uid);
 }
@@ -372,9 +371,6 @@ const loadAllPages = async () => {
     }
 }
 exportOnWindow({ loadAllPages });
-
-const allLoaded = loadAllPages();
-exportOnWindow({ allLoaded });
 // #endregion
 
 // #region download CBZ
@@ -441,7 +437,13 @@ const downloadCBZofAllPages = async () => {
 exportOnWindow({ downloadCBZofAllPages });
 // #endregion
 
-if (_docNameList) {
+if (window._docNameList) {
     createProgressBar();
+
+    const allLoaded = loadAllPages();
+    exportOnWindow({ allLoaded });
+    
+    const waitingScreen = createWaitingScreen();
+    exportOnWindow({ waitingScreen });
 }
 
