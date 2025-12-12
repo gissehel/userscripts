@@ -80,8 +80,8 @@ const progressBarColors = {
     CURRENTDEFAULT: '#ffdddd',
     CURRENTLOADING: '#ff8888',
     CURRENT: '#ff0000',
-
 }
+
 const createProgressBar = () => {
     const height = '3px';
     const progressBarContainer = createElementExtended('div', {
@@ -248,13 +248,22 @@ let cacheSemaphore = new Semaphore(1);
 exportOnWindow({ cacheSemaphore });
 
 let uidcache = 0;
-const ensurePageCached = async (imageIndex) => {
+let currnentUrgentPage = null;
+const ensurePageCached = async (imageIndex, urgent) => {
     if (imageIndex < 0 || imageIndex >= _docNameList.length) {
-        return;
+        return [""];
     }
     const imageName = _docNameList[imageIndex];
     if (imageCache[imageName]) {
-        return;
+        return imageCache[imageName];
+    }
+
+    if (urgent) {
+        currnentUrgentPage = imageName;
+    }
+    
+    if (!urgent && currnentUrgentPage) {
+        await delay(1000);
     }
 
     const uidName = `${imageName}-${++uidcache}`;
@@ -262,7 +271,12 @@ const ensurePageCached = async (imageIndex) => {
 
     if (imageCache[imageName]) {
         cacheSemaphore.release(uidName);
-        return;
+        return imageCache[imageName];
+    }
+
+    if (urgent && currnentUrgentPage !== imageName) {
+        cacheSemaphore.release(uidName);
+        return [""];
     }
 
     progressBarStartLoading(imageName);
@@ -274,46 +288,57 @@ const ensurePageCached = async (imageIndex) => {
     imageCache[imageName] = cache;
     progressBarFinishLoading(imageName);
 
+    if (urgent && currnentUrgentPage === imageName) {
+        currnentUrgentPage = null;
+    }
+
     console.log(`ensurePageCached done for ${imageName} with ${imageCount} image(s)`);
 
     cacheSemaphore.release(uidName);
+    return imageCache[imageName];
 }
 exportOnWindow({ ensurePageCached });
 
-const ensureImageCached = async (index, imageName, size) => {
+const getImageCached = async (index, imageName, size) => {
     if (!imageCache[imageName] || !imageCache[imageName][index]) {
-        await ensurePageCached(_docNameList.indexOf(imageName));
+        return "";
     }
     return imageCache[imageName][index];
 }
-exportOnWindow({ ensureImageCached });
+exportOnWindow({ getImageCached });
 
 
-const ensureImageCountReady = async (imageIndex) => {
+const getImageCountReady = async (imageIndex) => {
     const imageName = _docNameList[imageIndex];
     if (!imageCache[imageName]) {
-        await ensurePageCached(imageIndex)
+        return 0
     }
     return imageCache[imageName].length;
 }
-exportOnWindow({ ensureImageCountReady });
+exportOnWindow({ getImageCountReady });
 
 const ensureCurrentPageCached = async () => {
-    await ensurePageCached(_docIndex);
-    ensurePageCached(_docIndex + 1);
-    ensurePageCached(_docIndex - 1);
+    const result = await ensurePageCached(_docIndex, true);
+    if (result[0].length > 0) {
+        ensurePageCached(_docIndex + 1);
+        ensurePageCached(_docIndex - 1);
+    }
+    return result;
 }
 exportOnWindow({ ensureCurrentPageCached });
 // #endregion
 
 // #region original functions overrides
-const renderPdf = async (n, t) => {
+const renderPdf = async (imageCount, imageName, asSubCall) => {
     await showWaitingScreen();
-    for (var u = "", r = $(".viewer-move").length !== 0 ? $(".viewer-move").offset() : null, i = 0; i < n; i++) {
-        progressBarUpdateCurrent(t)
-        const data = await ensureImageCached(i, t, n)
-        u += "<div id='rawimagewrapper'><img id='imagePdf" + i + "' class='imagePdf' src='data:image/png;base64," + data + "' /><\/div>";
-        $("#pdfDocument").html(u);
+    for (var htmlContent = "", viewerOffset = $(".viewer-move").length !== 0 ? $(".viewer-move").offset() : null, imageIndex = 0; imageIndex < imageCount; imageIndex++) {
+        progressBarUpdateCurrent(imageName)
+        if (!asSubCall) {
+            await ensurePageCached(_docIndex, true);
+        }
+        const data = await getImageCached(imageIndex, imageName, imageCount)
+        htmlContent += "<div id='rawimagewrapper'><img id='imagePdf" + imageIndex + "' class='imagePdf' src='data:image/png;base64," + data + "' /><\/div>";
+        $("#pdfDocument").html(htmlContent);
         _pdfViewer = new Viewer(document.getElementById("rawimagewrapper"), {
             inline: !0,
             button: !1,
@@ -326,7 +351,7 @@ const renderPdf = async (n, t) => {
             maxZoomRatio: 10,
             viewed: function () {
                 _ratio !== null && _pdfViewer.zoomTo(_ratio);
-                r != null && _pdfViewer.moveTo(r.left, r.top)
+                viewerOffset != null && _pdfViewer.moveTo(viewerOffset.left, viewerOffset.top)
             },
             zoomed: function (n) {
                 _ratio = n.detail.ratio
@@ -342,12 +367,12 @@ const openPdf = async (n) => {
     await showWaitingScreen();
     await ensureCurrentPageCached();
 
-    let imageCount = await ensureImageCountReady(_docIndex);
+    let imageCount = await getImageCountReady(_docIndex);
 
     if (imageCount > 1) {
         imageCount = 1
     }
-    renderPdf(imageCount, _docNameList[_docIndex]);
+    await renderPdf(imageCount, _docNameList[_docIndex], true);
     onSwipePdf();
     await hideWaitingScreen();
     $("#pdf").css({
