@@ -681,7 +681,7 @@ const ophirofoxStruct = [
 ;
 
 const main = async () => {
-    if (window.location.pathname === ("/Login/")) {
+    if (window.location.pathname.slice(0,6) === ("/Login")) {
         const struct = ophirofoxStruct.filter(entry => entry.pattern).map(entry => ({ ...entry, host: (new URL(entry.pattern)).host }))
         const host = window.location.host;
         const url = monkeyGetSetValue("europresse-forward-to-login-page-url", '');
