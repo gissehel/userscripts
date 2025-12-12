@@ -199,7 +199,6 @@ const progressBarFinishLoading = (pageName) => {
     }
 }
 exportOnWindow({ progressBarFinishLoading });
-createProgressBar();
 // #endregion
 
 // #region preserve legacy functions
@@ -441,3 +440,8 @@ const downloadCBZofAllPages = async () => {
 }
 exportOnWindow({ downloadCBZofAllPages });
 // #endregion
+
+if (_docNameList) {
+    createProgressBar();
+}
+
