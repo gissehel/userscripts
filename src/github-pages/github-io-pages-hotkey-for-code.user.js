@@ -7,8 +7,9 @@
 // @import{addOnKey}
 // @import{openLinkInNewTab}
 
+const pageEnding = '.github.io'
+
 const findRepo = (url) => {
-    const pageEnding = '.github.io'
     const match = url.match(/^https?:\/\/([^/]+)\/([^/]+)/);
     if (match) {
         const host = match[1];
@@ -22,7 +23,6 @@ const findRepo = (url) => {
 }
 
 const findMainRepo = (url) => {
-    const pageEnding = '.github.io'
     const match = url.match(/^https?:\/\/([^/]+)/);
     if (match) {
         const host = match[1];
