@@ -34,21 +34,16 @@ const findMainRepo = (url) => {
     return null;
 }
 
-const action = () => {
-    const url = findRepo(document.location.href)
+const actionUsingUrlGetter = (urlGetter) => {
+    const url = urlGetter(document.location.href)
     if (url) {
         openLinkInNewTab(url)
     }
     return true;
 }
 
-const actionForMainRepo = () => {
-    const url = findMainRepo(document.location.href)
-    if (url) {
-        openLinkInNewTab(url)
-    }
-    return true;
-}
+const action = () => actionUsingUrlGetter(findRepo);
+const actionForMainRepo = () => actionUsingUrlGetter(findMainRepo);
 
 const element = document.body;
 const key = { code: 'KeyG', altKey: true };
