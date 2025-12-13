@@ -3,5 +3,5 @@
         "https://notion.so/*",
         "https://www.notion.so/*"
     ],
-    "icon" : "https://www.notion.so/images/logo-ios.png"
+    "iconFromDomain" : "notion.so"
 }

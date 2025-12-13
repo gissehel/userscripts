@@ -1,7 +1,6 @@
 // ==UserScript==
 // @match        https://twitter.com/*
 // @match        https://x.com/*
-// @icon         https://abs.twimg.com/favicons/twitter.2.ico
 // ==/UserScript==
 
 let el = document.documentElement;

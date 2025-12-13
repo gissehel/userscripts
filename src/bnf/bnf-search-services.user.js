@@ -1,6 +1,7 @@
 // ==UserScript==
 // @description     bnf-search-services : Amélioration de l'ergonomie de la liste base de recherches de la BnF
 // @match           https://bdl.bnf.fr/bases-de-donnees-par-titre
+// @iconFromDomain  bnf.fr
 // ==/UserScript==
 
 // @import{addStyle}

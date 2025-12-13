@@ -1,7 +1,6 @@
 // ==UserScript==
 // @match        http://twittervideodownloader.com/*
 // @match        https://twittervideodownloader.com/*
-// @icon         https://abs.twimg.com/favicons/twitter.2.ico
 // ==/UserScript==
 
 const input = document.querySelectorAll('input[name=tweet]')[0];

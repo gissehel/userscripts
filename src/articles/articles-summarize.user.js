@@ -11,7 +11,7 @@
 // @match           https://www.mediapart.fr/journal/*/*/*
 // @match           https://www-mediapart-fr.bnf.idm.oclc.org/journal/*/*/*
 // @match           https://sciencepost.fr/*/
-// @icon            https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
+// @iconFromDomain  chatgpt.com
 // ==/UserScript==
 
 // @import{readyPromise}

@@ -1,6 +1,7 @@
 // ==UserScript==
 // @match        https://*.github.io/
 // @match        https://*.github.io/*
+// @iconFromDomain  github.io
 // ==/UserScript==
 
 // @import{addOnKey}

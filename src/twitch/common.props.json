@@ -3,5 +3,5 @@
         "https://twitch.tv/*",
         "https://www.twitch.tv/*"
     ],
-    "icon" : "https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png"
+    "iconFromDomain" : "twitch.tv"
 }

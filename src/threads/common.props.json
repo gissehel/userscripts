@@ -3,5 +3,5 @@
         "https://threads.net/*",
         "https://www.threads.net/*"
     ],
-    "icon" : "https://static.cdninstagram.com/rsrc.php/ye/r/lEu8iVizmNW.ico"
+    "iconFromDomain" : "threads.net"
 }

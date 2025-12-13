@@ -1,5 +1,6 @@
 // ==UserScript==
 // @match        https://clients.boursobank.com/thecorner/toutes-les-offres
+// @iconFromDomain  boursobank.com
 // ==/UserScript==
 
 // @import{getSubElements}

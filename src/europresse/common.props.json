@@ -107,5 +107,5 @@
         "https://nouveau.europresse.com/access/ip/default.aspx?un=U033137T_1",
         "https://nouveau.europresse.com/access/ip/default.aspx?un=lausanneAT_1"
     ],
-    "icon": "https://www.europresse.com/app/uploads/2023/07/favicon-europress.svg"
+    "iconFromDomain": "nouveau.europresse.com"
 }
