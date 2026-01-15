@@ -446,7 +446,8 @@ const pageProvider = async function* () {
             }
             const mimeType = identifyImageMimeType(imgData);
             yield {
-                path: `${String(docIndex + 1).padStart(3, '0')}-${String(imageIndex + 1).padStart(3, '0')}-${imageName.replaceAll('·', '-')}.${extensionByMimeType[mimeType]}`,
+                // path: `${String(docIndex + 1).padStart(3, '0')}-${String(imageIndex + 1).padStart(3, '0')}-${imageName.replaceAll('·', '-')}.${extensionByMimeType[mimeType]}`,
+                path: `${String(docIndex + 1).padStart(3, '0')}-${String(imageIndex + 1).padStart(3, '0')}.${extensionByMimeType[mimeType]}`,
                 data: imgArray
             };
         }
@@ -456,7 +457,8 @@ exportOnWindow({ pageProvider });
 
 const downloadCBZofAllPages = async () => {
     const name = document.querySelectorAll('.pdf-source-name')[0].textContent.replaceAll(',', '').replaceAll(' ', '_');
-    const zipFileName = `europresse-${name}.cbz`;
+    // const zipFileName = `europresse-${name}.cbz`;
+    const zipFileName = `presse-${name}.cbz`;
     await downloadZip(zipFileName, pageProvider);
 }
 exportOnWindow({ downloadCBZofAllPages });
