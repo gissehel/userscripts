@@ -420,32 +420,6 @@ const identifyImageMimeType = (data) => {
 }
 exportOnWindow({ identifyImageMimeType });
 
-const enumerateCachedPages = async function* () {
-    await allLoaded;
-    for (let docIndex = 0; docIndex < _docNameList.length; docIndex++) {
-        const imageName = _docNameList[docIndex];
-        const imageCount = imageCache[imageName].length;
-        for (let imageIndex = 0; imageIndex < imageCount; imageIndex++) {
-            const base64Data = imageCache[imageName][imageIndex];
-            const imgData = atob(base64Data);
-            const imgArray = new Uint8Array(imgData.length);
-            for (let i = 0; i < imgData.length; i++) {
-                imgArray[i] = imgData.charCodeAt(i);
-            }
-            const mimeType = identifyImageMimeType(imgData);
-            yield {
-                mimeType,
-                docIndex,
-                imageIndex,
-                imageName,
-                imgArray,
-            };
-        }
-    }
-}
-exportOnWindow({ enumerateCachedPages });
-// #endregion
-
 if (window._docNameList) {
     createProgressBar();
 
@@ -454,5 +428,31 @@ if (window._docNameList) {
 
     const waitingScreen = createWaitingScreen();
     exportOnWindow({ waitingScreen });
+
+    const enumerateCachedPages = async function* () {
+        await allLoaded;
+        for (let docIndex = 0; docIndex < _docNameList.length; docIndex++) {
+            const imageName = _docNameList[docIndex];
+            const imageCount = imageCache[imageName].length;
+            for (let imageIndex = 0; imageIndex < imageCount; imageIndex++) {
+                const base64Data = imageCache[imageName][imageIndex];
+                const imgData = atob(base64Data);
+                const imgArray = new Uint8Array(imgData.length);
+                for (let i = 0; i < imgData.length; i++) {
+                    imgArray[i] = imgData.charCodeAt(i);
+                }
+                const mimeType = identifyImageMimeType(imgData);
+                yield {
+                    mimeType,
+                    docIndex,
+                    imageIndex,
+                    imageName,
+                    imgArray,
+                };
+            }
+        }
+    }
+    exportOnWindow({ enumerateCachedPages });
+    // #endregion
 }
 

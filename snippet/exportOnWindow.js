@@ -5,6 +5,6 @@
  */
 const exportOnWindow = (dict) => {
     for (const key in dict) {
-        window[key] = dict[key];
+        unsafeWindow[key] = dict[key];
     }
 }
