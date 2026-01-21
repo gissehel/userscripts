@@ -48,8 +48,8 @@ let waitingScreenSemaphoreIndex = 0;
 const showWaitingScreen = async () => {
     const uid = `showWaitingScreen-${++waitingScreenSemaphoreIndex}`;
     await waitingScreenSemaphore.acquire(uid);
-    if (waitingTasksCount === 0 && window.waitingScreen) {
-        window.waitingScreen.style.display = 'block';
+    if (waitingTasksCount === 0 && unsafeWindow.waitingScreen) {
+        unsafeWindow.waitingScreen.style.display = 'block';
     }
     waitingTasksCount++;
     waitingScreenSemaphore.release(uid);
@@ -60,8 +60,8 @@ const hideWaitingScreen = async () => {
     const uid = `hideWaitingScreen-${++waitingScreenSemaphoreIndex}`;
     await waitingScreenSemaphore.acquire(uid);
     waitingTasksCount--;
-    if (waitingTasksCount === 0 && window.waitingScreen) {
-        window.waitingScreen.style.display = 'none';
+    if (waitingTasksCount === 0 && unsafeWindow.waitingScreen) {
+        unsafeWindow.waitingScreen.style.display = 'none';
     }
     waitingScreenSemaphore.release(uid);
 }
@@ -200,8 +200,8 @@ exportOnWindow({ progressBarFinishLoading });
 // #endregion
 
 // #region preserve legacy functions
-const legacyRenderPdf = window.renderPdf;
-const legacyOpenPdf = window.openPdf;
+const legacyRenderPdf = unsafeWindow.renderPdf;
+const legacyOpenPdf = unsafeWindowopenPdf;
 exportOnWindow({ legacyRenderPdf, legacyOpenPdf });
 // #endregion
 
@@ -387,7 +387,7 @@ exportOnWindow({ openPdf });
 
 // #region auto-cache all pages
 const loadAllPages = async () => {
-    if (window['_docNameList']) {
+    if (unsafeWindow['_docNameList']) {
         for (let index = 0; index < _docNameList.length; index++) {
             await ensurePageCached(index);
             // await delay(1000);
@@ -397,7 +397,7 @@ const loadAllPages = async () => {
 exportOnWindow({ loadAllPages });
 // #endregion
 
-// #region enumerate cached pages
+// #region inspect image type
 const getMagic2 = (data) => {
     let result = '';
     for (let i = 0; i < 2; i++) {
@@ -419,8 +419,9 @@ const identifyImageMimeType = (data) => {
     }
 }
 exportOnWindow({ identifyImageMimeType });
+// #endregion
 
-if (window._docNameList) {
+if (unsafeWindow._docNameList) {
     createProgressBar();
 
     const allLoaded = loadAllPages();
@@ -453,6 +454,5 @@ if (window._docNameList) {
         }
     }
     exportOnWindow({ enumerateCachedPages });
-    // #endregion
 }
 
