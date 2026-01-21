@@ -1,3 +1,4 @@
+// @grant{unsafeWindow}
 const addOnKey = (() => {
     const normalizeBool = (data) => data ? true : false;
 
@@ -46,7 +47,7 @@ const addOnKey = (() => {
         'up': null,
         'down': null,
     };
-    window.registeredKeys = registeredKeys;
+    unsafeWindow.registeredKeys = registeredKeys;
 
     /**
      * @type {Object.<string, PhaseName>}
