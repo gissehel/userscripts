@@ -6,6 +6,7 @@ const moveHistoryTimeout = 3000; // ms
 // @import{registerEventListener}
 // @import{getElements}
 // @import{downloadDataUrl}
+// @import{exportOnWindow}
 
 const getKeyKey = ({ code, key, ctrlKey, shiftKey, altKey, metaKey }) => {
     return `${code}|${key}|${ctrlKey ? '1' : '0'}|${shiftKey ? '1' : '0'}|${altKey ? '1' : '0'}|${metaKey ? '1' : '0'}`
@@ -69,11 +70,6 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const moveRight = () => moveDirectionWithAcceleration(Direction.RIGHT);
     const moveUp = () => moveDirectionWithAcceleration(Direction.TOP);
     const moveDown = () => moveDirectionWithAcceleration(Direction.BOTTOM);
-    const downloadCBZ = () => {
-        if (window.downloadCBZofAllPages) {
-            window.downloadCBZofAllPages();
-        }
-    }
     const accessArchive = () => document.location.pathname = "/PDF/ArchiveResult";
     const actions = {
     }
@@ -82,6 +78,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
             actions[getKeyKey(keyStruct)] = action
         })
     }
+    exportOnWindow({ addAction });
     addAction(zoom_in_action,
         { key: 'ArrowDown', shiftKey: true },
         { key: 'j' },
@@ -120,9 +117,6 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     addAction(togglePdfPagesPanel,
         { key: 'p' },
         { key: '*' },
-    )
-    addAction(downloadCBZ,
-        { key: 'b' },
     )
     addAction(moveUp,
         { key: 'ArrowDown' },

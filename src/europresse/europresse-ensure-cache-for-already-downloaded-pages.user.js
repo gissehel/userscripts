@@ -1,10 +1,9 @@
 // @import{delay}
 // @import{Semaphore}
 // @import{exportOnWindow}
-// @import{downloadZip}
 // @import{createElementExtended}
 
-exportOnWindow({ downloadZip, createElementExtended, delay, Semaphore });
+exportOnWindow({ createElementExtended, delay, Semaphore });
 
 // #region Waiting screen management
 const createWaitingScreen = () => {
@@ -104,7 +103,7 @@ const createProgressBar = () => {
                         height,
                         backgroundColor: progressBarColors.DEFAULT,
                         left: `${(index * 100) / _docNameList.length}%`,
-                        right: `${100 - ((index+1) * 100) / _docNameList.length}%`,
+                        right: `${100 - ((index + 1) * 100) / _docNameList.length}%`,
                         opacity: '1',
                         transition: 'background-color 0.3s ease',
                         position: 'absolute',
@@ -261,7 +260,7 @@ const ensurePageCached = async (imageIndex, urgent) => {
     if (urgent) {
         currnentUrgentPage = imageName;
     }
-    
+
     if (!urgent && currnentUrgentPage) {
         await delay(1000);
     }
@@ -398,7 +397,7 @@ const loadAllPages = async () => {
 exportOnWindow({ loadAllPages });
 // #endregion
 
-// #region download CBZ
+// #region enumerate cached pages
 const getMagic2 = (data) => {
     let result = '';
     for (let i = 0; i < 2; i++) {
@@ -412,27 +411,16 @@ exportOnWindow({ getMagic2 });
 const identifyImageMimeType = (data) => {
     const magic2 = getMagic2(data);
     switch (magic2) {
-        case '8950':
-            return 'image/png';
-        case 'ffd8':
-            return 'image/jpeg';
-        case '4749':
-            return 'image/gif';
+        case '8950': return 'image/png';
+        case 'ffd8': return 'image/jpeg';
+        case '4749': return 'image/gif';
         default:
             return 'application/octet-stream';
     }
 }
 exportOnWindow({ identifyImageMimeType });
 
-const extensionByMimeType = {
-    'image/png': 'png',
-    'image/jpeg': 'jpg',
-    'image/gif': 'gif',
-    'application/octet-stream': 'raw'
-};
-exportOnWindow({ extensionByMimeType })
-
-const pageProvider = async function* () {
+const enumerateCachedPages = async function* () {
     await allLoaded;
     for (let docIndex = 0; docIndex < _docNameList.length; docIndex++) {
         const imageName = _docNameList[docIndex];
@@ -446,22 +434,16 @@ const pageProvider = async function* () {
             }
             const mimeType = identifyImageMimeType(imgData);
             yield {
-                // path: `${String(docIndex + 1).padStart(3, '0')}-${String(imageIndex + 1).padStart(3, '0')}-${imageName.replaceAll('·', '-')}.${extensionByMimeType[mimeType]}`,
-                path: `${String(docIndex + 1).padStart(3, '0')}-${String(imageIndex + 1).padStart(3, '0')}.${extensionByMimeType[mimeType]}`,
-                data: imgArray
+                mimeType,
+                docIndex,
+                imageIndex,
+                imageName,
+                imgArray,
             };
         }
     }
-};
-exportOnWindow({ pageProvider });
-
-const downloadCBZofAllPages = async () => {
-    const name = document.querySelectorAll('.pdf-source-name')[0].textContent.replaceAll(',', '').replaceAll(' ', '_');
-    // const zipFileName = `europresse-${name}.cbz`;
-    const zipFileName = `presse-${name}.cbz`;
-    await downloadZip(zipFileName, pageProvider);
 }
-exportOnWindow({ downloadCBZofAllPages });
+exportOnWindow({ enumerateCachedPages });
 // #endregion
 
 if (window._docNameList) {
@@ -469,7 +451,7 @@ if (window._docNameList) {
 
     const allLoaded = loadAllPages();
     exportOnWindow({ allLoaded });
-    
+
     const waitingScreen = createWaitingScreen();
     exportOnWindow({ waitingScreen });
 }
