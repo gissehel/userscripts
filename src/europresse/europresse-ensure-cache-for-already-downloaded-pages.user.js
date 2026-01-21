@@ -201,7 +201,7 @@ exportOnWindow({ progressBarFinishLoading });
 
 // #region preserve legacy functions
 const legacyRenderPdf = unsafeWindow.renderPdf;
-const legacyOpenPdf = unsafeWindowopenPdf;
+const legacyOpenPdf = unsafeWindow.openPdf;
 exportOnWindow({ legacyRenderPdf, legacyOpenPdf });
 // #endregion
 
