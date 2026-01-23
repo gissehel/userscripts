@@ -1,0 +1,17 @@
+/* ==UserStyle==
+@name        duolingo-hide-noadblock
+@namespace   https://github.com/gissehel/userscripts
+@version     20251211-160411-971027d
+@description duolingo-hide-noadblock
+@author      gissehel
+@homepage    https://github.com/gissehel/userscripts
+@supportURL  https://github.com/gissehel/userscripts/issues
+@icon        https://www.google.com/s2/favicons?sz=64&domain=duolingo.com
+@grant       none
+==/UserStyle== */
+
+@-moz-document domain("duolingo.com") {
+    ._3bfsh, ._39CMQ {
+        display:none !important;
+    }
+}
