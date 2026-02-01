@@ -5,8 +5,19 @@
  * @returns {()=>void} The unregister function
  */
 const registerLocationChange = (callback) => {
-    const locationKeys = ['href', 'origin', 'protocol', 'host', 'hostname', 'port', 'pathname', 'search', 'hash'];
-    const normalizeLocation = (location) => Object.fromEntries(Object.entries(location).filter(x => locationKeys.indexOf(x[0]) >= 0))
+    const normalizeLocation = (location) => {
+        const { href, origin, protocol, host, hostname, port, pathname, search, hash } = location;
+        const pathParts = pathname.split('/')
+        if (pathParts.length > 0 && pathParts[0] === '') {
+            pathParts.shift();
+        }
+        const isFolder = pathParts.length === 0 || pathParts[pathParts.length - 1] === '';
+        if (isFolder) {
+            pathParts.pop();
+        }
+
+        return { href, origin, protocol, host, hostname, port, pathname, pathParts, isFolder, search, hash };
+    }
     let currentLocation = normalizeLocation(location);
 
     const observer = new MutationObserver(() => {
@@ -24,5 +35,3 @@ const registerLocationChange = (callback) => {
         observer.disconnect();
     };
 }
-
-
