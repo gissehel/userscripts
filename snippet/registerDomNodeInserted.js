@@ -1,3 +1,4 @@
+// @import{registerEventListener}
 /**
  * Add a DOMNodeInserted on the document. 
  * Handle the fact that the callback can't be called while aleady being called (no stackoverflow). 
@@ -17,9 +18,7 @@
         }
 
     }
-    document.documentElement.addEventListener('DOMNodeInserted', onNodeChanged, false);
+    const unregister = document.documentElement.registerEventListener('DOMNodeInserted', onNodeChanged, false);
     onNodeChanged()
-    return () => {
-        document.documentElement.removeEventListener('DOMNodeInserted', onNodeChanged, false);
-    }
+    return unregister;
 }

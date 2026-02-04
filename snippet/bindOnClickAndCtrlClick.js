@@ -1,3 +1,4 @@
+// @import{registerEventListener}
 /**
  * Bind an onClick and ctrl+click handler to an element. Returns uninstall handler
  * 
@@ -22,9 +23,5 @@ const bindOnClickAndCtrlClick = (element, callback, callbackCtrl) => {
             }
         }
     }
-    element.addEventListener('click', onClick, true);
-
-    return () => {
-        element.removeEventListener('click', onClick, true);
-    }
+    return element.registerEventListener('click', onClick, true);
 }

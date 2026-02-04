@@ -1,3 +1,4 @@
+// @import{prototypeBind}
 /**
  * Wrap addEventListener and removeEventListener using a pattern where the unregister function is returned
  * 
@@ -21,5 +22,5 @@ const registerEventListener = (element, eventType, callback, options) => {
         }
     }
 }
-HTMLElement.prototype.registerEventListener = function (type, callback, options) { return registerEventListener(this, type, callback, options); }
-EventTarget.prototype.registerEventListener = function (type, callback, options) { return registerEventListener(this, type, callback, options); }
+prototypeBind(HTMLElement, registerEventListener)
+prototypeBind(EventTarget, registerEventListener)

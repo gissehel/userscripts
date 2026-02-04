@@ -1,3 +1,4 @@
+// @import{registerEventListener}
 /**
  * Bind an onChange handler an element. Returns uninstall handler
  * 
@@ -13,9 +14,5 @@ const bindOnChange = (element, callback) => {
             e.stopImmediatePropagation()
         }
     }
-    element.addEventListener('change', onChange, true);
-
-    return () => {
-        element.removeEventListener('change', onChange, true);
-    }
+    return element.registerEventListener('change', onChange, true);
 }

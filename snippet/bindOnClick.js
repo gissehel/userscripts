@@ -1,3 +1,4 @@
+// @import{registerEventListener}
 /**
  * Bind an onClick handler an element. Returns uninstall handler
  * 
@@ -13,9 +14,5 @@ const bindOnClick = (element, callback) => {
             e.stopImmediatePropagation()
         }
     }
-    element.addEventListener('click', onClick, true);
-
-    return () => {
-        element.removeEventListener('click', onClick, true);
-    }
+    return element.registerEventListener('click', onClick, true);
 }
