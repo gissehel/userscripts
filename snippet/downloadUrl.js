@@ -1,5 +1,4 @@
 // @import{createElementExtended}
-
 /**
  * Downloads a url as a file
  * 
