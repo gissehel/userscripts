@@ -23,5 +23,5 @@ const bindOnClickAndCtrlClick = (element, callback, callbackCtrl) => {
             }
         }
     }
-    return element.registerEventListener('click', onClick, true);
+    return registerEventListener(element, 'click', onClick, true);
 }
