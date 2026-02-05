@@ -1,4 +1,4 @@
-// @grant{unsafeWindow}
+// @import{realWindow}
 const addOnKey = (() => {
     const normalizeBool = (data) => data ? true : false;
 
@@ -47,7 +47,7 @@ const addOnKey = (() => {
         'up': null,
         'down': null,
     };
-    unsafeWindow.registeredKeys = registeredKeys;
+    realWindow.registeredKeys = registeredKeys;
 
     /**
      * @type {Object.<string, PhaseName>}

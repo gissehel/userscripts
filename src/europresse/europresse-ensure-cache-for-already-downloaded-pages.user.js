@@ -1,3 +1,4 @@
+// @import{realWindow}
 // @import{delay}
 // @import{Semaphore}
 // @import{exportOnWindow}
@@ -48,8 +49,8 @@ let waitingScreenSemaphoreIndex = 0;
 const showWaitingScreen = async () => {
     const uid = `showWaitingScreen-${++waitingScreenSemaphoreIndex}`;
     await waitingScreenSemaphore.acquire(uid);
-    if (waitingTasksCount === 0 && unsafeWindow.waitingScreen) {
-        unsafeWindow.waitingScreen.style.display = 'block';
+    if (waitingTasksCount === 0 && realWindow.waitingScreen) {
+        realWindow.waitingScreen.style.display = 'block';
     }
     waitingTasksCount++;
     waitingScreenSemaphore.release(uid);
@@ -60,8 +61,8 @@ const hideWaitingScreen = async () => {
     const uid = `hideWaitingScreen-${++waitingScreenSemaphoreIndex}`;
     await waitingScreenSemaphore.acquire(uid);
     waitingTasksCount--;
-    if (waitingTasksCount === 0 && unsafeWindow.waitingScreen) {
-        unsafeWindow.waitingScreen.style.display = 'none';
+    if (waitingTasksCount === 0 && realWindow.waitingScreen) {
+        realWindow.waitingScreen.style.display = 'none';
     }
     waitingScreenSemaphore.release(uid);
 }
@@ -96,14 +97,14 @@ const createProgressBar = () => {
         },
         parent: document.body,
         children: [
-            _docNameList.map((docName, index) => {
+            realWindow._docNameList.map((docName, index) => {
                 const progressBarItem = createElementExtended('div', {
                     id: `progress-bar-item-${index}`,
                     style: {
                         height,
                         backgroundColor: progressBarColors.DEFAULT,
-                        left: `${(index * 100) / _docNameList.length}%`,
-                        right: `${100 - ((index + 1) * 100) / _docNameList.length}%`,
+                        left: `${(index * 100) / realWindow._docNameList.length}%`,
+                        right: `${100 - ((index + 1) * 100) / realWindow._docNameList.length}%`,
                         opacity: '1',
                         transition: 'background-color 0.3s ease',
                         position: 'absolute',
@@ -200,8 +201,8 @@ exportOnWindow({ progressBarFinishLoading });
 // #endregion
 
 // #region preserve legacy functions
-const legacyRenderPdf = unsafeWindow.renderPdf;
-const legacyOpenPdf = unsafeWindow.openPdf;
+const legacyRenderPdf = realWindow.renderPdf;
+const legacyOpenPdf = realWindow.openPdf;
 exportOnWindow({ legacyRenderPdf, legacyOpenPdf });
 // #endregion
 
@@ -249,10 +250,10 @@ exportOnWindow({ cacheSemaphore });
 let uidcache = 0;
 let currnentUrgentPage = null;
 const ensurePageCached = async (imageIndex, urgent) => {
-    if (imageIndex < 0 || imageIndex >= _docNameList.length) {
+    if (imageIndex < 0 || imageIndex >= realWindow._docNameList.length) {
         return [""];
     }
-    const imageName = _docNameList[imageIndex];
+    const imageName = realWindow._docNameList[imageIndex];
     if (imageCache[imageName]) {
         return imageCache[imageName];
     }
@@ -308,7 +309,7 @@ exportOnWindow({ getImageCached });
 
 
 const getImageCountReady = async (imageIndex) => {
-    const imageName = _docNameList[imageIndex];
+    const imageName = realWindow._docNameList[imageIndex];
     if (!imageCache[imageName]) {
         return 0
     }
@@ -317,10 +318,10 @@ const getImageCountReady = async (imageIndex) => {
 exportOnWindow({ getImageCountReady });
 
 const ensureCurrentPageCached = async () => {
-    const result = await ensurePageCached(_docIndex, true);
+    const result = await ensurePageCached(realWindow._docIndex, true);
     if (result[0].length > 0) {
-        ensurePageCached(_docIndex + 1);
-        ensurePageCached(_docIndex - 1);
+        ensurePageCached(realWindow._docIndex + 1);
+        ensurePageCached(realWindow._docIndex - 1);
     }
     return result;
 }
@@ -333,7 +334,7 @@ const renderPdf = async (imageCount, imageName, asSubCall) => {
     for (var htmlContent = "", viewerOffset = $(".viewer-move").length !== 0 ? $(".viewer-move").offset() : null, imageIndex = 0; imageIndex < imageCount; imageIndex++) {
         progressBarUpdateCurrent(imageName)
         if (!asSubCall) {
-            await ensurePageCached(_docIndex, true);
+            await ensurePageCached(realWindow._docIndex, true);
         }
         const data = await getImageCached(imageIndex, imageName, imageCount)
         htmlContent += "<div id='rawimagewrapper'><img id='imagePdf" + imageIndex + "' class='imagePdf' src='data:image/png;base64," + data + "' /><\/div>";
@@ -362,16 +363,16 @@ const renderPdf = async (imageCount, imageName, asSubCall) => {
 exportOnWindow({ renderPdf });
 
 const openPdf = async (n) => {
-    progressBarUpdateCurrent(_docNameList[_docIndex])
+    progressBarUpdateCurrent(realWindow._docNameList[realWindow._docIndex])
     await showWaitingScreen();
     await ensureCurrentPageCached();
 
-    let imageCount = await getImageCountReady(_docIndex);
+    let imageCount = await getImageCountReady(realWindow._docIndex);
 
     if (imageCount > 1) {
         imageCount = 1
     }
-    await renderPdf(imageCount, _docNameList[_docIndex], true);
+    await renderPdf(imageCount, realWindow._docNameList[realWindow._docIndex], true);
     onSwipePdf();
     await hideWaitingScreen();
     $("#pdf").css({
@@ -387,8 +388,8 @@ exportOnWindow({ openPdf });
 
 // #region auto-cache all pages
 const loadAllPages = async () => {
-    if (unsafeWindow['_docNameList']) {
-        for (let index = 0; index < _docNameList.length; index++) {
+    if (realWindow['_docNameList']) {
+        for (let index = 0; index < realWindow._docNameList.length; index++) {
             await ensurePageCached(index);
             // await delay(1000);
         }
@@ -421,7 +422,7 @@ const identifyImageMimeType = (data) => {
 exportOnWindow({ identifyImageMimeType });
 // #endregion
 
-if (unsafeWindow._docNameList) {
+if (realWindow._docNameList) {
     createProgressBar();
 
     const allLoaded = loadAllPages();
@@ -432,8 +433,8 @@ if (unsafeWindow._docNameList) {
 
     const enumerateCachedPages = async function* () {
         await allLoaded;
-        for (let docIndex = 0; docIndex < _docNameList.length; docIndex++) {
-            const imageName = _docNameList[docIndex];
+        for (let docIndex = 0; docIndex < realWindow._docNameList.length; docIndex++) {
+            const imageName = realWindow._docNameList[docIndex];
             const imageCount = imageCache[imageName].length;
             for (let imageIndex = 0; imageIndex < imageCount; imageIndex++) {
                 const base64Data = imageCache[imageName][imageIndex];

@@ -1,3 +1,4 @@
+// @import{realWindow}
 /**
  * @typedef {Object} KeyStruct A key event
  * @property {string} key The key value of the key represented by the event
@@ -140,7 +141,7 @@ const registerKeyStruct = (() => {
     }
 
     document.addEventListener('keydown', onKeyDown)
-    window.keyBindings = keyBindings
+    realWindow.keyBindings = keyBindings
 
     return registerKeyStruct;
 })()

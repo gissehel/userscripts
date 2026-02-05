@@ -1,8 +1,8 @@
-unsafeWindow = {}
+realWindow = {}
 
 describe('getSsmHookableValue', () => {
     beforeEach(() => {
-        Object.keys(unsafeWindow).forEach((key)=>{ delete unsafeWindow[key]; })
+        Object.keys(realWindow).forEach((key)=>{ delete realWindow[key]; })
     });
 
     test('should return the same HookableValue instance for the same localName and name', () => {

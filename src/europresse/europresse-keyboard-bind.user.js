@@ -2,6 +2,7 @@ const moveAccelerationRatio = 1.1;
 const moveBaseDelta = 10;
 const moveHistoryTimeout = 3000; // ms
 
+// @import{realWindow}
 // @import{registerDomNodeMutatedUnique}
 // @import{registerEventListener}
 // @import{getElements}
@@ -28,10 +29,10 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
     const prev_button = getElements('#prevPdf')[0]
     const reset_zoom_button = getElements('#reset')[0]
     const pdf_pages_panel_btn = getElements('span.pdf-pages-panel-btn')[0]
-    const downloadImage = () => downloadDataUrl(getElements('.imagePdf')[0].src, `europresse-${_docNameList[_docIndex]}`)
+    const downloadImage = () => downloadDataUrl(getElements('.imagePdf')[0].src, `europresse-${realWindow._docNameList[realWindow._docIndex]}`)
     const moveDirection = (direction, delta) => {
         const viewer = getElements('img.viewer-move')[0];
-        window.viewer = viewer;
+        exportOnWindow({ viewer });
         switch (direction) {
             case Direction.LEFT:   _pdfViewer.moveTo(viewer.offsetLeft + delta, viewer.offsetTop); break;
             case Direction.RIGHT:  _pdfViewer.moveTo(viewer.offsetLeft - delta, viewer.offsetTop); break;
@@ -43,7 +44,7 @@ registerDomNodeMutatedUnique(() => getElements('#currentDoc.panel'), (close_butt
         }
     };
     const recentMoveHistory = [];
-    window.recentMoveHistory = recentMoveHistory;
+    exportOnWindow({ recentMoveHistory });
     const moveDirectionWithAcceleration = (direction) => {
         const timestamp = (new Date()).getTime();
         const historyField = { timestamp, direction };
