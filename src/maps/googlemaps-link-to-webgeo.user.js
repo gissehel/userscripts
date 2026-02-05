@@ -30,7 +30,7 @@ registerDomNodeMutatedUnique(() => document.querySelectorAll('[data-ogsr-up]'), 
             ],
             nextSibling: firstLink,
             onCreated: (link) => {
-                link.registerClickListener(() => {
+                registerClickListener(link, () => {
                     let googlePosition = document.URL.split('/').filter(part => part.startsWith('@'))[0];
                     if (googlePosition.endsWith('m')) {
                         const [alat, lon, distance] = googlePosition.split(',')

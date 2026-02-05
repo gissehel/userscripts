@@ -35,7 +35,7 @@ registerDomNodeMutatedUnique(() => document.querySelectorAll('#reverse-geocoding
                     ],
                     classnames: ['nav-link'],
                     onCreated: (link) => {
-                        link.registerClickListener(() => {
+                        registerClickListener(link, () => {
                             const coords = document.querySelectorAll('#reverse-geocoding-coords')[0]
                             if (coords) {
                                 const text = coords.textContent;

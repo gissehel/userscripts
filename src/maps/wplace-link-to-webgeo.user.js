@@ -2,7 +2,6 @@
 // @match        https://wplace.live/*
 // ==/UserScript==
 
-// @import{registerClickListener}
 // @import{registerDomNodeMutatedUnique}
 // @import{createElementExtended}
 // @import{openLinkInNewTab}

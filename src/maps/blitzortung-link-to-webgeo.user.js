@@ -16,7 +16,7 @@ registerDomNodeMutatedUnique(() => document.querySelectorAll('#MenuButtonDiv'), 
         parent: menuBase.parentElement,
         classnames: ['MenuButtonDiv'],
         onCreated: (element) => {
-            element.registerClickListener(() => {
+            registerClickListener(element, () => {
                 const params = location.hash.substring(1).split('/')
                 if (params.length > 0) {
                     const [zoom, lat, lon] = params.map(x => Number(x))

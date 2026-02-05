@@ -11,7 +11,7 @@ registerDomNodeMutatedUnique(() => getElements('.top-nav__prime'), (nav_menu) =>
         onCreated: (pipNode) => {
             pipNode.style.fontWeight = 'bold'
             pipNode.style.cursor = 'pointer'
-            pipNode.registerClickListener(() => {
+            registerClickListener(pipNode, () => {
                 (
                     getElements('video').reduce(
                         (prev, current) => (prev.offsetHeight > current.offsetHeight) ? prev : current,

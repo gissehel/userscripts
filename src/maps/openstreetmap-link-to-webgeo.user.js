@@ -30,7 +30,7 @@ const navLink = createElementExtended('li', {
             ],
             classnames: ['nav-link'],
             onCreated: (link) => {
-                link.registerClickListener(() => {
+                registerClickListener(link, () => {
                     const urlArgs = document.URL.split('#')[1];
                     let osmPosition = null;
                     if (urlArgs) {

@@ -43,7 +43,7 @@ const title = createElementExtended('h1', {
                 }),
             ],
             onCreated: (link) => {
-                link.registerClickListener(() => {
+                registerClickListener(link, () => {
                     const locs = location.hash.split('/').filter(x => x.startsWith('loc='));
                     if (locs.length > 0) {
                         const loc = locs[0].substring('loc='.length)

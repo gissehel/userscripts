@@ -32,7 +32,7 @@ registerDomNodeMutatedUnique(() => document.querySelectorAll('.top-right.subcont
                     })
                 ],
                 onCreated: (image) => {
-                    image.registerClickListener(() => {
+                    registerClickListener(image, () => {
                         const bingPosition = Object.fromEntries(document.URL.split('?')[1].split('&').map(data => data.split('=')))
                         if (bingPosition) {
                             const [lat, lon] = bingPosition.cp.split('%7E')

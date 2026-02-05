@@ -34,7 +34,7 @@ registerDomNodeMutatedUnique(() => [...document.body.querySelectorAll('#overlay'
         ],
         nextSibling: toggleOverlays,
         onCreated: (link) => {
-            link.registerClickListener(() => {
+            registerClickListener(link, () => {
                 const params = document.URL.split('?')[1].split(',').filter(x => x.indexOf(':') === -1)
                 if (params.length >= 3) {
                     const [lat, lon, zoom] = params.slice(params.length - 3)
