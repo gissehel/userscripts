@@ -1,4 +1,5 @@
 realWindow = {}
+function window() {} // ugly trick to make "window" accessible before declaration
 
 describe('getSsmHookableValue', () => {
     beforeEach(() => {

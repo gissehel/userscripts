@@ -1,3 +1,6 @@
 [submodule "userscripts-manager"]
 	path = userscripts-manager
 	url = https://github.com/userscripts-manager/userscripts-manager
+[submodule "userscripts-snippet"]
+	path = userscripts-snippet
+	url = https://github.com/userscripts-manager/userscripts-snippet
