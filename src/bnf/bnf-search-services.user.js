@@ -232,9 +232,9 @@ const createSearchFilterElement = () => createElementExtended('input', {
             updateSearch_(e.target.value);
         })
         setTimeout(() => {
-            element.focus()    
+            element.focus()
         }, 0);
-        
+
     },
 })
 
