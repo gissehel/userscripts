@@ -70,14 +70,17 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
                 index += 1
             }
             if (!hasNewSpeed) {
-               new_speed = lowSpeeds[lowSpeeds.length - 1]
-               hasNewSpeed = true
+                new_speed = lowSpeeds[lowSpeeds.length - 1]
+                hasNewSpeed = true
             }
             if (speed !== new_speed) {
                 speed = new_speed
                 setSpeed(speed)
                 if (options.verbose) {
                     console.log(`SPEED : [${speed}] move (${deltaY})`)
+                }
+                if (options.onSpeedChanged) {
+                    options.onSpeedChanged(speed)
                 }
             }
         }
@@ -93,6 +96,9 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
             if (options.verbose) {
                 console.log(`SPEED : [${speed}] cleanup`)
             }
+            if (options.onSpeedChanged) {
+                options.onSpeedChanged(speed)
+            }
         }
         if (activePointerId !== null) {
             try {
@@ -104,19 +110,22 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
     }
 
     const onPointerUp = (e) => {
-      if (!hasExceededThreshold) {
-        if (options.simulatePlayPause) {
-          console.log('play pause simulation')
-          if (video.paused) {
-            video.play()
-          } else {
-            video.pause()
-          }
-          e.stopImmediatePropagation();
-          e.preventDefault();
+        if (!hasExceededThreshold) {
+            if (options.simulatePlayPause) {
+                shouldCancelClick = true;
+                if (options.verbose) {
+                    console.log('PLAY/PAUSE simulation')
+                }
+                if (video.paused) {
+                    video.play()
+                } else {
+                    video.pause()
+                }
+                e.stopImmediatePropagation();
+                e.preventDefault();
+            }
         }
-      }
-      return cleanup(e)
+        return cleanup(e)
     }
 
     const onClick = (e) => {
