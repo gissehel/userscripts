@@ -80,7 +80,7 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
                     console.log(`SPEED : [${speed}] move (${deltaY})`)
                 }
                 if (options.onSpeedChanged) {
-                    options.onSpeedChanged(speed)
+                    options.onSpeedChanged(video, speed)
                 }
             }
         }
@@ -97,7 +97,7 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
                 console.log(`SPEED : [${speed}] cleanup`)
             }
             if (options.onSpeedChanged) {
-                options.onSpeedChanged(speed)
+                options.onSpeedChanged(video, speed)
             }
         }
         if (activePointerId !== null) {
