@@ -103,6 +103,22 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
         activePointerId = null;
     }
 
+    const onPointerUp = (e) => {
+      if (!hasExceededThreshold) {
+        if (options.simulatePlayPause) {
+          console.log('play pause simulation')
+          if (video.paused) {
+            video.play()
+          } else {
+            video.pause()
+          }
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }
+      return cleanup(e)
+    }
+
     const onClick = (e) => {
         if (shouldCancelClick) {
             e.stopImmediatePropagation();
@@ -113,14 +129,14 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
 
     video.addEventListener("pointerdown", onPointerDown, { capture: true });
     video.addEventListener("pointermove", onPointerMove, { capture: true });
-    video.addEventListener("pointerup", cleanup, { capture: true });
+    video.addEventListener("pointerup", onPointerUp, { capture: true });
     video.addEventListener("pointercancel", cleanup, { capture: true });
     video.addEventListener("click", onClick, { capture: true });
 
     return () => {
         video.removeEventListener("pointerdown", onPointerDown, { capture: true });
         video.removeEventListener("pointermove", onPointerMove, { capture: true });
-        video.removeEventListener("pointerup", cleanup, { capture: true });
+        video.removeEventListener("pointerup", onPointerUp, { capture: true });
         video.removeEventListener("pointercancel", cleanup, { capture: true });
         video.removeEventListener("click", onClick, { capture: true });
     }
