@@ -7,8 +7,9 @@
 // @import{registerDomNodeMutatedUnique}
 // @import{cleanupString}
 // @import{downloadData}
+// @import{downloadInfluxFile}
 
-NodeList.prototype.at = function(index) { return [...this]?.at(index) }
+NodeList.prototype.at = function (index) { return [...this]?.at(index) }
 
 const isNumOnly = (str) => [...str].filter(c => c < '0' || c > '9').length === 0
 const isFrDecimal = (str) => {
@@ -29,11 +30,6 @@ const isDeAInverval = (str) => str.startsWith('De ') && isAInverval(str.slice(3)
 const isJusquAInverval = (str) => (str.startsWith('Jusqu\'à ') || str.startsWith('Jusqu’à ')) && isNegPercentOnly(str.slice(8))
 
 const isEuroAmount = (str) => str.endsWith('€') && isSignedFrDecimal(str.slice(0, -1))
-
-const getInfluxString = (str) => `"${str.replaceAll('\\', '\\\\').replaceAll('"', '\\"')}"`
-const getInfluxStringTag = (str) => `${str.replaceAll('\\', '\\\\').replaceAll(' ', '\\ ').replaceAll('"', '\\"')}`
-const getInfluxBoolean = (str) => `${str === true}`
-const getInfluxInteger = (str) => `${str}i`
 
 /**
  * Extracts additional information from a string that represents a negative percentage value.
@@ -78,7 +74,7 @@ const getExtraInfo = (str) => {
         }
     }
     if (isEuroAmount(str)) {
-        const value = getFrDecimalAsCents(str.slice(0,-1))
+        const value = getFrDecimalAsCents(str.slice(0, -1))
         return {
             amount: value,
             parsed: true
@@ -89,42 +85,30 @@ const getExtraInfo = (str) => {
     }
 }
 
-const get_influx_dict = (dict) => Object.entries(dict).map(([key, value]) => `${key}=${value}`).join(',')
+const get_data_for_influx = async function* (infos) {
+    const measurement = `boursobank_thecorner`
+    for (let { id, name, description, CTA, tag, favorite } of infos) {
 
-const get_influx_line = (infos, { id, name, description, CTA, tag, favorite }) => {
-    if (!CTA) {
-        return undefined
-    }
-    const { minRedux, maxRedux, amount } = getExtraInfo(CTA)
+        const tags = {id, name}
+        const fields = { description, CTA, tag, favorite }
+        const { minRedux, maxRedux, amount } = getExtraInfo(CTA)
+        if (minRedux) {
+            fields.minRedux = minRedux
+            fields.maxRedux = maxRedux
+        }
+        if (amount) {
+            fields.amount = amount
+        }
+        const date = infos.date.unix
 
-    const fields = {}
-    const tags = {}
-    tags.id = getInfluxStringTag(id)
-    tags.name = getInfluxStringTag(name)
-    fields.description = getInfluxString(description)
-    fields.CTA = getInfluxString(CTA)
-    fields.tag = getInfluxString(tag)
-    fields.favorite = getInfluxBoolean(favorite)
-    if (minRedux) {
-        fields.minRedux = getInfluxInteger(minRedux)
-        fields.maxRedux = getInfluxInteger(maxRedux)
+        yield { measurement, tags, fields, date }
     }
-    if (amount) {
-        fields.amount = getInfluxInteger(amount)
-    }
-    const metric = `boursobank_thecorner`
-    return `${metric},${get_influx_dict(tags)} ${get_influx_dict(fields)} ${infos.date.unix * 1000000000}`
-}
-
-const get_influx_content = (infos) => {
-    const lines = infos.items.map(item => get_influx_line(infos, item)).filter(line => line !== undefined)
-    return lines.join('\n')
 }
 
 registerDomNodeMutatedUnique(() => document.querySelectorAll('#marketplaceProductList'), (container) => {
     const date = new Date()
     const dateiso = date.toISOString()
-    const dateunix = date.getTime()/1000
+    const dateunix = date.getTime() / 1000
     const dateid = dateiso.replace(/\..*/, '').replace(/[-:]/g, '').replace(/T/, '-')
 
     const infos = {
@@ -156,21 +140,19 @@ registerDomNodeMutatedUnique(() => document.querySelectorAll('#marketplaceProduc
         })
     }
 
-    const json = JSON.stringify(infos,null,2)
+    const json = JSON.stringify(infos, null, 2)
     const csv = [
         ['id', 'name', 'description', 'CTA', 'tag', 'favorite'].join(';'),
-        ...infos.items.map(({id, name, description, CTA, tag, favorite}) => `"${id}";"${name}";"${description}";"${CTA}";"${tag}";"${favorite}"`)
+        ...infos.items.map(({ id, name, description, CTA, tag, favorite }) => `"${id}";"${name}";"${description}";"${CTA}";"${tag}";"${favorite}"`)
     ].join('\r\n')
-    const influx = get_influx_content(infos)
 
     downloadData(`thecorner-list-${dateid}.json`, json, { mimetype: 'application/json', encoding: 'utf-8' })
-    downloadData(`thecorner-list-${dateid}.csv`, csv, { mimetype : 'text/csv', encoding: 'windows-1252' })
-    downloadData(`thecorner-list-${dateid}.influx`, influx, { mimetype : 'text/plain', encoding: 'utf-8' })
+    downloadData(`thecorner-list-${dateid}.csv`, csv, { mimetype: 'text/csv', encoding: 'windows-1252' })
+    downloadInfluxFile(`thecorner-list-${dateid}.influx`, get_data_for_influx(infos))
 
     console.log(infos)
     console.log(json)
     console.log(csv)
-    console.log(influx)
 
     return true
 })
