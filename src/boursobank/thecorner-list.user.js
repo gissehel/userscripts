@@ -87,7 +87,7 @@ const getExtraInfo = (str) => {
 
 const get_data_for_influx = async function* (infos) {
     const measurement = `boursobank_thecorner`
-    for (let { id, name, description, CTA, tag, favorite } of infos) {
+    for (let { id, name, description, CTA, tag, favorite } of infos.items) {
 
         const tags = {id, name}
         const fields = { description, CTA, tag, favorite }
