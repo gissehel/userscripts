@@ -21,6 +21,9 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
     let speed = normalSpeed;
 
     const onPointerDown = (e) => {
+        if (e.button !== 0) {
+            return;
+        }
         e.stopImmediatePropagation();
         e.preventDefault();
         startY = e.clientY;
@@ -31,6 +34,9 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
     }
 
     const onPointerMove = (e) => {
+        if (e.button !== 0) {
+            return;
+        }
         if (hasExceededThreshold) {
             e.stopImmediatePropagation();
             e.preventDefault();
@@ -87,6 +93,9 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
     }
 
     const cleanup = (e) => {
+        if (e.button !== 0) {
+            return;
+        }
         if (hasExceededThreshold) {
             e.stopImmediatePropagation();
             e.preventDefault();
@@ -110,6 +119,9 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
     }
 
     const onPointerUp = (e) => {
+        if (e.button !== 0) {
+            return;
+        }
         if (!hasExceededThreshold) {
             if (options.simulatePlayPause) {
                 shouldCancelClick = true;
@@ -129,6 +141,9 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
     }
 
     const onClick = (e) => {
+        if (e.button !== 0) {
+            return;
+        }
         if (shouldCancelClick) {
             e.stopImmediatePropagation();
             e.preventDefault();
