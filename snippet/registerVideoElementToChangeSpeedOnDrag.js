@@ -34,10 +34,7 @@ const registerVideoElementToChangeSpeedOnDrag = (video, thresold, speedvalues, s
     }
 
     const onPointerMove = (e) => {
-        if (e.button !== 0) {
-            return;
-        }
-        if (hasExceededThreshold) {
+        if (hasExceededThreshold || (!activePointerId)) {
             e.stopImmediatePropagation();
             e.preventDefault();
         }
