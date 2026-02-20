@@ -154,9 +154,6 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
     }
 
     const cleanup = async (e) => {
-        if (e.button !== 0) {
-            return;
-        }
         if (hasExceededThreshold) {
             e.stopImmediatePropagation();
             e.preventDefault();
@@ -180,6 +177,13 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
             catch (_) { }
         }
         activePointerId = null;
+    }
+
+    const onPointerCancel = async (e) => {
+        if (e.button !== 0) {
+            return;
+        }
+        return cleanup(e)
     }
 
     const onPointerUp = async (e) => {
@@ -217,11 +221,17 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
 
     const registrationManager = new RegistrationManager()
 
-    registrationManager.onRegistration(registerEventListener(panelControl, "pointerdown", onPointerDown, { capture: true }));
-    registrationManager.onRegistration(registerEventListener(panelControl, "pointermove", onPointerMove, { capture: true }));
-    registrationManager.onRegistration(registerEventListener(panelControl, "pointerup", onPointerUp, { capture: true }));
-    registrationManager.onRegistration(registerEventListener(panelControl, "pointercancel", cleanup, { capture: true }));
-    registrationManager.onRegistration(registerEventListener(panelControl, "click", onClick, { capture: true }));
+    const eventsToBind = {
+        pointerdown: onPointerDown,
+        pointermove: onPointerMove,
+        pointerup: onPointerUp,
+        pointercancel: onPointerCancel,
+        click: onClick
+    }
+
+    Object.entries(eventsToBind).forEach(([event, handler]) => {
+        registrationManager.onRegistration(registerEventListener(panelControl, event, handler, { capture: true }));
+    });
 
     return () => {
         registrationManager.cleanupAll();
