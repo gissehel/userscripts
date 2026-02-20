@@ -1,4 +1,6 @@
 // @import{delay}
+// @import{registerEventListener}
+// @import{RegistrationManager}
 /**
  * register a video element to change playback speed based on vertical drag distance. (Use the register pattern for cleanup)
  * 
@@ -123,13 +125,13 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
                 index -= 1
             }
             if (!hasNewSpeed) {
-                if (deltaY > -thresold) {
+                if (deltaY > -thresoldY) {
                     new_speed = normalSpeed
                     hasNewSpeed = true
                 }
             }
             while ((!hasNewSpeed) && (index < lowSpeeds.length)) {
-                if (deltaY > -thresold * (index + 2)) {
+                if (deltaY > -thresoldY * (index + 2)) {
                     new_speed = lowSpeeds[index]
                     hasNewSpeed = true
                     break
@@ -213,17 +215,15 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
         }
     }
 
-    panelControl.addEventListener("pointerdown", onPointerDown, { capture: true });
-    panelControl.addEventListener("pointermove", onPointerMove, { capture: true });
-    panelControl.addEventListener("pointerup", onPointerUp, { capture: true });
-    panelControl.addEventListener("pointercancel", cleanup, { capture: true });
-    panelControl.addEventListener("click", onClick, { capture: true });
+    const registrationManager = new RegistrationManager()
+
+    registrationManager.onRegistration(registerEventListener(panelControl, "pointerdown", onPointerDown, { capture: true }));
+    registrationManager.onRegistration(registerEventListener(panelControl, "pointermove", onPointerMove, { capture: true }));
+    registrationManager.onRegistration(registerEventListener(panelControl, "pointerup", onPointerUp, { capture: true }));
+    registrationManager.onRegistration(registerEventListener(panelControl, "pointercancel", cleanup, { capture: true }));
+    registrationManager.onRegistration(registerEventListener(panelControl, "click", onClick, { capture: true }));
 
     return () => {
-        panelControl.removeEventListener("pointerdown", onPointerDown, { capture: true });
-        panelControl.removeEventListener("pointermove", onPointerMove, { capture: true });
-        panelControl.removeEventListener("pointerup", onPointerUp, { capture: true });
-        panelControl.removeEventListener("pointercancel", cleanup, { capture: true });
-        panelControl.removeEventListener("click", onClick, { capture: true });
+        registrationManager.cleanupAll();
     }
 }
