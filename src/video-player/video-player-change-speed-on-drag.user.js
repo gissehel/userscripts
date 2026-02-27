@@ -12,6 +12,7 @@
 // @import{RegistrationManager}
 // @import{realWindow}
 // @import{exportOnWindow}
+// @import{registerMenuCommand}
 
 class PersistantInternalExternalList {
     constructor(monkeyName, defaultInternalList = [], defaultExternalList = []) {
@@ -260,5 +261,11 @@ exportOnWindow({
     video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list,
     video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list,
 })
+
+registerMenuCommand('Add this site to video speed change black list', video_player_change_speed__Add_this_site_to_blacklist)
+registerMenuCommand('Remove this site from video speed change black list', video_player_change_speed__Remove_this_site_from_blacklist)
+
+registerMenuCommand('Add this site to simulate play/pause on click list', video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list)
+registerMenuCommand('Remove this site from simulate play/pause on click list', video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list)
 
 main()
