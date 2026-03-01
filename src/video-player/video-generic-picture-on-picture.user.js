@@ -1,4 +1,5 @@
 // @import{getElements}
+// @import{registerMenuCommand}
 
 const setVideoPictureInPicture = async () => {
     try {
@@ -24,4 +25,4 @@ const setVideoPictureInPicture = async () => {
     }
 }
 
-setVideoPictureInPicture();
+registerMenuCommand('Toggle Picture-in-Picture', setVideoPictureInPicture)
