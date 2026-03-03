@@ -1,0 +1,6 @@
+{
+    "match": [
+        "https://www.reddit.com/*"
+    ],
+    "iconFromDomain" : "reddit.com"
+}
