@@ -9,12 +9,13 @@
 /**
  * Creates a generic panel
  * @param {string} localName The local storage name
+ * @param {string} sectionName The section name within the panel
  * @param {()=>Promise<HTMLElement[]>} getPanelContent The function to get the panel content
  * @param {Object} [options] Additional options
  * @param {(newPosition: string) => void} [options.onPanelPositionChanged] A callback called when the panel position changes
  * @param {(swapGenericPanel: () => void) => void} [options.setSwapGenericPanelFunction] A function to get the swap generic panel function, which can be used to toggle the panel visibility
  */
-const createSsmGenericPanel = async (localName, getPanelContent, options) => {
+const createSsmGenericPanel = async (localName, sectionName, getPanelContent, options) => {
     if (!options) {
         options = {};
     }
@@ -94,6 +95,7 @@ const createSsmGenericPanel = async (localName, getPanelContent, options) => {
             }),
         ],
         onCreated: (panel) => {
+            panel.subSections = {};
             panelPosition.register(async (newValue) => {
                 panel.style.right = newValue === PANEL_POSITION.LEFT ? 'unset' : '10px';
                 panel.style.left = newValue === PANEL_POSITION.LEFT ? '10px' : 'unset';
@@ -102,15 +104,27 @@ const createSsmGenericPanel = async (localName, getPanelContent, options) => {
         },
     }));
 
-    panel.appendChild(
-        createElementExtended('span', {
-            children: await getPanelContent(),
-            style: {
-                display: panelPosition.value === PANEL_POSITION.MINI ? 'none' : 'block',
-            },
-            onCreated: (panelContent) => panelPosition.register(async (newValue) => panelContent.style.display = newValue === PANEL_POSITION.MINI ? 'none' : 'block'),
-        }),
-    )
+    if (panel.subSections[sectionName]) {
+        panel.subSections[sectionName].remove()
+    }
+
+    const sectionElement = createElementExtended('span', {
+        children: await getPanelContent(),
+        style: {
+            display: panelPosition.value === PANEL_POSITION.MINI ? 'none' : 'block',
+        },
+        onCreated: (panelContent) => panelPosition.register(async (newValue) => panelContent.style.display = newValue === PANEL_POSITION.MINI ? 'none' : 'block'),
+    })
+
+    panel.subSections[sectionName] = sectionElement;
+
+    const nextSectionKey = Object.keys(panel.subSections).sort((a, b) => a.localeCompare(b)).filter(key => sectionName.localeCompare(key) < 0)[0];
+
+    if (nextSectionKey) {
+        panel.insertBefore(sectionElement, panel.subSections[nextSectionKey]);
+    } else {
+        panel.appendChild(sectionElement);
+    }
 
     const swapGenericPanel = async () => {
         panelPosition.value = (panelPosition.value === PANEL_POSITION.NONE) ? PANEL_POSITION.RIGHT : PANEL_POSITION.NONE;
