@@ -26,16 +26,6 @@ const createSsmGenericPanel = async (localName, sectionName, getPanelContent, op
         NONE: 'none',
     }
 
-    const getNextPanelPosition = (position) => {
-        switch (position) {
-            case PANEL_POSITION.RIGHT: return PANEL_POSITION.LEFT;
-            case PANEL_POSITION.LEFT: return PANEL_POSITION.MINI;
-            case PANEL_POSITION.MINI: return PANEL_POSITION.RIGHT;
-            case PANEL_POSITION.NONE: return PANEL_POSITION.RIGHT;
-        }
-        return PANEL_POSITION.RIGHT;
-    }
-
     let panelPosition = getSsmHookableValueMonkeyGetSet(localName, 'panelPosition', PANEL_POSITION.RIGHT);
 
     const panel = getSsmValue(localName, 'panel', () => createElementExtended('div', {
@@ -44,6 +34,7 @@ const createSsmGenericPanel = async (localName, sectionName, getPanelContent, op
             top: '10px',
             right: panelPosition.value === PANEL_POSITION.LEFT ? 'unset' : '10px',
             left: panelPosition.value === PANEL_POSITION.LEFT ? '10px' : 'unset',
+            display: panelPosition.value === PANEL_POSITION.NONE ? 'none' : 'block',
             zIndex: 2147483621,
             backgroundColor: 'white',
             border: '1px solid black',
