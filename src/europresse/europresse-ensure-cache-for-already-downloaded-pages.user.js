@@ -1,10 +1,14 @@
 // @import{realWindow}
 // @import{delay}
 // @import{Semaphore}
+// @import{SemaphoreIntertabs}
 // @import{exportOnWindow}
 // @import{createElementExtended}
+// @import{monkeyGetSetValue}
 
-exportOnWindow({ createElementExtended, delay, Semaphore });
+const useIntertabsSemaphore = monkeyGetSetValue('useIntertabsSemaphore', false);
+
+exportOnWindow({ createElementExtended, delay, Semaphore, SemaphoreIntertabs });
 
 // #region Waiting screen management
 const createWaitingScreen = () => {
@@ -244,7 +248,7 @@ const getImage = (index, imageName) => {
 exportOnWindow({ getImage });
 
 
-let cacheSemaphore = new Semaphore(1);
+let cacheSemaphore = useIntertabsSemaphore ? new SemaphoreIntertabs('cache') : new Semaphore(1);
 exportOnWindow({ cacheSemaphore });
 
 let uidcache = 0;
