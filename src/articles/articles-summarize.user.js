@@ -24,6 +24,8 @@
 // @import{bindOnClick}
 // @import{openLinkInNewTab}
 // @import{createSsmGenericPanel}
+// @import{ICONS}
+// @import{delay}
 
 // Exemples pour test:
 // * https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html
@@ -178,20 +180,48 @@ const getGptInstructions = (options) => options.prompts.join('\n ').replace('{{l
 
 const getSiteInfo = () => siteInfos[getDomain()] || siteInfos[document.location.hostname];
 
-const cleanupArticle = (siteInfo) => {
-    if (!siteInfo) {
-        siteInfo = getSiteInfo();
-    }
+const cleanup = (siteInfo) => {
     siteInfo.toremove.map(p => getElements(p).map(x => x.remove()));
 }
 
-const cleanupAndCopyArticle = async () => {
+const cleanupArticle = async () => {
+    const siteInfo = getSiteInfo();
+    cleanup(siteInfo);
+}
+
+const COPY_TYPE = {
+    CLIPBOARD: 'clipboard',
+    ALERT: 'alert',
+}
+
+/**
+ * Copy or display the text to the user depending on the copyType
+ * @param {*} text The text to copy or display
+ * @param {*} copyType The way to copy or display the text, can be 'clipboard' or 'alert'
+ */
+const copy = async (text, copyType) => {
+    if (copyType === COPY_TYPE.CLIPBOARD) {
+        await copyTextToClipboard(text);
+    } else if (copyType === COPY_TYPE.ALERT) {
+        alert(text);
+    } else {
+        await delay(0)
+        console.error('Invalid copy type:', copyType);
+    }
+}
+
+const copyPromptPrefix = async (copyType) => {
+    const promptPrefix = getGptInstructions(options);
+    await copy(promptPrefix, copyType);
+}
+
+const cleanupAndCopyArticle = async (copyType) => {
     const siteInfo = getSiteInfo();
     const mainArticle = getElements(siteInfo.article)[0];
-    cleanupArticle(siteInfo);
+    cleanup(siteInfo);
     const text = mainArticle.innerText
     const prompt = getGptInstructions(options) + '\n\n' + text;
-    await copyTextToClipboard(prompt);
+    await copy(prompt, copyType);
 }
 
 const createPanel = async () => {
@@ -202,22 +232,30 @@ const createPanel = async () => {
             return [
                 ...options.llmEngines.map((engine) =>
                     createIconLink(engine.icon ? engine.icon : 'https://www.google.com/s2/favicons?sz=64&domain=' + engine.domain, engine.name, engine.url, async () => {
-                        await cleanupAndCopyArticle();
+                        await cleanupAndCopyArticle(COPY_TYPE.CLIPBOARD);
                         openLinkInNewTab(engine.url);
                     })
                 ),
                 createElementExtended('hr'),
                 createIconLink(
-                    'https://cdn-icons-png.flaticon.com/512/2954/2954888.png', // From Flaticon [Clean icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/clean)
+                    ICONS.CLEANUP,
                     'Cleanup',
                     '#',
                     async () => { cleanupArticle(); }
                 ),
                 createIconLink(
-                    'https://cdn-icons-png.flaticon.com/512/2570/2570600.png', // From Flaticon [Clean icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/clean)
+                    ICONS.TITLE,
+                    'Copy prompt prefix',
+                    '#',
+                    async () => { await copyPromptPrefix(COPY_TYPE.CLIPBOARD); },
+                    async () => { await copyPromptPrefix(COPY_TYPE.ALERT); }
+                ),
+                createIconLink(
+                    ICONS.COPY,
                     'Copy prompt',
                     '#',
-                    async () => { await cleanupAndCopyArticle(); }
+                    async () => { await cleanupAndCopyArticle(COPY_TYPE.CLIPBOARD); },
+                    async () => { await cleanupAndCopyArticle(COPY_TYPE.ALERT); }
                 ),
             ]
         },
