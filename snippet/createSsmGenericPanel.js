@@ -56,28 +56,48 @@ const createSsmGenericPanel = async (localName, getPanelContent, options) => {
         },
         parent: document.body,
         children: [
-            createIconLinkAction(
-                ICONS.MOVE,
-                'Move panel',
-                async () => {
-                    await panelPosition.setValue(getNextPanelPosition(panelPosition.value));
-                }
-            ),
+            createElementExtended('span', {
+                children: [
+                    createIconLinkAction(
+                        ICONS.LEFT,
+                        'Move panel to the left',
+                        async () => await panelPosition.setValue(PANEL_POSITION.LEFT),
+                    ),
+                    createIconLinkAction(
+                        ICONS.RIGHT,
+                        'Move panel to the right',
+                        async () => await panelPosition.setValue(PANEL_POSITION.RIGHT),
+                    ),
+                    createIconLinkAction(
+                        ICONS.SHRINK,
+                        'Shrink panel',
+                        async () => await panelPosition.setValue(PANEL_POSITION.MINI),
+                    ),
+                ],
+                style: {
+                    display: panelPosition.value === PANEL_POSITION.MINI ? 'none' : 'inline-block',
+                },
+                onCreated: (element) => panelPosition.register(async (newValue) => element.style.display = newValue === PANEL_POSITION.MINI ? 'none' : 'inline-block'),
+            }),
+            createElementExtended('span', {
+                children: [
+                    createIconLinkAction(
+                        ICONS.GROW,
+                        'Grow panel',
+                        async () => await panelPosition.setValue(PANEL_POSITION.RIGHT),
+                    ),
+                ],
+                style: {
+                    display: panelPosition.value === PANEL_POSITION.MINI ? 'inline-block' : 'none',
+                },
+                onCreated: (element) => panelPosition.register(async (newValue) => element.style.display = newValue === PANEL_POSITION.MINI ? 'inline-block' : 'none'),
+            }),
         ],
         onCreated: (panel) => {
             panelPosition.register(async (newValue) => {
-                if (newValue === PANEL_POSITION.LEFT) {
-                    panel.style.right = 'unset';
-                    panel.style.left = '10px';
-                } else {
-                    panel.style.right = '10px';
-                    panel.style.left = 'unset';
-                }
-                if (newValue === PANEL_POSITION.NONE) {
-                    panel.style.display = 'none';
-                } else {
-                    panel.style.display = 'block';
-                }
+                panel.style.right = newValue === PANEL_POSITION.LEFT ? 'unset' : '10px';
+                panel.style.left = newValue === PANEL_POSITION.LEFT ? '10px' : 'unset';
+                panel.style.display = newValue === PANEL_POSITION.NONE ? 'none' : 'block';
             });
         },
     }));
@@ -88,24 +108,12 @@ const createSsmGenericPanel = async (localName, getPanelContent, options) => {
             style: {
                 display: panelPosition.value === PANEL_POSITION.MINI ? 'none' : 'block',
             },
-            onCreated: (panelContent) => {
-                panelPosition.register(async (newValue) => {
-                    if (newValue === PANEL_POSITION.MINI && panelContent) {
-                        panelContent.style.display = 'none';
-                    } else if (panelContent) {
-                        panelContent.style.display = 'block';
-                    }
-                });
-            },
+            onCreated: (panelContent) => panelPosition.register(async (newValue) => panelContent.style.display = newValue === PANEL_POSITION.MINI ? 'none' : 'block'),
         }),
     )
 
     const swapGenericPanel = async () => {
-        if (panelPosition.value === PANEL_POSITION.NONE) {
-            panelPosition.value = PANEL_POSITION.RIGHT;
-        } else {
-            panelPosition.value = PANEL_POSITION.NONE;
-        }
+        panelPosition.value = (panelPosition.value === PANEL_POSITION.NONE) ? PANEL_POSITION.RIGHT : PANEL_POSITION.NONE;
     }
 
     registerMenuCommand('Show/Hide generic panel', async () => {
