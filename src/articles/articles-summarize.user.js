@@ -10,6 +10,7 @@
 // @match           https://www.leparisien.fr/*
 // @match           https://www.mediapart.fr/journal/*/*/*
 // @match           https://www-mediapart-fr.bnf.idm.oclc.org/journal/*/*/*
+// @match           https://www-mediapart-fr.bpi.idm.oclc.org/journal/*/*/*
 // @match           https://sciencepost.fr/*/
 // @iconFromDomain  chatgpt.com
 // ==/UserScript==
@@ -141,6 +142,7 @@ const siteInfos = {
 }
 
 siteInfos["www-mediapart-fr.bnf.idm.oclc.org"] = siteInfos["www.mediapart.fr"];
+siteInfos["www-mediapart-fr.bpi.idm.oclc.org"] = siteInfos["www.mediapart.fr"];
 
 const baseOptions = {
     language: 'English',
