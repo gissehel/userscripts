@@ -23,6 +23,7 @@
 // @import{monkeySetValue}
 // @import{bindOnClick}
 // @import{openLinkInNewTab}
+// @import{createSsmGenericPanel}
 
 // Exemples pour test:
 // * https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html
@@ -193,67 +194,34 @@ const cleanupAndCopyArticle = async () => {
     await copyTextToClipboard(prompt);
 }
 
-const createIconLink = (iconUrl, name, defaultLink, asyncCode) => {
-    return createElementExtended('a', {
-        children: [
-            createElementExtended('img', {
-                attributes: {
-                    src: iconUrl,
-                    alt: name,
-                    title: name,
-                },
-                style: { width: '16px', height: '16px', verticalAlign: 'middle', marginRight: '5px', marginLeft: '5px' },
-            }),
-        ],
-        attributes: { href: defaultLink, title: name },
-        style: { textDecoration: 'none', color: 'black', fontWeight: 'bold', marginBottom: '5px', marginTop: '5px', display: 'inline-block' },
-        onCreated: (el) => {
-            bindOnClick(el, asyncCode);
+const createPanel = async () => {
+    await createSsmGenericPanel(
+        'articles',
+        'articles-summarize',
+        async () => {
+            return [
+                ...options.llmEngines.map((engine) =>
+                    createIconLink(engine.icon ? engine.icon : 'https://www.google.com/s2/favicons?sz=64&domain=' + engine.domain, engine.name, engine.url, async () => {
+                        await cleanupAndCopyArticle();
+                        openLinkInNewTab(engine.url);
+                    })
+                ),
+                createElementExtended('hr'),
+                createIconLink(
+                    'https://cdn-icons-png.flaticon.com/512/2954/2954888.png', // From Flaticon [Clean icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/clean)
+                    'Cleanup',
+                    '#',
+                    async () => { cleanupArticle(); }
+                ),
+                createIconLink(
+                    'https://cdn-icons-png.flaticon.com/512/2570/2570600.png', // From Flaticon [Clean icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/clean)
+                    'Copy prompt',
+                    '#',
+                    async () => { await cleanupAndCopyArticle(); }
+                ),
+            ]
         },
-    });
-}
-
-const createPanel = () => {
-    createElementExtended('div', {
-        style: {
-            position: 'fixed',
-            top: '10px',
-            right: '10px',
-            zIndex: 2147483621,
-            backgroundColor: 'white',
-            border: '1px solid black',
-            padding: '10px',
-            boxShadow: '2px 2px 5px rgba(0,0,0,0.5)',
-            maxWidth: '200px',
-            fontSize: '14px',
-            fontFamily: 'Arial, sans-serif',
-            borderRadius: '5px',
-            opacity: '0.7',
-        },
-        parent: document.body,
-        classnames: ['articles-summarize-panel'],
-        children: [
-            ...options.llmEngines.map((engine) =>
-                createIconLink(engine.icon ? engine.icon : 'https://www.google.com/s2/favicons?sz=64&domain=' + engine.domain, engine.name, engine.url, async () => {
-                    await cleanupAndCopyArticle();
-                    openLinkInNewTab(engine.url);
-                })
-            ),
-            createElementExtended('hr'),
-            createIconLink(
-                'https://cdn-icons-png.flaticon.com/512/2954/2954888.png', // From Flaticon [Clean icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/clean)
-                'Cleanup', 
-                '#', 
-                async () => { cleanupArticle(); }
-            ),
-            createIconLink(
-                'https://cdn-icons-png.flaticon.com/512/2570/2570600.png', // From Flaticon [Clean icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/clean)
-                'Copy prompt', 
-                '#', 
-                async () => { await cleanupAndCopyArticle(); }
-            ),
-        ]
-    });
+    )
 }
 
 createPanel();
