@@ -17,9 +17,8 @@
 // @import{readyPromise}
 // @import{createElementExtended}
 // @import{getElements}
-// @import{copyNodeToClipboard}
+// @import{copyTextToClipboard}
 // @import{getDomain}
-// @import{waitUserActivation}
 // @import{monkeyGetSetOptions}
 // @import{monkeySetValue}
 // @import{bindOnClick}
@@ -176,27 +175,6 @@ const options = monkeyGetSetOptions(baseOptions);
 
 const getGptInstructions = (options) => options.prompts.join('\n ').replace('{{language}}', options.language);
 
-let gptInstructionsElement = null;
-
-const ensureGptInstructionsElement = (mainArticle) => {
-    const gptInstructions = getGptInstructions(options);
-
-    if (gptInstructionsElement) {
-        gptInstructionsElement.remove();
-    }
-
-    gptInstructionsElement = createElementExtended('div', {
-        style: {
-            fontSize: "1px",
-            color: "white",
-            height: "1px",
-        },
-        text: gptInstructions,
-        prependIn: mainArticle,
-    });
-}
-
-
 const getSiteInfo = () => siteInfos[getDomain()] || siteInfos[document.location.hostname];
 
 const cleanupArticle = (siteInfo) => {
@@ -207,12 +185,12 @@ const cleanupArticle = (siteInfo) => {
 }
 
 const cleanupAndCopyArticle = async () => {
-    // await waitUserActivation();
     const siteInfo = getSiteInfo();
     const mainArticle = getElements(siteInfo.article)[0];
     cleanupArticle(siteInfo);
-    ensureGptInstructionsElement(mainArticle);
-    await copyNodeToClipboard(mainArticle);
+    const text = mainArticle.innerText
+    const prompt = getGptInstructions(options) + '\n\n' + text;
+    await copyTextToClipboard(prompt);
 }
 
 const createIconLink = (iconUrl, name, defaultLink, asyncCode) => {
