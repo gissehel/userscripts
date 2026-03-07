@@ -4,6 +4,8 @@
 // @match           https://www.lemonde.fr/*
 // @match           https://nouveau-europresse-com.bnf.idm.oclc.org/Search/ResultMobile/*
 // @match           https://nouveau-europresse-com.bnf.idm.oclc.org/Document/*
+// @match           https://nouveau-europresse-com.bpi.idm.oclc.org/Search/ResultMobile/*
+// @match           https://nouveau-europresse-com.bpi.idm.oclc.org/Document/*
 // @match           https://www.liberation.fr/*
 // @match           https://www.lefigaro.fr/*
 // @match           https://www.20minutes.fr/*
@@ -39,8 +41,10 @@
 // * https://www.livescience.com/planet-earth/earthquakes/link-between-cascadia-and-san-andreas-fault-earthquakes-discovered-30-years-after-lost-vessel-stumbled-across-key-data
 // * https://sciencepost.fr/des-archeologues-se-sont-mis-a-cuisiner-comme-neandertal-et-ont-decouvert-quelque-chose-de-troublant/
 
-const siteInfos = {
-    "lemonde.fr": {
+const siteInfos = [
+    {
+        domains: ["lemonde.fr"],
+        hosts: [],
         toremove: [
             'figure',
             'section.catcher',
@@ -51,17 +55,24 @@ const siteInfos = {
         ],
         article: '.article__content',
     },
-    "nouveau-europresse-com.bnf.idm.oclc.org": {
+    {
+        domains: [],
+        hosts: ["nouveau-europresse-com.bnf.idm.oclc.org", "nouveau-europresse-com.bpi.idm.oclc.org"],
+        name: "europresse",
         toremove: [],
         article: '.docOcurrContainer',
     },
-    "liberation.fr": {
+    {
+        domains: ["liberation.fr"],
+        hosts: [],
         toremove: [
             '.skAfM',
         ],
         article: 'article',
     },
-    "lefigaro.fr": {
+    {
+        domains: ["lefigaro.fr"],
+        hosts: [],
         toremove: [
             'figure',
             '.fig-wrapper',
@@ -80,7 +91,9 @@ const siteInfos = {
         ],
         article: 'article',
     },
-    "20minutes.fr": {
+    {
+        domains: ["20minutes.fr"],
+        hosts: [],
         toremove: [
             'figure',
             'article header',
@@ -93,7 +106,9 @@ const siteInfos = {
         abstract: 'section header span:last-child',
         article: 'article.o-paper__content',
     },
-    "leparisien.fr": {
+    {
+        domains: ["leparisien.fr"],
+        hosts: [],
         toremove: [
             '.dailymotion-suggestion_container',
             '.article-read-also_container',
@@ -103,7 +118,9 @@ const siteInfos = {
         abstract: 'header .subheadline',
         article: '.article-section',
     },
-    "livescience.com": {
+    {
+        domains: ["livescience.com"],
+        hosts: [],
         toremove: [
             'aside',
             'figure',
@@ -122,7 +139,9 @@ const siteInfos = {
         abstract: '.news-article header .byline-social .strapline',
         article: '#article-body',
     },
-    "sciencepost.fr": {
+    {
+        domains: ["sciencepost.fr"],
+        hosts: [],
         toremove: [
             'figure',
         ],
@@ -130,7 +149,10 @@ const siteInfos = {
         abstract: 'div.entry-content p strong:first-child',
         article: 'div.entry-content',
     },
-    "www.mediapart.fr": {
+    {
+        domains: ["mediapart.fr"],
+        hosts: ["www-mediapart-fr.bnf.idm.oclc.org", "www-mediapart-fr.bpi.idm.oclc.org"],
+        name: "mediapart",
         toremove: [
             'figure',
             'aside',
@@ -139,10 +161,7 @@ const siteInfos = {
         abstract: 'p.news__heading__top__intro',
         article: '.news__body__center__article',
     },
-}
-
-siteInfos["www-mediapart-fr.bnf.idm.oclc.org"] = siteInfos["www.mediapart.fr"];
-siteInfos["www-mediapart-fr.bpi.idm.oclc.org"] = siteInfos["www.mediapart.fr"];
+]
 
 const baseOptions = {
     language: 'English',
@@ -180,7 +199,14 @@ const options = monkeyGetSetOptions(baseOptions);
 
 const getGptInstructions = (options) => options.prompts.join('\n ').replace('{{language}}', options.language);
 
-const getSiteInfo = () => siteInfos[getDomain()] || siteInfos[document.location.hostname];
+const getSiteInfo = () => {
+    const domain = getDomain();
+    const hostname = document.location.hostname;
+    return siteInfos.find(siteInfo =>
+        siteInfo.domains.includes(domain) ||
+        siteInfo.hosts.includes(hostname)
+    ) || null;
+}
 
 const cleanup = (siteInfo) => {
     siteInfo.toremove.map(p => getElements(p).map(x => x.remove()));
