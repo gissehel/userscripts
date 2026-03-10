@@ -38,6 +38,9 @@ const isEuroAmount = (str) => str.endsWith('€') && isSignedFrDecimal(str.slice
  * @returns {object} An object containing the extracted information, or an empty object if the input string does not represent a valid negative percentage.
  */
 const getExtraInfo = (str) => {
+    if (!str) {
+        return { parsed: false }
+    }
     if (isNegPercentOnly(str)) {
         const value = parseInt(str.slice(0, -1))
         return {
@@ -100,8 +103,9 @@ const get_data_for_influx = async function* (infos) {
             fields.amount = amount
         }
         const date = infos.date.unix
-
-        yield { measurement, tags, fields, date }
+        if (minRedux || amount) {
+            yield { measurement, tags, fields, date }
+        }
     }
 }
 
