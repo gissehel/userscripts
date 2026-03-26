@@ -7,7 +7,7 @@
 // @import{createElementExtended}
 // @import{monkeyGetSetValue}
 
-const useNavigatorLocksSemaphore = monkeyGetSetValue('useNavigatorLocksSemaphore', false);
+const useNavigatorLocksSemaphore = monkeyGetSetValue('useNavigatorLocksSemaphore', true);
 const useProxySemaphore = monkeyGetSetValue('useProxySemaphore', false);
 
 exportOnWindow({ createElementExtended, delay, Semaphore, SemaphoreNavigatorLocks, SemaphoreProxy });
