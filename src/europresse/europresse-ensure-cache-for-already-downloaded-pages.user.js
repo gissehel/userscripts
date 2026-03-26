@@ -1,14 +1,15 @@
 // @import{realWindow}
 // @import{delay}
 // @import{Semaphore}
-// @import{SemaphoreIntertabs}
+// @import{SemaphoreNavigatorLocks}
+// @import{SemaphoreProxy}
 // @import{exportOnWindow}
 // @import{createElementExtended}
 // @import{monkeyGetSetValue}
 
-const useIntertabsSemaphore = monkeyGetSetValue('useIntertabsSemaphore', false);
+const useNavigatorLocksSemaphore = monkeyGetSetValue('useNavigatorLocksSemaphore', false);
 
-exportOnWindow({ createElementExtended, delay, Semaphore, SemaphoreIntertabs });
+exportOnWindow({ createElementExtended, delay, Semaphore, SemaphoreNavigatorLocks, SemaphoreProxy });
 
 // #region Waiting screen management
 const createWaitingScreen = () => {
@@ -44,7 +45,7 @@ const createWaitingScreen = () => {
 }
 exportOnWindow({ createWaitingScreen });
 
-const waitingScreenSemaphore = new Semaphore(1);
+const waitingScreenSemaphore = new Semaphore('waitingScreenSemaphore', 1);
 exportOnWindow({ waitingScreenSemaphore });
 
 let waitingTasksCount = 0;
@@ -247,8 +248,19 @@ const getImage = (index, imageName) => {
 }
 exportOnWindow({ getImage });
 
+const getCacheSemaphoreClass = () => {
+    if (useNavigatorLocksSemaphore) {
+        return SemaphoreNavigatorLocks
+    } else {
+        return Semaphore
+    }
+}
 
-let cacheSemaphore = useIntertabsSemaphore ? new SemaphoreIntertabs('cache') : new Semaphore(1);
+const getCacheSemaphore = () => {
+    return new SemaphoreProxy(getCacheSemaphoreClass(), 'europresse_cache', 1);
+}
+
+let cacheSemaphore = getCacheSemaphore();
 exportOnWindow({ cacheSemaphore });
 
 let uidcache = 0;
