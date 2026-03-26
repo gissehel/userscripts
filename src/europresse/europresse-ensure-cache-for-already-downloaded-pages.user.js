@@ -8,6 +8,7 @@
 // @import{monkeyGetSetValue}
 
 const useNavigatorLocksSemaphore = monkeyGetSetValue('useNavigatorLocksSemaphore', false);
+const useProxySemaphore = monkeyGetSetValue('useProxySemaphore', false);
 
 exportOnWindow({ createElementExtended, delay, Semaphore, SemaphoreNavigatorLocks, SemaphoreProxy });
 
@@ -257,7 +258,11 @@ const getCacheSemaphoreClass = () => {
 }
 
 const getCacheSemaphore = () => {
-    return new SemaphoreProxy(getCacheSemaphoreClass(), 'europresse_cache', 1);
+    if (useProxySemaphore) {
+        return new SemaphoreProxy(getCacheSemaphoreClass(), 'europresse_cache', 1);
+    } else {
+        return new (getCacheSemaphoreClass())('europresse_cache', 1);
+    }
 }
 
 let cacheSemaphore = getCacheSemaphore();
