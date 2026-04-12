@@ -6,7 +6,7 @@
 
 // @import{getElements}
 // @import{getUrlSearchParams}
-// @import{downloadData}
+// @import{monkeySetValue}
 
 const getInfo = async () => {
     const info = {};
@@ -38,7 +38,7 @@ const getInfo = async () => {
 const downloadInfo = async () => {
     const info = await getInfo();
     code = info['Code de source'] || `unknown-${(new Date).getTime()}`;
-    downloadData(`europresse-info-${code}.json`, JSON.stringify(info, null, 0), { mimetype: 'application/json', encoding: 'utf-8' });
+    monkeySetValue(`europresse-info-${code}`, JSON.stringify(info, null, 0));
 }
 
 downloadInfo();
