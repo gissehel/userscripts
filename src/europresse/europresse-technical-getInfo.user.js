@@ -1,5 +1,6 @@
 // ==UserScript==
 // @match        https://nouveau-eureka-cc.*.idm.oclc.org/WebPages/SourceDetails.aspx?*
+// @match        https://nouveau.eureka.cc/WebPages/SourceDetails.aspx?*
 // ==/UserScript==
 
 // https://nouveau-eureka-cc.bpi.idm.oclc.org/WebPages/SourceDetails.aspx?source_id=1773&target=2&cond=1
