@@ -291,12 +291,12 @@ const ensurePageCached = async (imageIndex, urgent) => {
     await cacheSemaphore.acquire(uidName);
 
     if (imageCache[imageName]) {
-        cacheSemaphore.release(uidName);
+        await cacheSemaphore.release(uidName);
         return imageCache[imageName];
     }
 
     if (urgent && currnentUrgentPage !== imageName) {
-        cacheSemaphore.release(uidName);
+        await cacheSemaphore.release(uidName);
         return [""];
     }
 
@@ -315,7 +315,9 @@ const ensurePageCached = async (imageIndex, urgent) => {
 
     console.log(`ensurePageCached done for ${imageName} with ${imageCount} image(s)`);
 
-    cacheSemaphore.release(uidName);
+    await delay(200);
+
+    await cacheSemaphore.release(uidName);
     return imageCache[imageName];
 }
 exportOnWindow({ ensurePageCached });
