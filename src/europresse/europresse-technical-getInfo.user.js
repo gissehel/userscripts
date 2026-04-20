@@ -37,10 +37,21 @@ const getInfo = async () => {
     return info;
 }
 
-const downloadInfo = async () => {
+const saveInfo = async () => {
     const info = await getInfo();
     code = info['Code de source'] || `unknown-${(new Date).getTime()}`;
     monkeySetValue(`europresse-info-${code}`, JSON.stringify(info, null, 0));
 }
 
-downloadInfo();
+const downloadInfo = async () => {
+}
+
+const main = async () => {
+    if (window.location.pathname === '/') {
+        downloadInfo();
+    } else if (window.location.pathname === '/WebPages/SourceDetails.aspx') {
+        saveInfo();
+    }
+}
+
+main();
