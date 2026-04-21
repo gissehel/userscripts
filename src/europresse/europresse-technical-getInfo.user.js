@@ -1,6 +1,8 @@
 // ==UserScript==
 // @match        https://nouveau-eureka-cc.*.idm.oclc.org/WebPages/SourceDetails.aspx?*
 // @match        https://nouveau.eureka.cc/WebPages/SourceDetails.aspx?*
+// @match        https://nouveau-eureka-cc.*.idm.oclc.org/*
+// @match        https://nouveau.eureka.cc/*
 // ==/UserScript==
 
 // https://nouveau.eureka.cc/WebPages/Sources/SourceSearch.aspx
@@ -9,6 +11,9 @@
 // @import{getElements}
 // @import{getUrlSearchParams}
 // @import{monkeySetValue}
+// @import{downloadData}
+// @import{monkeyListKeys}
+// @import{monkeyGetValue}
 
 const getInfo = async () => {
     const info = {};
@@ -44,10 +49,13 @@ const saveInfo = async () => {
 }
 
 const downloadInfo = async () => {
+    const keys = monkeyListKeys().filter(key => key.startsWith('europresse-info-'))
+    const values = keys.map(key => JSON.parse(monkeyGetValue(key)))
+    downloadData(`europresse-info-${(new Date).toISOString()}.json`, JSON.stringify(values, null, 2), { mimetype: 'application/json' })
 }
 
 const main = async () => {
-    if (window.location.pathname === '/') {
+    if (window.location.pathname === '/' || window.location.pathname === '/Login/') {
         downloadInfo();
     } else if (window.location.pathname === '/WebPages/SourceDetails.aspx') {
         saveInfo();
