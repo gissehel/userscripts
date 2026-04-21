@@ -29,9 +29,9 @@ HTMLElement.prototype.titleOrContent = function() {
 const isShort = () => document.location.pathname.endsWith('/shorts')
 
 const getVideoTitleShort = (richItemRenderer) => richItemRenderer.q('h3 [role=text]')?.map(e=>e.textContent)?.join('')
-const getVideoTitleLong = (richItemRenderer) => richItemRenderer.q('#video-title-link')?.at(0)?.q('#video-title')?.slice(-1)?.at(0)?.titleOrContent()
+const getVideoTitleLong = (richItemRenderer) => richItemRenderer.q('.ytLockupMetadataViewModelTitle')?.at(0)?.q('[role=text]')?.at(0)?.titleOrContent()
 const getVideoLinkShort = (richItemRenderer) => richItemRenderer.q('a')?.at(0)?.href
-const getVideoLinkLong = (richItemRenderer) => getSubElements(richItemRenderer, 'a#thumbnail')?.at(0)?.href
+const getVideoLinkLong = (richItemRenderer) => richItemRenderer.q('.ytLockupMetadataViewModelTitle')?.at(0)?.href
 const getVideoContentShort = (link) => link
 // const getVideoContentLong = (link) => `{{video ${link}}}`
 const getVideoContentLong = (link) => link
