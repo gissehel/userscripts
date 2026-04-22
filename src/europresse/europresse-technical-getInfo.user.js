@@ -50,15 +50,15 @@ const saveInfo = async () => {
 
 const downloadInfo = async () => {
     const keys = (await monkeyListKeys()).filter(key => key.startsWith('europresse-info-'))
-    const values = await Promise.all(keys.map(async (key) => JSON.parse(await monkeyGetValue(key))))
+    const values = await Promise.all(keys.sort().map(async (key) => JSON.parse(await monkeyGetValue(key))))
     downloadData(`europresse-info-${(new Date).toISOString()}.json`, JSON.stringify(values, null, 2), { mimetype: 'application/json' })
 }
 
 const main = async () => {
     if (window.location.pathname === '/' || window.location.pathname === '/Login/') {
-        downloadInfo();
+        await downloadInfo();
     } else if (window.location.pathname === '/WebPages/SourceDetails.aspx') {
-        saveInfo();
+        await saveInfo();
     }
 }
 
