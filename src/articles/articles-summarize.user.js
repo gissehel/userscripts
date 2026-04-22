@@ -22,7 +22,7 @@
 // @import{getElements}
 // @import{copyTextToClipboard}
 // @import{getDomain}
-// @import{monkeyGetSetOptionsSync}
+// @import{monkeyGetSetOptions}
 // @import{bindOnClick}
 // @import{openLinkInNewTab}
 // @import{createSsmGenericPanel}
@@ -194,8 +194,6 @@ const baseOptions = {
     ],
 };
 
-const options = monkeyGetSetOptionsSync(baseOptions);
-
 const getGptInstructions = (options) => options.prompts.join('\n ').replace('{{language}}', options.language);
 
 const getSiteInfo = () => {
@@ -237,12 +235,12 @@ const copy = async (text, copyType) => {
     }
 }
 
-const copyPromptPrefix = async (copyType) => {
+const copyPromptPrefix = async (copyType, options) => {
     const promptPrefix = getGptInstructions(options);
     await copy(promptPrefix, copyType);
 }
 
-const cleanupAndCopyArticle = async (copyType) => {
+const cleanupAndCopyArticle = async (copyType, options) => {
     const siteInfo = getSiteInfo();
     const mainArticle = getElements(siteInfo.article)[0];
     cleanup(siteInfo);
@@ -252,6 +250,8 @@ const cleanupAndCopyArticle = async (copyType) => {
 }
 
 const createPanel = async () => {
+    const options = await monkeyGetSetOptions(baseOptions);
+
     await createSsmGenericPanel(
         'articles',
         'articles-summarize',
@@ -259,7 +259,7 @@ const createPanel = async () => {
             return [
                 ...options.llmEngines.map((engine) =>
                     createIconLink(engine.icon ? engine.icon : 'https://www.google.com/s2/favicons?sz=64&domain=' + engine.domain, engine.name, engine.url, async () => {
-                        await cleanupAndCopyArticle(COPY_TYPE.CLIPBOARD);
+                        await cleanupAndCopyArticle(COPY_TYPE.CLIPBOARD, options);
                         openLinkInNewTab(engine.url);
                     })
                 ),
@@ -274,15 +274,15 @@ const createPanel = async () => {
                     ICONS.TITLE,
                     'Copy prompt prefix',
                     '#',
-                    async () => { await copyPromptPrefix(COPY_TYPE.CLIPBOARD); },
-                    async () => { await copyPromptPrefix(COPY_TYPE.ALERT); }
+                    async () => { await copyPromptPrefix(COPY_TYPE.CLIPBOARD, options); },
+                    async () => { await copyPromptPrefix(COPY_TYPE.ALERT, options); }
                 ),
                 createIconLink(
                     ICONS.COPY,
                     'Copy prompt',
                     '#',
-                    async () => { await cleanupAndCopyArticle(COPY_TYPE.CLIPBOARD); },
-                    async () => { await cleanupAndCopyArticle(COPY_TYPE.ALERT); }
+                    async () => { await cleanupAndCopyArticle(COPY_TYPE.CLIPBOARD, options); },
+                    async () => { await cleanupAndCopyArticle(COPY_TYPE.ALERT, options); }
                 ),
             ]
         },

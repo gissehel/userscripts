@@ -6,8 +6,8 @@
 // @import{getElements}
 // @import{registerDomNodeMutatedUnique}
 // @import{registerVideoElementToChangeSpeedOnDrag}
-// @import{monkeyGetSetValueSync}
-// @import{monkeySetValueSync}
+// @import{monkeyGetSetValue}
+// @import{monkeySetValue}
 // @import{createElementExtended}
 // @import{RegistrationManager}
 // @import{realWindow}
@@ -17,37 +17,57 @@
 class PersistantInternalExternalList {
     constructor(monkeyName, defaultInternalList = [], defaultExternalList = []) {
         this.internalList = [...defaultInternalList]
-        this.externalList = monkeyGetSetValueSync(monkeyName, defaultExternalList)
+        this.defaultExternalList = [...defaultExternalList]
+        this.externalList = null
         this.monkeyName = monkeyName
-        this.list = [...this.internalList, ...this.externalList]
+        this.list = null
+        // this.list = [...this.internalList, ...this.externalList]
     }
 
-    add(item) {
+    async _ensureExternalList() {
+        if (this.externalList === null) {
+            this.externalList = await monkeyGetSetValue(this.monkeyName, this.defaultExternalList)
+        }
+        return this.externalList
+    }
+
+    async _ensureList() {
+        if (this.list === null) {
+            await this._ensureExternalList()
+            this.list = [...this.internalList, ...this.externalList]
+        }
+    }
+
+    async add(item) {
+        await this._ensureExternalList()
         if (!this.externalList.includes(item)) {
             this.externalList.push(item)
-            monkeySetValueSync(this.monkeyName, this.externalList)
+            await monkeySetValue(this.monkeyName, this.externalList)
             this.list = [...this.internalList, ...this.externalList]
             return true
         }
         return false
     }
 
-    remove(item) {
+    async remove(item) {
+        await this._ensureExternalList()
         const index = this.externalList.indexOf(item)
         if (index >= 0) {
             this.externalList.splice(index, 1)
-            monkeySetValueSync(this.monkeyName, this.externalList)
+            await monkeySetValue(this.monkeyName, this.externalList)
             this.list = [...this.internalList, ...this.externalList]
             return true
         }
         return false
     }
 
-    includes(item) {
+    async includes(item) {
+        await this._ensureList()
         return this.list.includes(item)
     }
 
-    externalIncludes(item) {
+    async externalIncludes(item) {
+        await this._ensureExternalList()
         return this.externalList.includes(item) 
     }
 }
@@ -158,10 +178,10 @@ const timeChangeByHost = {
     'www.youtube.com': setTimeIncrLabelYoutube,
 }
 
-const registerInstallation = () => {
-    const speedRanges = monkeyGetSetValueSync('speedRanges', [[0.75, 0.5, 0.25], 1, [1.25, 1.5, 1.75, 2, 3, 4, 5, 6, 8]]);
-    const verbose = monkeyGetSetValueSync('verbose', false);
-    const simulatePlayPause = domainSimulatePlayPauseOnClickList.includes(location.host)
+const registerInstallation = async () => {
+    const speedRanges = await monkeyGetSetValue('speedRanges', [[0.75, 0.5, 0.25], 1, [1.25, 1.5, 1.75, 2, 3, 4, 5, 6, 8]]);
+    const verbose = await monkeyGetSetValue('verbose', false);
+    const simulatePlayPause = await domainSimulatePlayPauseOnClickList.includes(location.host)
     let onSpeedChanged = null
     let onTimeChanged = null
 
@@ -177,7 +197,7 @@ const registerInstallation = () => {
         onTimeChanged = setTimeIncrLabelGeneric
     }
 
-    const thresold = monkeyGetSetValueSync('thresold', 20)
+    const thresold = await monkeyGetSetValue('thresold', 20)
     const registrationManager = new RegistrationManager({ autoCleanupOnAfterFirstCleanup: true })
 
     registrationManager.onRegistration(
@@ -213,44 +233,44 @@ const registerInstallation = () => {
 const cleanupInstallation = new RegistrationManager()
 
 const main = async () => {
-    if (domainBlackList.includes(location.host)) {
+    if (await domainBlackList.includes(location.host)) {
         console.log(`video-player-change-speed-on-drag: This site (${location.host}) is in the black list, skipping...`)
         console.log(`To remove this site from the black list, call video_player_change_speed__Remove_this_site_from_blacklist() in the console.${(window.location !== window.parent.location) ? ` This is an iframe for the url [${window.location.href}]. Be carefull to use the console of the iframe.` : ""}`)
     } else {
         console.log(`video-player-change-speed-on-drag: This site (${location.host}) is not in the black list, applying...`)
         console.log(`To add this site to the black list, call video_player_change_speed__Add_this_site_to_blacklist() in the console.${(window.location !== window.parent.location) ? ` This is an iframe for the url [${window.location.href}]. Be carefull to use the console of the iframe.` : ""}`)
-        cleanupInstallation.onRegistration(registerInstallation())
+        cleanupInstallation.onRegistration(await registerInstallation())
     }
 }
 
-const video_player_change_speed__Add_this_site_to_blacklist = () => {
-    if (domainBlackList.add(location.host)) {
+const video_player_change_speed__Add_this_site_to_blacklist = async () => {
+    if (await domainBlackList.add(location.host)) {
         cleanupInstallation.cleanupAll()
-        main()
+        await main()
         alert(`This site (${location.host}) has been added to the black list, you can call video_player_change_speed__Remove_this_site_from_blacklist() to remove it from the list if it was a mistake.`)
     }
 }
 
-const video_player_change_speed__Remove_this_site_from_blacklist = () => {
-    if (domainBlackList.remove(location.host)) {
+const video_player_change_speed__Remove_this_site_from_blacklist = async () => {
+    if (await domainBlackList.remove(location.host)) {
         cleanupInstallation.cleanupAll()
-        main()
+        await main()
         alert(`This site (${location.host}) has been removed from the black list, you can call video_player_change_speed__Add_this_site_to_blacklist() to add it to the list if it was a mistake.`)
     }
 }
 
-const video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list = () => {
-    if (domainSimulatePlayPauseOnClickList.add(location.host)) {
+const video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list = async () => {
+    if (await domainSimulatePlayPauseOnClickList.add(location.host)) {
         cleanupInstallation.cleanupAll()
-        main()
+        await main()
         alert(`This site (${location.host}) has been added to the simulate play/pause on click list, you can call video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list() to remove it from the list if it was a mistake.`)
     }
 }
 
-const video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list = () => {
-    if (domainSimulatePlayPauseOnClickList.remove(location.host)) {
+const video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list = async () => {
+    if (await domainSimulatePlayPauseOnClickList.remove(location.host)) {
         cleanupInstallation.cleanupAll()
-        main()
+        await main()
         alert(`This site (${location.host}) has been removed from the simulate play/pause on click list, you can call video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list() to add it to the list if it was a mistake.`)
     }
 }
