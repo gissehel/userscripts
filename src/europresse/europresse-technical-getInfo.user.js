@@ -45,12 +45,12 @@ const getInfo = async () => {
 const saveInfo = async () => {
     const info = await getInfo();
     code = info['Code de source'] || `unknown-${(new Date).getTime()}`;
-    monkeySetValue(`europresse-info-${code}`, JSON.stringify(info, null, 0));
+    await monkeySetValue(`europresse-info-${code}`, JSON.stringify(info, null, 0));
 }
 
 const downloadInfo = async () => {
-    const keys = monkeyListKeys().filter(key => key.startsWith('europresse-info-'))
-    const values = keys.map(key => JSON.parse(monkeyGetValue(key)))
+    const keys = (await monkeyListKeys()).filter(key => key.startsWith('europresse-info-'))
+    const values = await Promise.all(keys.map(async (key) => JSON.parse(await monkeyGetValue(key))))
     downloadData(`europresse-info-${(new Date).toISOString()}.json`, JSON.stringify(values, null, 2), { mimetype: 'application/json' })
 }
 

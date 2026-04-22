@@ -22,8 +22,7 @@
 // @import{getElements}
 // @import{copyTextToClipboard}
 // @import{getDomain}
-// @import{monkeyGetSetOptions}
-// @import{monkeySetValue}
+// @import{monkeyGetSetOptionsSync}
 // @import{bindOnClick}
 // @import{openLinkInNewTab}
 // @import{createSsmGenericPanel}
@@ -195,7 +194,7 @@ const baseOptions = {
     ],
 };
 
-const options = monkeyGetSetOptions(baseOptions);
+const options = monkeyGetSetOptionsSync(baseOptions);
 
 const getGptInstructions = (options) => options.prompts.join('\n ').replace('{{language}}', options.language);
 

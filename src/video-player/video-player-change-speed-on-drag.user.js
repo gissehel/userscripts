@@ -6,8 +6,8 @@
 // @import{getElements}
 // @import{registerDomNodeMutatedUnique}
 // @import{registerVideoElementToChangeSpeedOnDrag}
-// @import{monkeyGetSetValue}
-// @import{monkeySetValue}
+// @import{monkeyGetSetValueSync}
+// @import{monkeySetValueSync}
 // @import{createElementExtended}
 // @import{RegistrationManager}
 // @import{realWindow}
@@ -17,7 +17,7 @@
 class PersistantInternalExternalList {
     constructor(monkeyName, defaultInternalList = [], defaultExternalList = []) {
         this.internalList = [...defaultInternalList]
-        this.externalList = monkeyGetSetValue(monkeyName, defaultExternalList)
+        this.externalList = monkeyGetSetValueSync(monkeyName, defaultExternalList)
         this.monkeyName = monkeyName
         this.list = [...this.internalList, ...this.externalList]
     }
@@ -25,7 +25,7 @@ class PersistantInternalExternalList {
     add(item) {
         if (!this.externalList.includes(item)) {
             this.externalList.push(item)
-            monkeySetValue(this.monkeyName, this.externalList)
+            monkeySetValueSync(this.monkeyName, this.externalList)
             this.list = [...this.internalList, ...this.externalList]
             return true
         }
@@ -36,7 +36,7 @@ class PersistantInternalExternalList {
         const index = this.externalList.indexOf(item)
         if (index >= 0) {
             this.externalList.splice(index, 1)
-            monkeySetValue(this.monkeyName, this.externalList)
+            monkeySetValueSync(this.monkeyName, this.externalList)
             this.list = [...this.internalList, ...this.externalList]
             return true
         }
@@ -159,8 +159,8 @@ const timeChangeByHost = {
 }
 
 const registerInstallation = () => {
-    const speedRanges = monkeyGetSetValue('speedRanges', [[0.75, 0.5, 0.25], 1, [1.25, 1.5, 1.75, 2, 3, 4, 5, 6, 8]]);
-    const verbose = monkeyGetSetValue('verbose', false);
+    const speedRanges = monkeyGetSetValueSync('speedRanges', [[0.75, 0.5, 0.25], 1, [1.25, 1.5, 1.75, 2, 3, 4, 5, 6, 8]]);
+    const verbose = monkeyGetSetValueSync('verbose', false);
     const simulatePlayPause = domainSimulatePlayPauseOnClickList.includes(location.host)
     let onSpeedChanged = null
     let onTimeChanged = null
@@ -177,7 +177,7 @@ const registerInstallation = () => {
         onTimeChanged = setTimeIncrLabelGeneric
     }
 
-    const thresold = monkeyGetSetValue('thresold', 20)
+    const thresold = monkeyGetSetValueSync('thresold', 20)
     const registrationManager = new RegistrationManager({ autoCleanupOnAfterFirstCleanup: true })
 
     registrationManager.onRegistration(

@@ -684,7 +684,7 @@ const main = async () => {
     if (window.location.pathname.slice(0,6) === ("/Login")) {
         const struct = ophirofoxStruct.filter(entry => entry.pattern).map(entry => ({ ...entry, host: (new URL(entry.pattern)).host }))
         const host = window.location.host;
-        const url = monkeyGetSetValue("europresse-forward-to-login-page-url", '');
+        const url = await monkeyGetSetValue("europresse-forward-to-login-page-url", '');
         const sites = struct.filter(entry => entry.host === host).map(entry => ({name: entry.name, url: entry.AUTH_URL}));
         if (url && url !== '') {
             sites.push({

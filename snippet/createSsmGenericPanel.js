@@ -26,7 +26,7 @@ const createSsmGenericPanel = async (localName, sectionName, getPanelContent, op
         NONE: 'none',
     }
 
-    let panelPosition = getSsmHookableValueMonkeyGetSet(localName, 'panelPosition', PANEL_POSITION.RIGHT);
+    let panelPosition = await getSsmHookableValueMonkeyGetSet(localName, 'panelPosition', PANEL_POSITION.RIGHT);
 
     const panel = getSsmValue(localName, 'panel', () => createElementExtended('div', {
         style: {
