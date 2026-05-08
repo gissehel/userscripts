@@ -68,19 +68,19 @@ class PersistantInternalExternalList {
 
     async externalIncludes(item) {
         await this._ensureExternalList()
-        return this.externalList.includes(item) 
+        return this.externalList.includes(item)
     }
 }
 
 const domainBlackList = new PersistantInternalExternalList(
-    'domainBlackList', 
-    [], 
+    'domainBlackList',
+    [],
     []
 )
 
 const domainSimulatePlayPauseOnClickList = new PersistantInternalExternalList(
-    'domainSimulatePlayPauseOnClickList', 
-    ['www.youtube.com', 'www.twitch.tv'], 
+    'domainSimulatePlayPauseOnClickList',
+    ['www.youtube.com', 'www.twitch.tv'],
     ['video.sibnet.ru', 'sendvid.com']
 )
 
@@ -225,27 +225,15 @@ const registerInstallation = async () => {
             })
     )
 
-    return () => {
-        registrationManager.cleanupAll()
+    return async () => {
+        await registrationManager.cleanupAll()
     }
 }
 
 const cleanupInstallation = new RegistrationManager()
 
-const main = async () => {
-    if (await domainBlackList.includes(location.host)) {
-        console.log(`video-player-change-speed-on-drag: This site (${location.host}) is in the black list, skipping...`)
-        console.log(`To remove this site from the black list, call video_player_change_speed__Remove_this_site_from_blacklist() in the console.${(window.location !== window.parent.location) ? ` This is an iframe for the url [${window.location.href}]. Be carefull to use the console of the iframe.` : ""}`)
-    } else {
-        console.log(`video-player-change-speed-on-drag: This site (${location.host}) is not in the black list, applying...`)
-        console.log(`To add this site to the black list, call video_player_change_speed__Add_this_site_to_blacklist() in the console.${(window.location !== window.parent.location) ? ` This is an iframe for the url [${window.location.href}]. Be carefull to use the console of the iframe.` : ""}`)
-        cleanupInstallation.onRegistration(await registerInstallation())
-    }
-}
-
 const video_player_change_speed__Add_this_site_to_blacklist = async () => {
     if (await domainBlackList.add(location.host)) {
-        cleanupInstallation.cleanupAll()
         await main()
         alert(`This site (${location.host}) has been added to the black list, you can call video_player_change_speed__Remove_this_site_from_blacklist() to remove it from the list if it was a mistake.`)
     }
@@ -253,7 +241,6 @@ const video_player_change_speed__Add_this_site_to_blacklist = async () => {
 
 const video_player_change_speed__Remove_this_site_from_blacklist = async () => {
     if (await domainBlackList.remove(location.host)) {
-        cleanupInstallation.cleanupAll()
         await main()
         alert(`This site (${location.host}) has been removed from the black list, you can call video_player_change_speed__Add_this_site_to_blacklist() to add it to the list if it was a mistake.`)
     }
@@ -261,7 +248,6 @@ const video_player_change_speed__Remove_this_site_from_blacklist = async () => {
 
 const video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list = async () => {
     if (await domainSimulatePlayPauseOnClickList.add(location.host)) {
-        cleanupInstallation.cleanupAll()
         await main()
         alert(`This site (${location.host}) has been added to the simulate play/pause on click list, you can call video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list() to remove it from the list if it was a mistake.`)
     }
@@ -269,7 +255,6 @@ const video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_l
 
 const video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list = async () => {
     if (await domainSimulatePlayPauseOnClickList.remove(location.host)) {
-        cleanupInstallation.cleanupAll()
         await main()
         alert(`This site (${location.host}) has been removed from the simulate play/pause on click list, you can call video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list() to add it to the list if it was a mistake.`)
     }
@@ -282,10 +267,28 @@ exportOnWindow({
     video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list,
 })
 
-registerMenuCommand('Add this site to video speed change black list', video_player_change_speed__Add_this_site_to_blacklist)
-registerMenuCommand('Remove this site from video speed change black list', video_player_change_speed__Remove_this_site_from_blacklist)
+async function main() {
+    await cleanupInstallation.cleanupAll()
+    
+    if (await domainBlackList.includes(location.host)) {
+        console.log(`video-player-change-speed-on-drag: This site (${location.host}) is in the black list, skipping...`)
+        console.log(`To remove this site from the black list, call video_player_change_speed__Remove_this_site_from_blacklist() in the console.${(window.location !== window.parent.location) ? ` This is an iframe for the url [${window.location.href}]. Be carefull to use the console of the iframe.` : ""}`)
+    } else {
+        console.log(`video-player-change-speed-on-drag: This site (${location.host}) is not in the black list, applying...`)
+        console.log(`To add this site to the black list, call video_player_change_speed__Add_this_site_to_blacklist() in the console.${(window.location !== window.parent.location) ? ` This is an iframe for the url [${window.location.href}]. Be carefull to use the console of the iframe.` : ""}`)
+        cleanupInstallation.onRegistration(await registerInstallation())
+    }
+    if (await domainBlackList.includes(location.host)) {
+        cleanupInstallation.onRegistration(await registerMenuCommand('Remove this site from video speed change black list', video_player_change_speed__Remove_this_site_from_blacklist))
+    } else {
+        cleanupInstallation.onRegistration(await registerMenuCommand('Add this site to video speed change black list', video_player_change_speed__Add_this_site_to_blacklist))
+    }
 
-registerMenuCommand('Add this site to simulate play/pause on click list', video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list)
-registerMenuCommand('Remove this site from simulate play/pause on click list', video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list)
+    if (await domainSimulatePlayPauseOnClickList.includes(location.host)) {
+        cleanupInstallation.onRegistration(await registerMenuCommand('Remove this site from simulate play/pause on click list', video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list))
+    } else {
+        cleanupInstallation.onRegistration(await registerMenuCommand('Add this site to simulate play/pause on click list', video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list))
+    }
+}
 
 main()
