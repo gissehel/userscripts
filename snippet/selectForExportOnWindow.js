@@ -12,4 +12,4 @@ const selectForExportOnWindow = (obj) => {
 }
 registerMenuCommand('Export item to window', () => {
     exportOnWindow(toExportOnWindow);
-})
+});
