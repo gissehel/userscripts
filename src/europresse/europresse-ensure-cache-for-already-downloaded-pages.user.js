@@ -83,7 +83,7 @@ const getFlagActivationValue = (() => {
             await registerActivation(flagName, hookableValue);
         }
 
-        return hookableValue;
+        return hookableValueFlags[flagName];
     }
     exportOnWindow({ getFlagActivationValue, hookableValueFlags });
     return getFlagActivationValue;
@@ -556,7 +556,7 @@ const main = async () => {
             }
         });
 
-        exportOnWindow({ allLoaded, allLoadedAutoloadFunctionResult });
+        exportOnWindow({ allLoaded, autoLoadAllPages, allLoadedAutoloadFunctionResult });
 
         const waitingScreen = createWaitingScreen();
         exportOnWindow({ waitingScreen });
