@@ -61,7 +61,7 @@ const getFlagActivationValue = (() => {
     const getFlagActivationValue = async (flagName, defaultValue, onFlagChange) => {
         if (!hookableValueFlags[flagName]) {
             const value = await monkeyGetSetValue(flagName, defaultValue);
-            hookableValueFlags[flagName] = new HookableValue(value);
+            hookableValueFlags[flagName] = new HookableValue(flagName, value);
             const hookableValue = hookableValueFlags[flagName];
             await onFlagChange?.(value);
             hookableValue.register(async (newValue) => {
