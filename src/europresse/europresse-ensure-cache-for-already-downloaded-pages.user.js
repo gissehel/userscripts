@@ -93,6 +93,7 @@ const getFlagActivationValue = (() => {
 const main = async () => {
     const useNavigatorLocksSemaphore = await monkeyGetSetValue('useNavigatorLocksSemaphore', true);
     const useProxySemaphore = await monkeyGetSetValue('useProxySemaphore', false);
+    const downloadCooldownByHost = await monkeyGetSetValue(`downloadCooldownByHost-${location.host}`, 0);
 
     exportOnWindow({ createElementExtended, delay, Semaphore, SemaphoreNavigatorLocks, SemaphoreProxy });
 
@@ -391,7 +392,11 @@ const main = async () => {
         for (let index = 0; index < imageCount; index++) {
             cache.push(await getImage(index, imageName));
         }
-        imageCache[imageName] = cache;
+        if (cache.length !== imageCount) {
+            console.error(`Expected ${imageCount} images for ${imageName}, but got ${cache.length}`);
+        } else {
+            imageCache[imageName] = cache;
+        }
         progressBarFinishLoading(imageName);
 
         await allPagesCachedHookableValue.setValue(Object.values(_docNameList).every(name => imageCache[name] !== undefined));
@@ -403,6 +408,7 @@ const main = async () => {
         console.log(`ensurePageCached done for ${imageName} with ${imageCount} image(s)`);
 
         await delay(200);
+        await delay(downloadCooldownByHost);
 
         await cacheSemaphore.release(uidName);
         return imageCache[imageName];
