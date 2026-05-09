@@ -540,7 +540,7 @@ const main = async () => {
             if (allPagesCachedHookableValue.value) {
                 resolve();
             } else {
-                await allPagesCachedHookableValue.register(async (newValue) => {
+                allPagesCachedHookableValue.register(async (newValue) => {
                     if (newValue) {
                         resolve();
                     }
