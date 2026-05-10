@@ -392,7 +392,7 @@ const main = async () => {
         for (let index = 0; index < imageCount; index++) {
             cache.push(await getImage(index, imageName));
         }
-        if (cache.length !== imageCount) {
+        if (cache.length !== imageCount*1) {
             console.error(`Expected ${imageCount} images for ${imageName}, but got ${cache.length}`);
         } else {
             imageCache[imageName] = cache;
