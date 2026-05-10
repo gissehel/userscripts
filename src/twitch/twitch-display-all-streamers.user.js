@@ -5,6 +5,7 @@
 // @import{addStyle}
 // @import{registerDomNodeMutatedUnique}
 // @import{delay}
+// @import{registerMenuCommand}
 
 const getFollowedChannelZone = () => {
     return document.querySelector('[aria-label="Followed Channels"]')
@@ -40,7 +41,9 @@ const openAllChannels = async () => {
 const main = () => {
     console.log({ message: 'in main' })
     openAllChannels().then(() => console.log('x'))
-
+    registerMenuCommand('Show all followed channels', async () => {
+        openAllChannels().then(() => console.log('All followed channels should be shown now'))
+    })
 }
 
 addStyle(`.side-nav-card:has(> a > .side-nav-card__avatar--offline) { height: 20px; } `)
