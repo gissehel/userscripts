@@ -8,7 +8,7 @@
 // @import{monkeyGetSetValue}
 // @import{monkeySetValue}
 // @import{HookableValue}
-// @import{getFlagActivationValue}
+// @import{getPersistentParameterValueBoolean}
 
 const main = async () => {
     const useNavigatorLocksSemaphore = await monkeyGetSetValue('useNavigatorLocksSemaphore', true);
@@ -476,7 +476,8 @@ const main = async () => {
 
         /** @type{Promise<void>|null} */
         let allLoadedAutoloadFunctionResult = null;
-        const autoLoadAllPages = await getFlagActivationValue('autoLoadAllPages', false, async (newValue) => {
+        const autoLoadAllPages = await getPersistentParameterValueBoolean('autoLoadAllPages', false, { scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST });
+        autoLoadAllPages.register(async (newValue) => {
             if (newValue && !allLoadedAutoloadFunctionResult) {
                 allLoadedAutoloadFunctionResult = loadAllPages();
             }
