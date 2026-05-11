@@ -9,11 +9,12 @@
 // @import{monkeySetValue}
 // @import{HookableValue}
 // @import{getPersistentParameterValueBoolean}
+// @import{getPersistentParameterValueNumber}
 
 const main = async () => {
     const useNavigatorLocksSemaphore = await monkeyGetSetValue('useNavigatorLocksSemaphore', true);
     const useProxySemaphore = await monkeyGetSetValue('useProxySemaphore', false);
-    const downloadCooldownByHost = await monkeyGetSetValue(`downloadCooldownByHost-${location.host}`, 0);
+    const downloadCooldown = await getPersistentParameterValueNumber(`downloadCooldown`, 0, { scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST });
 
     exportOnWindow({ createElementExtended, delay, Semaphore, SemaphoreNavigatorLocks, SemaphoreProxy });
 
@@ -328,7 +329,7 @@ const main = async () => {
         console.log(`ensurePageCached done for ${imageName} with ${imageCount} image(s)`);
 
         await delay(200);
-        await delay(downloadCooldownByHost);
+        await delay(downloadCooldown);
 
         await cacheSemaphore.release(uidName);
         return imageCache[imageName];
