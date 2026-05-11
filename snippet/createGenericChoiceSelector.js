@@ -13,7 +13,7 @@
 const createGenericChoiceSelector = async (ssmHookableValue, title, items, getSelectorProperties) => {
     const selectorProperties = getSelectorProperties ? (await getSelectorProperties()) : {};
 
-    ssmHookableValue.register(async (newValue) => {
+    await ssmHookableValue.register(async (newValue) => {
         console.log(`${ssmHookableValue.name} changed to ${newValue}`);
     });
 
@@ -38,7 +38,7 @@ const createGenericChoiceSelector = async (ssmHookableValue, title, items, getSe
                 ssmHookableValue.value = el.value;
             });
             el.value = ssmHookableValue.value;
-            ssmHookableValue.register(async (newValue) => {
+            await ssmHookableValue.register(async (newValue) => {
                 el.value = newValue;
             });
         },

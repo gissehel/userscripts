@@ -33,10 +33,10 @@ describe('getSsmHookableValue', () => {
         expect(hv.value).toBeNull();
     });
 
-    test('should execute hook when value changes', () => {
+    test('should execute hook when value changes', async () => {
         const hv = getSsmHookableValue('local1', 'value1', 10);
         let hookCalled = false;
-        hv.register((newValue, oldValue) => {
+        await hv.register(async (newValue, oldValue) => {
             hookCalled = true;
             expect(oldValue).toBe(10);
             expect(newValue).toBe(20);

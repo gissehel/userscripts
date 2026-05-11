@@ -128,7 +128,7 @@ const createSsmGenericPanel = async (localName, sectionName, getPanelContent, op
     })
 
     if (options.onPanelPositionChanged) {
-        panelPosition.register(options.onPanelPositionChanged);
+        await panelPosition.register(options.onPanelPositionChanged);
     }
     if (options.setSwapGenericPanelFunction) {
         options.setSwapGenericPanelFunction(swapGenericPanel);

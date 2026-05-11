@@ -467,7 +467,7 @@ const main = async () => {
             if (allPagesCachedHookableValue.value) {
                 resolve();
             } else {
-                allPagesCachedHookableValue.register(async (newValue) => {
+                await allPagesCachedHookableValue.register(async (newValue) => {
                     if (newValue) {
                         resolve();
                     }
@@ -478,7 +478,7 @@ const main = async () => {
         /** @type{Promise<void>|null} */
         let allLoadedAutoloadFunctionResult = null;
         const autoLoadAllPages = await getPersistentParameterValueBoolean('autoLoadAllPages', false, { scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST });
-        autoLoadAllPages.register(async (newValue) => {
+        await autoLoadAllPages.register(async (newValue) => {
             if (newValue && !allLoadedAutoloadFunctionResult) {
                 allLoadedAutoloadFunctionResult = loadAllPages();
             }

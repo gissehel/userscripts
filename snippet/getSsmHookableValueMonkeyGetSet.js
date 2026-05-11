@@ -11,7 +11,7 @@
  */
 const getSsmHookableValueMonkeyGetSet = async (localName, name, defaultValue = null) => {
     const hookableValue = getSsmHookableValue(localName, name, await monkeyGetSetValue(name, defaultValue));
-    hookableValue.register(async (newValue) => {
+    await hookableValue.register(async (newValue) => {
         await monkeySetValue(name, newValue);
     });
     return hookableValue;
