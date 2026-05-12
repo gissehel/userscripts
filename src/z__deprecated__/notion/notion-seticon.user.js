@@ -6,7 +6,7 @@
 // @import{getSubElements}
 // @import{getElements}
 
-registerDomNodeMutatedUnique(() => getElements('.pseudoSelection>.notion-record-icon'), (icon_container) => {
+registerDomNodeMutatedUnique(() => getElements('.pseudoSelection>.notion-record-icon'), async (icon_container) => {
     const hrefs = getSubElements(icon_container, 'img')
         .map((image)=>image.getAttribute('src'))
         .filter((href)=>href.startsWith('https://'))

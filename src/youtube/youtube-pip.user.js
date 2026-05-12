@@ -4,7 +4,6 @@
 // @match        https://m.youtube.com/*
 // ==/UserScript==
 
-// @import{registerDomNodeMutated}
 // @import{registerDomNodeMutatedUnique}
 // @import{createElementExtended}
 // @import{addStyle}
@@ -17,7 +16,7 @@ registerDomNodeMutatedUnique(() => [
     ...getElements('#actions-inner>#menu>ytd-menu-renderer'),
     // ...getElements('.slim-video-action-bar-actions'),
     ...getElements('ytm-slim-owner-renderer'),
-], (buttons) => {
+], async (buttons) => {
     if (buttons && buttons.childElementCount >= 1) {
         const subbuttons = getSubElements(buttons, '.pip-text-button')
         if (subbuttons.length > 0) {

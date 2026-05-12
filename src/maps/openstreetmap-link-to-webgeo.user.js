@@ -47,16 +47,19 @@ const navLink = createElementExtended('li', {
     ],
 })
 
-registerDomNodeMutatedUnique(() => document.querySelectorAll('nav.secondary'), (panel) => {
-    const subpanel = panel.children[0];
-    const firstLink = subpanel.children[0];
-    if (firstLink) {
-        const className = firstLink.className;
-        navLink.className = `${className} webgeo`;
-        subpanel.insertBefore(navLink, firstLink);
+registerDomNodeMutatedUnique(
+    () => document.querySelectorAll('nav.secondary'),
+    async (panel) => {
+        const subpanel = panel.children[0];
+        const firstLink = subpanel.children[0];
+        if (firstLink) {
+            const className = firstLink.className;
+            navLink.className = `${className} webgeo`;
+            subpanel.insertBefore(navLink, firstLink);
 
-        return;
+            return;
+        }
     }
-})
+)
 
 addStyle('.webgeo-icon { vertical-align: sub; margin-right: 3px; margin-top: 5px; }')

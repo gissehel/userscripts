@@ -1,8 +1,11 @@
 // @import{registerDomNodeMutatedUnique}
 // @import{getElements}
 
-registerDomNodeMutatedUnique(() => getElements('.alert-hotspot .alert-close'), (close_button) => {
-    close_button.click()
+registerDomNodeMutatedUnique(
+    () => getElements('.alert-hotspot .alert-close'),
+    async (close_button) => {
+        close_button.click()
 
-    return true
-})
+        return true
+    }
+)

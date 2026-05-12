@@ -7,7 +7,7 @@
 // @import{registerDomNodeMutated}
 // @import{parentsElement}
 
-const likeOrUnlike = (e) => {
+const likeOrUnlike = async (e) => {
     const likeOrUnlikeButtons = [...document.querySelectorAll('[data-testid="JobPopup"] button[title=Unlike]'), ...document.querySelectorAll('[data-testid="JobPopup"] button[title=Like]')]
     if (likeOrUnlikeButtons.length > 0) {
         likeOrUnlikeButtons[0].click()
@@ -16,7 +16,7 @@ const likeOrUnlike = (e) => {
     e.preventDefault()
 }
 
-const onDomChanged = () => {
+const onDomChanged = async () => {
     const images = [...document.querySelectorAll('.renderIfVisible')]
     for (let image of images) {
         const parentElementClassList = image.parentElement.classList
@@ -40,7 +40,7 @@ const onDomChanged = () => {
     }
 }
 
-const shadeOrUnshadeLiked = (e) => {
+const shadeOrUnshadeLiked = async (e) => {
     if (document.body.classList.contains('shadeLiked')) {
         document.body.classList.remove('shadeLiked')
     } else {
@@ -49,7 +49,7 @@ const shadeOrUnshadeLiked = (e) => {
     e.preventDefault()
 }
 
-const minimiseOrUnminimiseLiked = (e) => {
+const minimiseOrUnminimiseLiked = async (e) => {
     if (document.body.classList.contains('minimiseLiked')) {
         document.body.classList.remove('minimiseLiked')
     } else {

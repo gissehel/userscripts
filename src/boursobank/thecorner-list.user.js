@@ -92,7 +92,7 @@ const get_data_for_influx = async function* (infos) {
     const measurement = `boursobank_thecorner`
     for (let { id, name, description, CTA, tag, favorite } of infos.items) {
 
-        const tags = {id, name}
+        const tags = { id, name }
         const fields = { description, CTA, tag, favorite }
         const { minRedux, maxRedux, amount } = getExtraInfo(CTA)
         if (minRedux) {
@@ -109,54 +109,57 @@ const get_data_for_influx = async function* (infos) {
     }
 }
 
-registerDomNodeMutatedUnique(() => document.querySelectorAll('#marketplaceProductList'), (container) => {
-    const date = new Date()
-    const dateiso = date.toISOString()
-    const dateunix = date.getTime() / 1000
-    const dateid = dateiso.replace(/\..*/, '').replace(/[-:]/g, '').replace(/T/, '-')
+registerDomNodeMutatedUnique(
+    () => document.querySelectorAll('#marketplaceProductList'),
+    async (container) => {
+        const date = new Date()
+        const dateiso = date.toISOString()
+        const dateunix = date.getTime() / 1000
+        const dateid = dateiso.replace(/\..*/, '').replace(/[-:]/g, '').replace(/T/, '-')
 
-    const infos = {
-        date: {
-            iso: dateiso,
-            unix: dateunix,
-            id: dateid
-        },
-        items: getSubElements(container, '.boursoshop-universe-product__card').map((card) => {
-            /** @type {Object} */
-            const info = {}
-            info.id = card.getAttribute('data-product-id')
-            for (let attribute of ['name', 'description']) {
-                getSubElements(card, `.boursoshop-universe-product__${attribute}`).map((element) => {
-                    info[attribute] = cleanupString(element?.textContent)
-                })
-            }
-            for (let attribute of ['CTA', 'tag']) {
-                getSubElements(card, `.boursoshop-universe-product__${attribute}`).map((element) => {
-                    info[attribute] = cleanupString(element?.childNodes?.at(0)?.childNodes?.at(0)?.textContent)
-                })
-            }
-            const favorite_icon = getSubElements(card, '.boursoshop-universe-product__favorite i.c-icon')[0]
-            info.favorite = favorite_icon.classList.contains('c-icon--like-full')
-            if (info.CTA) {
-                Object.assign(info, getExtraInfo(info.CTA))
-            }
-            return info
-        })
+        const infos = {
+            date: {
+                iso: dateiso,
+                unix: dateunix,
+                id: dateid
+            },
+            items: getSubElements(container, '.boursoshop-universe-product__card').map((card) => {
+                /** @type {Object} */
+                const info = {}
+                info.id = card.getAttribute('data-product-id')
+                for (let attribute of ['name', 'description']) {
+                    getSubElements(card, `.boursoshop-universe-product__${attribute}`).map((element) => {
+                        info[attribute] = cleanupString(element?.textContent)
+                    })
+                }
+                for (let attribute of ['CTA', 'tag']) {
+                    getSubElements(card, `.boursoshop-universe-product__${attribute}`).map((element) => {
+                        info[attribute] = cleanupString(element?.childNodes?.at(0)?.childNodes?.at(0)?.textContent)
+                    })
+                }
+                const favorite_icon = getSubElements(card, '.boursoshop-universe-product__favorite i.c-icon')[0]
+                info.favorite = favorite_icon.classList.contains('c-icon--like-full')
+                if (info.CTA) {
+                    Object.assign(info, getExtraInfo(info.CTA))
+                }
+                return info
+            })
+        }
+
+        const json = JSON.stringify(infos, null, 2)
+        const csv = [
+            ['id', 'name', 'description', 'CTA', 'tag', 'favorite'].join(';'),
+            ...infos.items.map(({ id, name, description, CTA, tag, favorite }) => `"${id}";"${name}";"${description}";"${CTA}";"${tag}";"${favorite}"`)
+        ].join('\r\n')
+
+        downloadData(`thecorner-list-${dateid}.json`, json, { mimetype: 'application/json', encoding: 'utf-8' })
+        downloadData(`thecorner-list-${dateid}.csv`, csv, { mimetype: 'text/csv', encoding: 'windows-1252' })
+        downloadInfluxFile(`thecorner-list-${dateid}.influx`, get_data_for_influx(infos))
+
+        console.log(infos)
+        console.log(json)
+        console.log(csv)
+
+        return true
     }
-
-    const json = JSON.stringify(infos, null, 2)
-    const csv = [
-        ['id', 'name', 'description', 'CTA', 'tag', 'favorite'].join(';'),
-        ...infos.items.map(({ id, name, description, CTA, tag, favorite }) => `"${id}";"${name}";"${description}";"${CTA}";"${tag}";"${favorite}"`)
-    ].join('\r\n')
-
-    downloadData(`thecorner-list-${dateid}.json`, json, { mimetype: 'application/json', encoding: 'utf-8' })
-    downloadData(`thecorner-list-${dateid}.csv`, csv, { mimetype: 'text/csv', encoding: 'windows-1252' })
-    downloadInfluxFile(`thecorner-list-${dateid}.influx`, get_data_for_influx(infos))
-
-    console.log(infos)
-    console.log(json)
-    console.log(csv)
-
-    return true
-})
+)

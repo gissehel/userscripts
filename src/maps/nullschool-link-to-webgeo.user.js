@@ -58,13 +58,16 @@ const title = createElementExtended('h1', {
     ],
 })
 
-registerDomNodeMutatedUnique(() => document.querySelectorAll('h1'), (titleBase) => {
-    const parent = titleBase.parentElement;
-    if (parent) {
-        parent.append(title);
-        return true
+registerDomNodeMutatedUnique(
+    () => document.querySelectorAll('h1'),
+    async (titleBase) => {
+        const parent = titleBase.parentElement;
+        if (parent) {
+            parent.append(title);
+            return true
+        }
+        return false
     }
-    return false
-})
+)
 
 addStyle('.webgeo-icon { margin-right: 0.5em; }')

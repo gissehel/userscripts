@@ -11,7 +11,7 @@ const getFollowedChannelZone = () => {
     return document.querySelector('[aria-label="Followed Channels"]')
 }
 
-const showMoreChannels = (followedChannelZone) => {
+const showMoreChannels = async (followedChannelZone) => {
     const button = followedChannelZone.querySelector('[data-a-target="side-nav-show-more-button"]')
     if (button) {
         button.click()
@@ -24,25 +24,27 @@ const showAllChannels = async (followedChannelZone) => {
     let cont = true
     while (cont) {
         console.log('cont')
-        cont = showMoreChannels(followedChannelZone)
+        cont = await showMoreChannels(followedChannelZone)
         await delay(50)
     }
 }
 
 const openAllChannels = async () => {
     return new Promise((resolve) => {
-        registerDomNodeMutatedUnique(() => [getFollowedChannelZone()], (followedChannelZone) => {
+        registerDomNodeMutatedUnique(() => [getFollowedChannelZone()], async (followedChannelZone) => {
             console.log({ followedChannelZone })
-            showAllChannels(followedChannelZone).then(() => resolve())
+            await showAllChannels(followedChannelZone)
+            resolve()
         })
     })
 }
 
-const main = () => {
+const main = async () => {
     console.log({ message: 'in main' })
-    openAllChannels().then(() => console.log('x'))
-    registerMenuCommand('Show all followed channels', async () => {
-        openAllChannels().then(() => console.log('All followed channels should be shown now'))
+    await openAllChannels()
+    await registerMenuCommand('Show all followed channels', async () => {
+        await openAllChannels()
+        console.log('All followed channels should be shown now')
     })
 }
 

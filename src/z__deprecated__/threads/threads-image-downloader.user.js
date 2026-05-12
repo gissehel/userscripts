@@ -1,7 +1,7 @@
 // @import{createElementExtended}
 // @import{registerDomNodeMutatedUnique}
 
-registerDomNodeMutatedUnique(() => [...document.querySelectorAll('.xrvdsqn.x87ps6o.x5yr21d > img')], (image) => {
+registerDomNodeMutatedUnique(() => [...document.querySelectorAll('.xrvdsqn.x87ps6o.x5yr21d > img')], async (image) => {
     const parent = image.parentElement;
     if (parent.tagName === 'DIV') {
         console.log('tid-event-start');

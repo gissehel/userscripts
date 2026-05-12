@@ -60,7 +60,7 @@ const addBufferOnElement = (richItemRenderer, preAction) => {
 let itemId = 0
 let itemIdSet = null
 
-registerDomNodeMutatedUnique(() => getElements('ytd-rich-item-renderer'), (richItemRenderer) => {
+registerDomNodeMutatedUnique(() => getElements('ytd-rich-item-renderer'), async (richItemRenderer) => {
     const videoTitle = getVideoTitle(richItemRenderer)
     const videoLink = getVideoLink(richItemRenderer)
     if ((videoTitle === undefined) || (videoLink === undefined) || (videoTitle === '') || (videoLink === '')) {
@@ -76,8 +76,8 @@ registerDomNodeMutatedUnique(() => getElements('ytd-rich-item-renderer'), (richI
         classnames: classnames,
         text: label,
         onCreated: (button) => {
-            bindOnClick(button, () => {
-                addBufferOnElement(richItemRenderer, preAction)
+            bindOnClick(button, async () => {
+                await addBufferOnElement(richItemRenderer, preAction)
                 console.log(`Copying [${buffer}]`)
                 copyTextToClipboard(buffer)
             })
@@ -91,7 +91,7 @@ registerDomNodeMutatedUnique(() => getElements('ytd-rich-item-renderer'), (richI
         classnames: ['eyvfl-button', 'eyvfl-export-button-interval'],
         text: '↔️📋',
         onCreated: (button) => {
-            bindOnClick(button, () => {
+            bindOnClick(button, async () => {
                 buffer = ''
                 if (itemIdSet === null) {
                     itemIdSet = localItemId

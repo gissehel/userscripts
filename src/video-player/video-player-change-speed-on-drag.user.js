@@ -201,9 +201,9 @@ const registerInstallation = async () => {
     const registrationManager = new RegistrationManager({ autoCleanupOnAfterFirstCleanup: true })
 
     registrationManager.onRegistration(
-        registerDomNodeMutatedUnique(
+        await registerDomNodeMutatedUnique(
             () => getElements('video'),
-            (video) => {
+            async (video) => {
                 const panelControlByHost = {
                     'www.twitch.tv': document.querySelector('[data-a-target="player-overlay-click-handler"]'),
                 }
@@ -269,7 +269,7 @@ exportOnWindow({
 
 async function main() {
     await cleanupInstallation.cleanupAll()
-    
+
     if (await domainBlackList.includes(location.host)) {
         console.log(`video-player-change-speed-on-drag: This site (${location.host}) is in the black list, skipping...`)
         console.log(`To remove this site from the black list, call video_player_change_speed__Remove_this_site_from_blacklist() in the console.${(window.location !== window.parent.location) ? ` This is an iframe for the url [${window.location.href}]. Be carefull to use the console of the iframe.` : ""}`)
