@@ -1,19 +1,5 @@
 // ==UserScript==
 // @description     articles-summarize : Create prompt to summarize articles
-// @match           https://www.livescience.com/*
-// @match           https://www.lemonde.fr/*
-// @match           https://nouveau-europresse-com.bnf.idm.oclc.org/Search/ResultMobile/*
-// @match           https://nouveau-europresse-com.bnf.idm.oclc.org/Document/*
-// @match           https://nouveau-europresse-com.bpi.idm.oclc.org/Search/ResultMobile/*
-// @match           https://nouveau-europresse-com.bpi.idm.oclc.org/Document/*
-// @match           https://www.liberation.fr/*
-// @match           https://www.lefigaro.fr/*
-// @match           https://www.20minutes.fr/*
-// @match           https://www.leparisien.fr/*
-// @match           https://www.mediapart.fr/journal/*/*/*
-// @match           https://www-mediapart-fr.bnf.idm.oclc.org/journal/*/*/*
-// @match           https://www-mediapart-fr.bpi.idm.oclc.org/journal/*/*/*
-// @match           https://sciencepost.fr/*/
 // @iconFromDomain  chatgpt.com
 // ==/UserScript==
 
@@ -29,19 +15,13 @@
 // @import{ICONS}
 // @import{delay}
 
-// Exemples pour test:
-// * https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html
-// * https://www.lemonde.fr/planete/article/2025/09/01/les-emissions-de-gaz-a-effet-de-serre-continuent-leur-progression-malgre-les-bons-chiffres-chinois_6637986_3244.html
-// * https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html
-// * https://www.liberation.fr/politique/reforme-des-retraites-493-deficit-ce-quil-faut-retenir-de-la-declaration-de-politique-general-de-sebastien-lecornu-20251014_6Q5XRISHGVAO5OT7HVTXF3RIQQ/
-// * https://www.lefigaro.fr/conjoncture/taxe-sur-les-holdings-contribution-sur-les-hauts-revenus-les-premieres-mesures-du-budget-lecornu-devoilees-20251014
-// * https://www.20minutes.fr/paris/4179419-20251015-si-seine-atteignant-9-10-paris-assiste-exercice-simulation-crue-ratp
-// * https://www.leparisien.fr/economie/retraites/suspension-de-la-reforme-des-retraites-un-trimestre-de-moins-a-travailler-cest-toujours-bon-a-prendre-15-10-2025-PUMPIITUC5H2RAAPRYLK524CSQ.php
-// * https://www.livescience.com/planet-earth/earthquakes/link-between-cascadia-and-san-andreas-fault-earthquakes-discovered-30-years-after-lost-vessel-stumbled-across-key-data
-// * https://sciencepost.fr/des-archeologues-se-sont-mis-a-cuisiner-comme-neandertal-et-ont-decouvert-quelque-chose-de-troublant/
-
+//@postheader{// Exemples pour test:}
 const siteInfos = [
     {
+        // @match{https://www.lemonde.fr/*}
+        // @postheader{// * https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html}
+        // @postheader{// * https://www.lemonde.fr/planete/article/2025/09/01/les-emissions-de-gaz-a-effet-de-serre-continuent-leur-progression-malgre-les-bons-chiffres-chinois_6637986_3244.html}
+        // @postheader{// * https://www.lemonde.fr/planete/article/2025/10/14/pollution-atmospherique-il-faut-reduire-les-emissions-humaines-pendant-les-tempetes-de-sable-selon-l-anses_6646592_3244.html}
         domains: ["lemonde.fr"],
         hosts: [],
         toremove: [
@@ -55,6 +35,10 @@ const siteInfos = [
         article: '.article__content',
     },
     {
+        // @match{https://nouveau-europresse-com.bnf.idm.oclc.org/Search/ResultMobile/*}
+        // @match{https://nouveau-europresse-com.bnf.idm.oclc.org/Document/*}
+        // @match{https://nouveau-europresse-com.bpi.idm.oclc.org/Search/ResultMobile/*}
+        // @match{https://nouveau-europresse-com.bpi.idm.oclc.org/Document/*}
         domains: [],
         hosts: ["nouveau-europresse-com.bnf.idm.oclc.org", "nouveau-europresse-com.bpi.idm.oclc.org"],
         name: "europresse",
@@ -62,6 +46,8 @@ const siteInfos = [
         article: '.docOcurrContainer',
     },
     {
+        // @match{https://www.liberation.fr/*}
+        // @postheader{// * https://www.liberation.fr/politique/reforme-des-retraites-493-deficit-ce-quil-faut-retenir-de-la-declaration-de-politique-general-de-sebastien-lecornu-20251014_6Q5XRISHGVAO5OT7HVTXF3RIQQ/}
         domains: ["liberation.fr"],
         hosts: [],
         toremove: [
@@ -70,6 +56,8 @@ const siteInfos = [
         article: 'article',
     },
     {
+        // @match{https://www.lefigaro.fr/*}
+        // @postheader{// * https://www.lefigaro.fr/conjoncture/taxe-sur-les-holdings-contribution-sur-les-hauts-revenus-les-premieres-mesures-du-budget-lecornu-devoilees-20251014}
         domains: ["lefigaro.fr"],
         hosts: [],
         toremove: [
@@ -91,6 +79,8 @@ const siteInfos = [
         article: 'article',
     },
     {
+        // @match{https://www.20minutes.fr/*}
+        // @postheader{// * https://www.20minutes.fr/paris/4179419-20251015-si-seine-atteignant-9-10-paris-assiste-exercice-simulation-crue-ratp}
         domains: ["20minutes.fr"],
         hosts: [],
         toremove: [
@@ -106,6 +96,8 @@ const siteInfos = [
         article: 'article.o-paper__content',
     },
     {
+        // @match{https://www.leparisien.fr/*}
+        // @postheader{// * https://www.leparisien.fr/economie/retraites/suspension-de-la-reforme-des-retraites-un-trimestre-de-moins-a-travailler-cest-toujours-bon-a-prendre-15-10-2025-PUMPIITUC5H2RAAPRYLK524CSQ.php}
         domains: ["leparisien.fr"],
         hosts: [],
         toremove: [
@@ -118,6 +110,8 @@ const siteInfos = [
         article: '.article-section',
     },
     {
+        // @postheader{// * https://www.livescience.com/planet-earth/earthquakes/link-between-cascadia-and-san-andreas-fault-earthquakes-discovered-30-years-after-lost-vessel-stumbled-across-key-data}
+        // @match{https://www.livescience.com/*}
         domains: ["livescience.com"],
         hosts: [],
         toremove: [
@@ -139,6 +133,8 @@ const siteInfos = [
         article: '#article-body',
     },
     {
+        // @match{https://sciencepost.fr/*/}
+        // @postheader{// * https://sciencepost.fr/des-archeologues-se-sont-mis-a-cuisiner-comme-neandertal-et-ont-decouvert-quelque-chose-de-troublant/}
         domains: ["sciencepost.fr"],
         hosts: [],
         toremove: [
@@ -149,6 +145,9 @@ const siteInfos = [
         article: 'div.entry-content',
     },
     {
+        // @match{https://www.mediapart.fr/journal/*/*/*}
+        // @match{https://www-mediapart-fr.bnf.idm.oclc.org/journal/*/*/*}
+        // @match{https://www-mediapart-fr.bpi.idm.oclc.org/journal/*/*/*}
         domains: ["mediapart.fr"],
         hosts: ["www-mediapart-fr.bnf.idm.oclc.org", "www-mediapart-fr.bpi.idm.oclc.org"],
         name: "mediapart",
