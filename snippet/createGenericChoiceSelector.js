@@ -33,7 +33,7 @@ const createGenericChoiceSelector = async (ssmHookableValue, title, items, getSe
             padding: '2px',
             fontFamily: 'Calibri, Helvetica, sans-serif', 
         },
-        onCreated: (el) => {
+        onCreated: async (el) => {
             bindOnChange(el, async () => {
                 ssmHookableValue.value = el.value;
             });
