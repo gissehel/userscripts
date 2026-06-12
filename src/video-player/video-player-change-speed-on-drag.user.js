@@ -13,6 +13,7 @@
 // @import{realWindow}
 // @import{exportOnWindow}
 // @import{registerMenuCommand}
+// @import{getPersistentParameterValueString}
 
 let panelControlQueryHv = null
 
