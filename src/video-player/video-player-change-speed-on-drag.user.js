@@ -295,7 +295,7 @@ async function main() {
         'www.twitch.tv': '[data-a-target="player-overlay-click-handler"]',
     }
 
-    const panelControlQueryHv = await getPersistentParameterValueString(`panelControlQuery`, defaultPanelControlByHost[location.host], { scope: 'by_host' })
+    panelControlQueryHv = await getPersistentParameterValueString(`panelControlQuery`, defaultPanelControlByHost[location.host], { scope: 'by_host' })
 }
 
 main()
