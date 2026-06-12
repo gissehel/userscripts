@@ -14,6 +14,8 @@
 // @import{exportOnWindow}
 // @import{registerMenuCommand}
 
+let panelControlQueryHv = null
+
 class PersistantInternalExternalList {
     constructor(monkeyName, defaultInternalList = [], defaultExternalList = []) {
         this.internalList = [...defaultInternalList]
@@ -204,11 +206,9 @@ const registerInstallation = async () => {
         await registerDomNodeMutatedUnique(
             () => getElements('video'),
             async (video) => {
-                const panelControlByHost = {
-                    'www.twitch.tv': document.querySelector('[data-a-target="player-overlay-click-handler"]'),
-                }
-
-                const panelControl = panelControlByHost[location.host] || undefined
+                
+                const panelControlQuery = panelControlQueryHv?.value
+                const panelControl = panelControlQuery ? document.querySelector(panelControlQuery)[0] : undefined
 
                 registrationManager.onRegistration(registerVideoElementToChangeSpeedOnDrag(
                     video,
@@ -289,6 +289,12 @@ async function main() {
     } else {
         cleanupInstallation.onRegistration(await registerMenuCommand('Add this site to simulate play/pause on click list', video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list))
     }
+
+    const defaultPanelControlByHost = {
+        'www.twitch.tv': '[data-a-target="player-overlay-click-handler"]',
+    }
+
+    const panelControlQueryHv = await getPersistentParameterValueString(`panelControlQuery`, defaultPanelControlByHost[location.host], { scope: 'by_host' })
 }
 
 main()
