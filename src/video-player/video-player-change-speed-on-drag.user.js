@@ -14,6 +14,7 @@
 // @import{exportOnWindow}
 // @import{registerMenuCommand}
 // @import{getPersistentParameterValueString}
+// @import{PERSISTENT_PARAMETER_SCOPE}
 
 let panelControlQueryHv = null
 
@@ -295,7 +296,7 @@ async function main() {
         'www.twitch.tv': '[data-a-target="player-overlay-click-handler"]',
     }
 
-    panelControlQueryHv = await getPersistentParameterValueString(`panelControlQuery`, defaultPanelControlByHost[location.host], { scope: 'by_host' })
+    panelControlQueryHv = await getPersistentParameterValueString(`panelControlQuery`, defaultPanelControlByHost[location.host], { scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST })
 }
 
 main()
