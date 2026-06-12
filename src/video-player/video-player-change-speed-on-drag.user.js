@@ -209,7 +209,7 @@ const registerInstallation = async () => {
             async (video) => {
                 
                 const panelControlQuery = panelControlQueryHv?.value
-                const panelControl = panelControlQuery ? document.querySelector(panelControlQuery)[0] : undefined
+                const panelControl = panelControlQuery ? document.querySelector(panelControlQuery) : undefined
 
                 registrationManager.onRegistration(registerVideoElementToChangeSpeedOnDrag(
                     video,
