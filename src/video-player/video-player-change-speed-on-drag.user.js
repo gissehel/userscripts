@@ -18,6 +18,10 @@
 
 let panelControlQueryHv = null
 
+const defaultPanelControlByHost = {
+    'www.twitch.tv': '[data-a-target="player-overlay-click-handler"]',
+}
+
 class PersistantInternalExternalList {
     constructor(monkeyName, defaultInternalList = [], defaultExternalList = []) {
         this.internalList = [...defaultInternalList]
@@ -208,7 +212,7 @@ const registerInstallation = async () => {
         await registerDomNodeMutatedUnique(
             () => getElements('video'),
             async (video) => {
-                
+
                 const panelControlQuery = panelControlQueryHv?.value
                 const panelControl = panelControlQuery ? document.querySelector(panelControlQuery) : undefined
 
@@ -236,28 +240,28 @@ const cleanupInstallation = new RegistrationManager()
 
 const video_player_change_speed__Add_this_site_to_blacklist = async () => {
     if (await domainBlackList.add(location.host)) {
-        await main()
+        await installOrUninstall()
         alert(`This site (${location.host}) has been added to the black list, you can call video_player_change_speed__Remove_this_site_from_blacklist() to remove it from the list if it was a mistake.`)
     }
 }
 
 const video_player_change_speed__Remove_this_site_from_blacklist = async () => {
     if (await domainBlackList.remove(location.host)) {
-        await main()
+        await installOrUninstall()
         alert(`This site (${location.host}) has been removed from the black list, you can call video_player_change_speed__Add_this_site_to_blacklist() to add it to the list if it was a mistake.`)
     }
 }
 
 const video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list = async () => {
     if (await domainSimulatePlayPauseOnClickList.add(location.host)) {
-        await main()
+        await installOrUninstall()
         alert(`This site (${location.host}) has been added to the simulate play/pause on click list, you can call video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list() to remove it from the list if it was a mistake.`)
     }
 }
 
 const video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list = async () => {
     if (await domainSimulatePlayPauseOnClickList.remove(location.host)) {
-        await main()
+        await installOrUninstall()
         alert(`This site (${location.host}) has been removed from the simulate play/pause on click list, you can call video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list() to add it to the list if it was a mistake.`)
     }
 }
@@ -269,7 +273,7 @@ exportOnWindow({
     video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list,
 })
 
-async function main() {
+async function installOrUninstall() {
     await cleanupInstallation.cleanupAll()
 
     if (await domainBlackList.includes(location.host)) {
@@ -292,11 +296,22 @@ async function main() {
         cleanupInstallation.onRegistration(await registerMenuCommand('Add this site to simulate play/pause on click list', video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list))
     }
 
-    const defaultPanelControlByHost = {
-        'www.twitch.tv': '[data-a-target="player-overlay-click-handler"]',
-    }
+}
 
-    panelControlQueryHv = await getPersistentParameterValueString(`panelControlQuery`, defaultPanelControlByHost[location.host], { scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST })
+async function main() {
+    panelControlQueryHv = await getPersistentParameterValueString(
+        `panelControlQuery`,
+        defaultPanelControlByHost[location.host],
+        {
+            scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST
+        }
+    )
+
+    panelControlQueryHv.register(async () => {
+        await installOrUninstall()
+    })
+
+    await installOrUninstall()
 }
 
 main()
