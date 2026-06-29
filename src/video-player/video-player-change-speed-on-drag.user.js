@@ -112,13 +112,19 @@ const setLabelYoutube = (video, label, display) => {
 
     }
     if (speedLabel && speedTextLabel) {
-        speedTextLabel.textContent = label
+        if (label) {
+            speedTextLabel.textContent = label
+        }
         speedLabel.style.display = display ? "" : "none"
     }
 }
 
 const setSpeedLabelYoutube = (video, speed) => {
     setLabelYoutube(video, `${speed}x`, speed !== 1)
+}
+
+const removeLabelYoutube = (video) => {
+    setLabelYoutube(video, null, false)
 }
 
 const setTimeIncrLabelYoutube = getTimeIncrLabelSetter(setLabelYoutube)
@@ -168,12 +174,18 @@ const setLabelGeneric = (video, label, display) => {
     }
 
     if (speedLabel && speedTextLabel) {
-        speedTextLabel.textContent = label
+        if (label) {
+            speedTextLabel.textContent = label
+        }
         speedLabel.style.display = display ? "inline-block" : "none"
     }
 }
 const setSpeedLabelGeneric = (video, speed) => {
     setLabelGeneric(video, `${speed}x`, speed !== 1)
+}
+
+const removeLabelGeneric = (video) => {
+    setLabelGeneric(video, null, false)
 }
 
 const setTimeIncrLabelGeneric = getTimeIncrLabelSetter(setLabelGeneric)
@@ -186,12 +198,17 @@ const timeChangeByHost = {
     'www.youtube.com': setTimeIncrLabelYoutube,
 }
 
+const removeLabelByHost = {
+    'www.youtube.com': removeLabelYoutube,
+}
+
 const registerInstallation = async () => {
     const speedRanges = await monkeyGetSetValue('speedRanges', [[0.75, 0.5, 0.25], 1, [1.25, 1.5, 1.75, 2, 3, 4, 5, 6, 8]]);
     const verbose = await monkeyGetSetValue('verbose', false);
     const simulatePlayPause = await domainSimulatePlayPauseOnClickList.includes(location.host)
     let onSpeedChanged = null
     let onTimeChanged = null
+    let onRemoveLabel = null
 
     if (speedChangeByHost[location.host]) {
         onSpeedChanged = speedChangeByHost[location.host]
@@ -203,6 +220,12 @@ const registerInstallation = async () => {
         onTimeChanged = timeChangeByHost[location.host]
     } else {
         onTimeChanged = setTimeIncrLabelGeneric
+    }
+
+    if (removeLabelByHost[location.host]) {
+        onRemoveLabel = removeLabelByHost[location.host]
+    } else {
+        onRemoveLabel = removeLabelGeneric
     }
 
     const thresold = await monkeyGetSetValue('thresold', 20)
@@ -225,6 +248,7 @@ const registerInstallation = async () => {
                         simulatePlayPause,
                         onSpeedChanged,
                         onTimeChanged,
+                        onRemoveLabel,
                         panelControl,
                     }
                 ));

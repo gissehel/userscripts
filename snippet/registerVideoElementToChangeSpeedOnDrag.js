@@ -18,6 +18,7 @@
  * @param {(video: HTMLVideoElement, speed: number) => void} [options.onSpeedChanged] callback called when the speed is changed by dragging
  * @param {(video: HTMLVideoElement, deltaTime: number) => void} [options.incrTime] the function to call to increment the video time when horizontal drag exceed the threshold
  * @param {(video: HTMLVideoElement, deltaTime: number) => Promise<void>} [options.onTimeChanged] callback called when the time is changed by dragging
+ * @param {(video: HTMLVideoElement) => void} [options.onRemoveLabel] callback called when the label should be removed
  * @param {number} [options.timeDisplayDelay=300] the time in ms to display the time change when horizontal drag exceed the threshold
  * @return {()=>void} cleanup function to remove event listeners
  */
@@ -45,6 +46,7 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
     const deltaTime = options.deltaTime || 5;
     const incrTime = options.incrTime || ((video, deltaTime) => video.currentTime += deltaTime)
     const onTimeChanged = options.onTimeChanged || null
+    const onRemoveLabel = options.onRemoveLabel || null
     const timeDisplayDelay = options.timeDisplayDelay || 300
     let deltaXSection = 0;
 
@@ -166,6 +168,13 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
                         console.log(`SPEED : [${speed}] cleanup`)
                     }
                     onSpeedChanged?.(video, speed)
+                } else {
+                    if (verbose) {
+                        console.log(`SPEED : keep speed`)
+                    }
+                    delay(1500).then(() => {
+                        onRemoveLabel?.(video)
+                    });
                 }
             }
             if (hasExceededThresholdX) {
