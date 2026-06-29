@@ -153,13 +153,14 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
         }
     }
 
-    const cleanup = async (e, keepSpeed = false) => {
+    const cleanup = async (e, keepSpeed) => {
         if (hasExceededThreshold) {
             e.stopImmediatePropagation();
             e.preventDefault();
             hasExceededThreshold = false;
             if (hasExceededThresholdY) {
                 if (!keepSpeed) {
+                    speed = normalSpeed
                     setSpeed(video, speed)
                     if (verbose) {
                         console.log(`SPEED : [${speed}] cleanup`)
