@@ -153,18 +153,19 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
         }
     }
 
-    const cleanup = async (e) => {
+    const cleanup = async (e, keepSpeed = false) => {
         if (hasExceededThreshold) {
             e.stopImmediatePropagation();
             e.preventDefault();
             hasExceededThreshold = false;
             if (hasExceededThresholdY) {
-                speed = normalSpeed
-                setSpeed(video, speed)
-                if (verbose) {
-                    console.log(`SPEED : [${speed}] cleanup`)
+                if (!keepSpeed) {
+                    setSpeed(video, speed)
+                    if (verbose) {
+                        console.log(`SPEED : [${speed}] cleanup`)
+                    }
+                    onSpeedChanged?.(video, speed)
                 }
-                onSpeedChanged?.(video, speed)
             }
             if (hasExceededThresholdX) {
                 deltaXSection = 0;
@@ -205,7 +206,13 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
                 e.preventDefault();
             }
         }
-        return cleanup(e)
+        let keepSpeed = false;
+        if (hasExceededThreshold) {
+            if (e.ctrlKey) {
+                keepSpeed = true;
+            }
+        }
+        return cleanup(e, keepSpeed)
     }
 
     const onClick = async (e) => {
