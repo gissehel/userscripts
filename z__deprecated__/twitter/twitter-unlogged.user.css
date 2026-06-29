@@ -1,0 +1,23 @@
+/* ==UserStyle==
+@name        twitter-unlogged
+@namespace   https://github.com/gissehel/userscripts
+@version     20260121-193406-a747f13
+@description twitter-unlogged
+@author      gissehel
+@homepage    https://github.com/gissehel/userscripts
+@supportURL  https://github.com/gissehel/userscripts/issues
+@icon        https://www.google.com/s2/favicons?sz=64&domain=x.com
+@grant       none
+==/UserStyle== */
+
+@-moz-document domain("twitter.com") {
+  #layers>.r-g6jmlv
+  ,#layers>.r-1p0dtai
+  /* ,#layers>.r-ipm5af */
+  {
+    display: none !important;
+  }
+  html {
+    overflow: auto !important;
+  }
+}

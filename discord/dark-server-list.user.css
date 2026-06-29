@@ -1,0 +1,15 @@
+/* ==UserStyle==
+@name        dark-server-list
+@namespace   https://github.com/gissehel/userscripts
+@version     20251211-160411-971027d
+@description dark-server-list
+@author      gissehel
+@homepage    https://github.com/gissehel/userscripts
+@supportURL  https://github.com/gissehel/userscripts/issues
+@icon        https://www.google.com/s2/favicons?sz=64&domain=discord.com
+@grant       none
+==/UserStyle== */
+
+@-moz-document domain(discord.com) {
+    .scroller-3X7KbA { background-color: #6e6a7e }
+}
