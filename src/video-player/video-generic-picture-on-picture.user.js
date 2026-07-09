@@ -25,4 +25,4 @@ const setVideoPictureInPicture = async () => {
     }
 }
 
-registerMenuCommand('Toggle Picture-in-Picture', setVideoPictureInPicture)
+registerMenuCommand('🔄 Toggle Picture-in-Picture', setVideoPictureInPicture)

@@ -121,7 +121,7 @@ const createSsmGenericPanel = async (localName, sectionName, getPanelContent, op
         panelPosition.value = (panelPosition.value === PANEL_POSITION.NONE) ? PANEL_POSITION.RIGHT : PANEL_POSITION.NONE;
     }
 
-    await registerMenuCommand('Show/Hide generic panel', async () => {
+    await registerMenuCommand('🔄 Show/Hide generic panel', async () => {
         if (swapGenericPanel) {
             await swapGenericPanel();
         }

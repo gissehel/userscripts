@@ -42,9 +42,9 @@ const openAllChannels = async () => {
 const main = async () => {
     console.log({ message: 'in main' })
     await openAllChannels()
-    await registerMenuCommand('Show all followed channels', async () => {
+    await registerMenuCommand('👁️ Show all followed channels', async () => {
         await openAllChannels()
-        console.log('All followed channels should be shown now')
+        console.log('👁️ All followed channels should be shown now')
     })
 }
 

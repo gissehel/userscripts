@@ -309,15 +309,15 @@ async function installOrUninstall() {
         cleanupInstallation.onRegistration(await registerInstallation())
     }
     if (await domainBlackList.includes(location.host)) {
-        cleanupInstallation.onRegistration(await registerMenuCommand('Remove this site from video speed change black list', video_player_change_speed__Remove_this_site_from_blacklist))
+        cleanupInstallation.onRegistration(await registerMenuCommand('➖ Remove this site from video speed change black list', video_player_change_speed__Remove_this_site_from_blacklist))
     } else {
-        cleanupInstallation.onRegistration(await registerMenuCommand('Add this site to video speed change black list', video_player_change_speed__Add_this_site_to_blacklist))
+        cleanupInstallation.onRegistration(await registerMenuCommand('➕ Add this site to video speed change black list', video_player_change_speed__Add_this_site_to_blacklist))
     }
 
     if (await domainSimulatePlayPauseOnClickList.includes(location.host)) {
-        cleanupInstallation.onRegistration(await registerMenuCommand('Remove this site from simulate play/pause on click list', video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list))
+        cleanupInstallation.onRegistration(await registerMenuCommand('➖ Remove this site from simulate play/pause on click list', video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list))
     } else {
-        cleanupInstallation.onRegistration(await registerMenuCommand('Add this site to simulate play/pause on click list', video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list))
+        cleanupInstallation.onRegistration(await registerMenuCommand('➕ Add this site to simulate play/pause on click list', video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list))
     }
 
 }

@@ -10,6 +10,6 @@ const selectForExportOnWindow = (obj) => {
         toExportOnWindow[key] = obj[key]
     }
 }
-registerMenuCommand('Export item to window', () => {
+registerMenuCommand('⬅️ Export item to window', () => {
     exportOnWindow(toExportOnWindow);
 });
