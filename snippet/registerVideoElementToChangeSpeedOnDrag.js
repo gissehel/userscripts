@@ -47,7 +47,7 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
     }
     const resetBlockDirection = () => {
         blockDirection = false;
-        blockForDirection = null;
+        blockedDirection = null;
     }
     const thresold = options.thresold || 20;
     const verbose = options.verbose || false;
