@@ -36,6 +36,8 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
     let shouldCancelClick = false;
     let activePointerId = null;
     let speed = normalSpeed;
+    let blockDirection = false;
+    let blockedDirection = null;
     const thresold = options.thresold || 20;
     const verbose = options.verbose || false;
     const simulatePlayPause = options.simulatePlayPause || false;
@@ -56,6 +58,9 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
         }
         e.stopImmediatePropagation();
         e.preventDefault();
+        if (e.shiftKey) {
+            blockDirection = true;
+        }
         startX = e.clientX;
         startY = e.clientY;
         hasExceededThreshold = false;
@@ -77,17 +82,23 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
         }
         const deltaX = e.clientX - startX;
         const deltaY = startY - e.clientY;
-        if (Math.abs(deltaX) > thresoldX) {
+        if ((blockedDirection === null || blockedDirection === 'x') && (Math.abs(deltaX) > thresoldX)) {
             hasExceededThreshold = true;
             hasExceededThresholdX = true;
             shouldCancelClick = true;
+            if (blockDirection && blockedDirection === null) {
+                blockedDirection = 'x'
+            }
         }
-        if (Math.abs(deltaY) > thresoldY) {
+        if ((blockedDirection === null || blockedDirection === 'y') && Math.abs(deltaY) > thresoldY) {
             hasExceededThreshold = true;
             hasExceededThresholdY = true;
             shouldCancelClick = true;
+            if (blockDirection && blockedDirection === null) {
+                blockedDirection = 'y'
+            }
         }
-        if (hasExceededThresholdX) {
+        if ((blockedDirection === null || blockedDirection === 'x') && hasExceededThresholdX) {
             const newDeltaXSection = Math.sign(deltaX) * Math.floor(Math.abs(deltaX) / thresoldX)
             if (newDeltaXSection !== deltaXSection) {
                 if (newDeltaXSection > 0 && newDeltaXSection > deltaXSection) {
@@ -114,7 +125,7 @@ const registerVideoElementToChangeSpeedOnDrag = (video, speedvalues, options) =>
                 deltaXSection = newDeltaXSection
             }
         }
-        if (hasExceededThresholdY) {
+        if ((blockedDirection === null || blockedDirection === 'y') && hasExceededThresholdY) {
             let new_speed = normalSpeed
             let hasNewSpeed = false
             let index = highSpeeds.length - 1
