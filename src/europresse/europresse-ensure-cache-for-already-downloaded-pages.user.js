@@ -463,7 +463,7 @@ const main = async () => {
         createProgressBar();
 
         /** @type{Promise<void>} */
-        const allLoaded = new Promise((resolve) => {
+        const allLoaded = new Promise(async (resolve) => {
             if (allPagesCachedHookableValue.value) {
                 resolve();
             } else {
