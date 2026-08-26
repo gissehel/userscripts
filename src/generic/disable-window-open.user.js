@@ -14,9 +14,10 @@ const main = async () => {
         console.log('   Arguments tried:', args);
         return null;
     }
-    const enableWindowOpen = await getPersistentParameterValueBoolean('opening-popups', true, {
+    const enableWindowOpen = await getPersistentParameterValueBoolean('allow-window-open', true, {
         scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST,
         dontStoreDefault: true,
+        displayName: 'opening popups',
     });
     enableWindowOpen.registerAndCall(async (newValue) => {
         if (newValue) {
