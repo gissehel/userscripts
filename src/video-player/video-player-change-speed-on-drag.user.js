@@ -26,81 +26,6 @@ let allowVideoSpeedChange = null;
 /** @type{HookableValue<boolean>|null} */
 let simulatePlayPauseOnClick = null;
 
-
-const defaultPanelControlByHost = {
-    'www.twitch.tv': '[data-a-target="player-overlay-click-handler"]',
-}
-
-class PersistantInternalExternalList {
-    constructor(monkeyName, defaultInternalList = [], defaultExternalList = []) {
-        this.internalList = [...defaultInternalList]
-        this.defaultExternalList = [...defaultExternalList]
-        this.externalList = null
-        this.monkeyName = monkeyName
-        this.list = null
-        // this.list = [...this.internalList, ...this.externalList]
-    }
-
-    async _ensureExternalList() {
-        if (this.externalList === null) {
-            this.externalList = await monkeyGetSetValue(this.monkeyName, this.defaultExternalList)
-        }
-        return this.externalList
-    }
-
-    async _ensureList() {
-        if (this.list === null) {
-            await this._ensureExternalList()
-            this.list = [...this.internalList, ...this.externalList]
-        }
-    }
-
-    async add(item) {
-        await this._ensureExternalList()
-        if (!this.externalList.includes(item)) {
-            this.externalList.push(item)
-            await monkeySetValue(this.monkeyName, this.externalList)
-            this.list = [...this.internalList, ...this.externalList]
-            return true
-        }
-        return false
-    }
-
-    async remove(item) {
-        await this._ensureExternalList()
-        const index = this.externalList.indexOf(item)
-        if (index >= 0) {
-            this.externalList.splice(index, 1)
-            await monkeySetValue(this.monkeyName, this.externalList)
-            this.list = [...this.internalList, ...this.externalList]
-            return true
-        }
-        return false
-    }
-
-    async includes(item) {
-        await this._ensureList()
-        return this.list.includes(item)
-    }
-
-    async externalIncludes(item) {
-        await this._ensureExternalList()
-        return this.externalList.includes(item)
-    }
-}
-
-const domainBlackList = new PersistantInternalExternalList(
-    'domainBlackList',
-    [],
-    []
-)
-
-const domainSimulatePlayPauseOnClickList = new PersistantInternalExternalList(
-    'domainSimulatePlayPauseOnClickList',
-    ['www.youtube.com', 'www.twitch.tv'],
-    ['video.sibnet.ru', 'sendvid.com']
-)
-
 let speedLabel = null
 let speedTextLabel = null
 
@@ -212,7 +137,7 @@ const removeLabelByHost = {
 }
 
 const registerInstallation = async () => {
-    const speedRanges = await monkeyGetSetValue('speedRanges', [[0.75, 0.5, 0.25], 1, [1.25, 1.5, 1.75, 2, 3, 4, 5, 6, 8]]);
+    const speedRanges = await monkeyGetSetValue('speedRanges', [[0.75, 0.5, 0.25], 1, [1.25, 1.5, 1.75, 1.85, 2, 2.2, 2.35, 2.5, 3, 4, 5, 6, 8]]);
     const verbose = await monkeyGetSetValue('verbose', false);
     const simulatePlayPause = (simulatePlayPauseOnClick?.value ?? false)
     let onSpeedChanged = null
@@ -240,7 +165,7 @@ const registerInstallation = async () => {
     const thresold = await monkeyGetSetValue('thresold', 20)
     const registrationManager = new RegistrationManager({ autoCleanupOnAfterFirstCleanup: true })
 
-    registrationManager.onRegistration(
+    await registrationManager.onRegistration(
         await registerDomNodeMutatedUnique(
             () => getElements('video'),
             async (video) => {
@@ -248,7 +173,7 @@ const registerInstallation = async () => {
                 const panelControlQuery = panelControlQueryHv?.value
                 const panelControl = panelControlQuery ? document.querySelector(panelControlQuery) : undefined
 
-                registrationManager.onRegistration(await registerVideoElementToChangeSpeedOnDrag(
+                await registrationManager.onRegistration(await registerVideoElementToChangeSpeedOnDrag(
                     video,
                     speedRanges,
                     {
@@ -274,7 +199,12 @@ const cleanupInstallation = new RegistrationManager()
 async function installOrUninstall() {
     await cleanupInstallation.cleanupAll()
 
-    
+    panelControlQueryHv = await getPersistentParameterValueString(`panelControlQuery`, undefined, {
+        dontStoreDefault: true,
+        scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST,
+        displayName: `Panel Control Query`,
+    })
+
     allowVideoSpeedChange = await getPersistentParameterValueBoolean(`allowVideoSpeedChange`, true, {
         dontStoreDefault: true,
         scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST,
@@ -287,27 +217,13 @@ async function installOrUninstall() {
         displayName: `simulate play/pause on click`,
     })
 
-    cleanupInstallation.onRegistration(await simulatePlayPauseOnClick?.registerAndCall(async (shouldSimulatePlayPauseOnClick) => {
-        if (shouldSimulatePlayPauseOnClick) {
-            console.log(`Simulate play/pause on click has been enabled for ${location.host}.`)
-        } else {
-            console.log(`Simulate play/pause on click has been disabled for ${location.host}.`)
-        }
-        await cleanupInstallation.cleanupAll()
-        if (allowVideoSpeedChange?.value) {
-            await cleanupInstallation.onRegistration(await registerInstallation())
-        }
-    }))
+    await cleanupInstallation.onRegistration(await panelControlQueryHv.register(async () => { await installOrUninstall() }))
+    await cleanupInstallation.onRegistration(await allowVideoSpeedChange?.register(async () => { await installOrUninstall() }))
+    await cleanupInstallation.onRegistration(await simulatePlayPauseOnClick?.register(async () => { await installOrUninstall() }))
 
-    cleanupInstallation.onRegistration(await allowVideoSpeedChange?.registerAndCall(async (shouldAllowVideoSpeedChange) => {
-        await cleanupInstallation.cleanupAll()
-        if (shouldAllowVideoSpeedChange) {
-            await cleanupInstallation.onRegistration(await registerInstallation())
-            console.log(`Video speed change has been enabled for ${location.host}.`)
-        } else {
-            console.log(`Video speed change has been disabled for ${location.host}.`)
-        }
-    }))
+    if (allowVideoSpeedChange?.value) {
+        await cleanupInstallation.onRegistration(await registerInstallation())
+    }
 }
 
 async function main() {
@@ -315,12 +231,12 @@ async function main() {
     if (init != true) {
         const defaultData = {
             'panelControlQuery': {
-                'www.twitch.tv': "[data-a-target=\"player-overlay-click-handler\"]", 
+                'www.twitch.tv': "[data-a-target=\"player-overlay-click-handler\"]",
             },
             'simulatePlayPauseOnClick': {
-                'www.youtube.com': true, 
-                'www.twitch.tv': true, 
-                'video.sibnet.ru': true, 
+                'www.youtube.com': true,
+                'www.twitch.tv': true,
+                'video.sibnet.ru': true,
                 'sendvid.com': true,
             },
         }
@@ -331,18 +247,6 @@ async function main() {
         }
         await monkeySetValue('init', true)
     }
-
-    panelControlQueryHv = await getPersistentParameterValueString(
-        `panelControlQuery`,
-        undefined,
-        {
-            scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST
-        }
-    )
-
-    await panelControlQueryHv.register(async () => {
-        await installOrUninstall()
-    })
 
     await installOrUninstall()
 }
