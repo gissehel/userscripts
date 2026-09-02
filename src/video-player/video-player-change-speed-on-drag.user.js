@@ -14,9 +14,17 @@
 // @import{exportOnWindow}
 // @import{registerMenuCommand}
 // @import{getPersistentParameterValueString}
+// @import{getPersistentParameterValueBoolean}
 // @import{PERSISTENT_PARAMETER_SCOPE}
 
+/** @type{HookableValue<string>|null} */
 let panelControlQueryHv = null
+
+/** @type{HookableValue<boolean>|null} */
+let allowVideoSpeedChange = null;
+/** @type{HookableValue<boolean>|null} */
+let simulatePlayPauseOnClick = null;
+
 
 const defaultPanelControlByHost = {
     'www.twitch.tv': '[data-a-target="player-overlay-click-handler"]',
@@ -205,7 +213,7 @@ const removeLabelByHost = {
 const registerInstallation = async () => {
     const speedRanges = await monkeyGetSetValue('speedRanges', [[0.75, 0.5, 0.25], 1, [1.25, 1.5, 1.75, 2, 3, 4, 5, 6, 8]]);
     const verbose = await monkeyGetSetValue('verbose', false);
-    const simulatePlayPause = await domainSimulatePlayPauseOnClickList.includes(location.host)
+    const simulatePlayPause = (simulatePlayPauseOnClick?.value ?? false)
     let onSpeedChanged = null
     let onTimeChanged = null
     let onRemoveLabel = null
@@ -262,64 +270,41 @@ const registerInstallation = async () => {
 
 const cleanupInstallation = new RegistrationManager()
 
-const video_player_change_speed__Add_this_site_to_blacklist = async () => {
-    if (await domainBlackList.add(location.host)) {
-        await installOrUninstall()
-        alert(`This site (${location.host}) has been added to the black list, you can call video_player_change_speed__Remove_this_site_from_blacklist() to remove it from the list if it was a mistake.`)
-    }
-}
-
-const video_player_change_speed__Remove_this_site_from_blacklist = async () => {
-    if (await domainBlackList.remove(location.host)) {
-        await installOrUninstall()
-        alert(`This site (${location.host}) has been removed from the black list, you can call video_player_change_speed__Add_this_site_to_blacklist() to add it to the list if it was a mistake.`)
-    }
-}
-
-const video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list = async () => {
-    if (await domainSimulatePlayPauseOnClickList.add(location.host)) {
-        await installOrUninstall()
-        alert(`This site (${location.host}) has been added to the simulate play/pause on click list, you can call video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list() to remove it from the list if it was a mistake.`)
-    }
-}
-
-const video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list = async () => {
-    if (await domainSimulatePlayPauseOnClickList.remove(location.host)) {
-        await installOrUninstall()
-        alert(`This site (${location.host}) has been removed from the simulate play/pause on click list, you can call video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list() to add it to the list if it was a mistake.`)
-    }
-}
-
-exportOnWindow({
-    video_player_change_speed__Add_this_site_to_blacklist,
-    video_player_change_speed__Remove_this_site_from_blacklist,
-    video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list,
-    video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list,
-})
-
 async function installOrUninstall() {
     await cleanupInstallation.cleanupAll()
 
-    if (await domainBlackList.includes(location.host)) {
-        console.log(`video-player-change-speed-on-drag: This site (${location.host}) is in the black list, skipping...`)
-        console.log(`To remove this site from the black list, call video_player_change_speed__Remove_this_site_from_blacklist() in the console.${(window.location !== window.parent.location) ? ` This is an iframe for the url [${window.location.href}]. Be carefull to use the console of the iframe.` : ""}`)
-    } else {
-        console.log(`video-player-change-speed-on-drag: This site (${location.host}) is not in the black list, applying...`)
-        console.log(`To add this site to the black list, call video_player_change_speed__Add_this_site_to_blacklist() in the console.${(window.location !== window.parent.location) ? ` This is an iframe for the url [${window.location.href}]. Be carefull to use the console of the iframe.` : ""}`)
-        cleanupInstallation.onRegistration(await registerInstallation())
-    }
-    if (await domainBlackList.includes(location.host)) {
-        cleanupInstallation.onRegistration(await registerMenuCommand('➖ Remove this site from video speed change black list', video_player_change_speed__Remove_this_site_from_blacklist))
-    } else {
-        cleanupInstallation.onRegistration(await registerMenuCommand('➕ Add this site to video speed change black list', video_player_change_speed__Add_this_site_to_blacklist))
-    }
+    allowVideoSpeedChange = await getPersistentParameterValueBoolean(`allowVideoSpeedChange`, true, {
+        dontStoreDefault: true,
+        scope: PERSISTENT_PARAMETER_SCOPE.BY_DOMAIN,
+        displayName: `video speed change`,
+    })
+    simulatePlayPauseOnClick = await getPersistentParameterValueBoolean(`simulatePlayPauseOnClick`, false, {
+        dontStoreDefault: true,
+        scope: PERSISTENT_PARAMETER_SCOPE.BY_DOMAIN,
+        displayName: `simulate play/pause on click`,
+    })
 
-    if (await domainSimulatePlayPauseOnClickList.includes(location.host)) {
-        cleanupInstallation.onRegistration(await registerMenuCommand('➖ Remove this site from simulate play/pause on click list', video_player_change_speed__Remove_this_site_from_simulate_play_pause_on_click_list))
-    } else {
-        cleanupInstallation.onRegistration(await registerMenuCommand('➕ Add this site to simulate play/pause on click list', video_player_change_speed__Add_this_site_to_simulate_play_pause_on_click_list))
-    }
+    simulatePlayPauseOnClick?.registerAndCall(async (shouldSimulatePlayPauseOnClick) => {
+        if (shouldSimulatePlayPauseOnClick) {
+            alert(`Simulate play/pause on click has been enabled for ${location.host}.`)
+        } else {
+            alert(`Simulate play/pause on click has been disabled for ${location.host}.`)
+        }
+        await cleanupInstallation.cleanupAll()
+        if (allowVideoSpeedChange?.value) {
+            await cleanupInstallation.onRegistration(await registerInstallation())
+        }
+    })
 
+    allowVideoSpeedChange?.registerAndCall(async (shouldAllowVideoSpeedChange) => {
+        await cleanupInstallation.cleanupAll()
+        if (shouldAllowVideoSpeedChange) {
+            await cleanupInstallation.onRegistration(await registerInstallation())
+            alert(`Video speed change has been enabled for ${location.host}.`)
+        } else {
+            alert(`Video speed change has been disabled for ${location.host}.`)
+        }
+    })
 }
 
 async function main() {
