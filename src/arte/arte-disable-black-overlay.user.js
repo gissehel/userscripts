@@ -9,7 +9,7 @@ const main = async () => {
 
     addStyle(`
         .avp .avp-content {
-            background-color: none !important;
+            background-color: transparent !important;
         }
     `)
 }
