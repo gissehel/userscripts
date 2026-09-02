@@ -1,6 +1,6 @@
 // ==UserScript==
 // @match        https://www.arte.tv/*
-// @iconFromDomain arte.tv
+// @iconFromDomain www.arte.tv
 // ==/UserScript==
 
 // @import{addStyle}
