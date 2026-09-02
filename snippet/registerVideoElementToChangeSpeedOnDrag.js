@@ -20,6 +20,7 @@
  * @param {(video: HTMLVideoElement, deltaTime: number) => Promise<void>} [options.onTimeChanged] callback called when the time is changed by dragging
  * @param {(video: HTMLVideoElement) => void} [options.onRemoveLabel] callback called when the label should be removed
  * @param {number} [options.timeDisplayDelay=300] the time in ms to display the time change when horizontal drag exceed the threshold
+ * @param {boolean} [options.capture=false] whether to use capture phase for event listeners (default to false)
  * @return {Promise<()=>Promise<void>>} cleanup function to remove event listeners
  */
 const registerVideoElementToChangeSpeedOnDrag = async (video, speedvalues, options) => {
@@ -266,7 +267,7 @@ const registerVideoElementToChangeSpeedOnDrag = async (video, speedvalues, optio
     }
 
     for (const [event, handler] of Object.entries(eventsToBind)) {
-        await registrationManager.onRegistration(registerEventListener(panelControl, event, handler, { capture: true }));
+        await registrationManager.onRegistration(registerEventListener(panelControl, event, handler, { capture: options.capture ?? false }));
     }
 
     return async () => {
