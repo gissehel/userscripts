@@ -18,7 +18,7 @@
 // @import{getPersistentParameterValueBoolean}
 // @import{PERSISTENT_PARAMETER_SCOPE}
 
-/** @type{HookableValue<string>|null} */
+/** @type{HookableValue<string|undefined>|null} */
 let panelControlQueryHv = null
 
 /** @type{HookableValue<boolean>|null} */
@@ -248,7 +248,7 @@ const registerInstallation = async () => {
                 const panelControlQuery = panelControlQueryHv?.value
                 const panelControl = panelControlQuery ? document.querySelector(panelControlQuery) : undefined
 
-                registrationManager.onRegistration(registerVideoElementToChangeSpeedOnDrag(
+                registrationManager.onRegistration(await registerVideoElementToChangeSpeedOnDrag(
                     video,
                     speedRanges,
                     {
@@ -274,18 +274,20 @@ const cleanupInstallation = new RegistrationManager()
 async function installOrUninstall() {
     await cleanupInstallation.cleanupAll()
 
+    
     allowVideoSpeedChange = await getPersistentParameterValueBoolean(`allowVideoSpeedChange`, true, {
         dontStoreDefault: true,
-        scope: PERSISTENT_PARAMETER_SCOPE.BY_DOMAIN,
+        scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST,
         displayName: `video speed change`,
     })
+
     simulatePlayPauseOnClick = await getPersistentParameterValueBoolean(`simulatePlayPauseOnClick`, false, {
         dontStoreDefault: true,
-        scope: PERSISTENT_PARAMETER_SCOPE.BY_DOMAIN,
+        scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST,
         displayName: `simulate play/pause on click`,
     })
 
-    simulatePlayPauseOnClick?.registerAndCall(async (shouldSimulatePlayPauseOnClick) => {
+    cleanupInstallation.onRegistration(await simulatePlayPauseOnClick?.registerAndCall(async (shouldSimulatePlayPauseOnClick) => {
         if (shouldSimulatePlayPauseOnClick) {
             console.log(`Simulate play/pause on click has been enabled for ${location.host}.`)
         } else {
@@ -295,9 +297,9 @@ async function installOrUninstall() {
         if (allowVideoSpeedChange?.value) {
             await cleanupInstallation.onRegistration(await registerInstallation())
         }
-    })
+    }))
 
-    allowVideoSpeedChange?.registerAndCall(async (shouldAllowVideoSpeedChange) => {
+    cleanupInstallation.onRegistration(await allowVideoSpeedChange?.registerAndCall(async (shouldAllowVideoSpeedChange) => {
         await cleanupInstallation.cleanupAll()
         if (shouldAllowVideoSpeedChange) {
             await cleanupInstallation.onRegistration(await registerInstallation())
@@ -305,27 +307,40 @@ async function installOrUninstall() {
         } else {
             console.log(`Video speed change has been disabled for ${location.host}.`)
         }
-    })
+    }))
 }
 
 async function main() {
     const init = await monkeyGetValue('init')
     if (init != true) {
-        for (const domain of ['www.youtube.com', 'www.twitch.tv', 'video.sibnet.ru', 'sendvid.com']) {
-            await monkeySetValue(`simulatePlayPauseOnClick_domain_${domain}`, true)
+        const defaultData = {
+            'panelControlQuery': {
+                'www.twitch.tv': "[data-a-target=\"player-overlay-click-handler\"]", 
+            },
+            'simulatePlayPauseOnClick': {
+                'www.youtube.com': true, 
+                'www.twitch.tv': true, 
+                'video.sibnet.ru': true, 
+                'sendvid.com': true,
+            },
+        }
+        for (const key of Object.keys(defaultData)) {
+            for (const host of Object.keys(defaultData[key])) {
+                await monkeySetValue(`${key}_host_${host}`, defaultData[key][host])
+            }
         }
         await monkeySetValue('init', true)
     }
 
     panelControlQueryHv = await getPersistentParameterValueString(
         `panelControlQuery`,
-        defaultPanelControlByHost[location.host],
+        undefined,
         {
             scope: PERSISTENT_PARAMETER_SCOPE.BY_HOST
         }
     )
 
-    panelControlQueryHv.register(async () => {
+    await panelControlQueryHv.register(async () => {
         await installOrUninstall()
     })
 
