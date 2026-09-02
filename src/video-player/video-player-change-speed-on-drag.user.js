@@ -8,6 +8,7 @@
 // @import{registerVideoElementToChangeSpeedOnDrag}
 // @import{monkeyGetSetValue}
 // @import{monkeySetValue}
+// @import{monkeyGetValue}
 // @import{createElementExtended}
 // @import{RegistrationManager}
 // @import{realWindow}
@@ -286,9 +287,9 @@ async function installOrUninstall() {
 
     simulatePlayPauseOnClick?.registerAndCall(async (shouldSimulatePlayPauseOnClick) => {
         if (shouldSimulatePlayPauseOnClick) {
-            alert(`Simulate play/pause on click has been enabled for ${location.host}.`)
+            console.log(`Simulate play/pause on click has been enabled for ${location.host}.`)
         } else {
-            alert(`Simulate play/pause on click has been disabled for ${location.host}.`)
+            console.log(`Simulate play/pause on click has been disabled for ${location.host}.`)
         }
         await cleanupInstallation.cleanupAll()
         if (allowVideoSpeedChange?.value) {
@@ -300,14 +301,22 @@ async function installOrUninstall() {
         await cleanupInstallation.cleanupAll()
         if (shouldAllowVideoSpeedChange) {
             await cleanupInstallation.onRegistration(await registerInstallation())
-            alert(`Video speed change has been enabled for ${location.host}.`)
+            console.log(`Video speed change has been enabled for ${location.host}.`)
         } else {
-            alert(`Video speed change has been disabled for ${location.host}.`)
+            console.log(`Video speed change has been disabled for ${location.host}.`)
         }
     })
 }
 
 async function main() {
+    const init = await monkeyGetValue('init')
+    if (init != true) {
+        for (const domain of ['www.youtube.com', 'www.twitch.tv', 'video.sibnet.ru', 'sendvid.com']) {
+            await monkeySetValue(`simulatePlayPauseOnClick_domain_${domain}`, true)
+        }
+        await monkeySetValue('init', true)
+    }
+
     panelControlQueryHv = await getPersistentParameterValueString(
         `panelControlQuery`,
         defaultPanelControlByHost[location.host],
