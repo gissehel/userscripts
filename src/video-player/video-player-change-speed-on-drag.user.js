@@ -232,6 +232,8 @@ async function main() {
         const defaultData = {
             'panelControlQuery': {
                 'www.twitch.tv': "[data-a-target=\"player-overlay-click-handler\"]",
+                'vidzy.org': "#fss-ov",
+                'www.arte.tv': ".avp-content",
             },
             'simulatePlayPauseOnClick': {
                 'www.youtube.com': true,
