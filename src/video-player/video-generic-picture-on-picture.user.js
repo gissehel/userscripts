@@ -1,7 +1,11 @@
 // @import{getElements}
 // @import{registerMenuCommand}
 
-const setVideoPictureInPicture = async () => {
+
+/**
+ * @param {(HTMLVideoElement)=>void} func 
+ */
+const setVideoFunction = async (func) => {
     try {
         const videos = getElements('video')
         const noVideo = { 
@@ -18,11 +22,14 @@ const setVideoPictureInPicture = async () => {
             }
             ,noVideo
         )
-        biggestVideo.requestPictureInPicture()
+        func(biggestVideo)
 
     } catch (err) {
         alert(err);
     }
 }
 
-registerMenuCommand('🔄 Toggle Picture-in-Picture', setVideoPictureInPicture)
+registerMenuCommand('🔄 Toggle Picture-in-Picture', async () => setVideoFunction((video) => video.requestPictureInPicture()))
+registerMenuCommand('🛑 Exit Picture-in-Picture', async () => document.exitPictureInPicture())
+registerMenuCommand('📺 Toggle Fullscreen', async () => setVideoFunction((video) => video.requestFullscreen()))
+registerMenuCommand('🛑 Exit Fullscreen', async () => document.exitFullscreen())
