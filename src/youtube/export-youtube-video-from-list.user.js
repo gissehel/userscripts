@@ -77,11 +77,11 @@ const getModifierString = (e) => {
     if (ctrlKey) {
         modifiers.push('Ctrl')
     }
-    if (shiftKey) {
-        modifiers.push('Shift')
-    }
     if (altKey) {
         modifiers.push('Alt')
+    }
+    if (shiftKey) {
+        modifiers.push('Shift')
     }
     if (metaKey) {
         modifiers.push('Meta')
