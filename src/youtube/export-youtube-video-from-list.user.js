@@ -12,7 +12,8 @@
 // @import{createElementExtended}
 // @import{bindOnClick}
 
-addStyle('.eyvfl-button { width: 47px; height: 30px; position: absolute; bottom: 0px; padding-inline-start: 3px; padding-inline-end: 3px; }')
+addStyle('.eyvfl-no-button .eyvfl-button { display: none; }')
+addStyle('.eyvfl-button { width: 47px; height: 30px; position: absolute; bottom: 0px; padding-inline-start: 3px; padding-inline-end: 3px; display: block; }')
 addStyle('.eyvfl-export-button { right: 0px; }')
 addStyle('.eyvfl-export-button2 { right: 50px; }')
 addStyle('.eyvfl-export-button-interval { right: 100px; }')
@@ -60,6 +61,59 @@ const addBufferOnElement = (richItemRenderer, preAction) => {
 let itemId = 0
 let itemIdSet = null
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+
+/**
+ * @param {Object} e
+ * @param {boolean} [e.ctrlKey]
+ * @param {boolean} [e.shiftKey]
+ * @param {boolean} [e.altKey]
+ * @param {boolean} [e.metaKey]
+ * @returns 
+ */
+const getModifierString = (e) => {
+    const { ctrlKey, shiftKey, altKey, metaKey } = e
+    const modifiers = []
+    if (ctrlKey) {
+        modifiers.push('Ctrl')
+    }
+    if (shiftKey) {
+        modifiers.push('Shift')
+    }
+    if (altKey) {
+        modifiers.push('Alt')
+    }
+    if (metaKey) {
+        modifiers.push('Meta')
+    }
+    return modifiers.join('+')
+}
+
+/**
+ * @param {HTMLElement} button 
+ * @param {()=>Promise<void>} action 
+ */
+const bindOnClickButton = (button, action) => {
+    bindOnClick(button, async (e) => {
+        const modifierString = getModifierString(e)
+        console.log(`Button clicked with modifiers: [${modifierString}]`)
+        switch (modifierString) {
+            case 'Alt':
+                {
+                    document.body.classList.add('eyvfl-no-button')
+                    await delay(2000)
+                    document.body.classList.remove('eyvfl-no-button')
+                }                
+                break
+            case '':
+                await action()
+                break
+            default:
+                return false
+        }
+    })
+}
+
 registerDomNodeMutatedUnique(() => getElements('ytd-rich-item-renderer'), async (richItemRenderer) => {
     const videoTitle = getVideoTitle(richItemRenderer)
     const videoLink = getVideoLink(richItemRenderer)
@@ -76,7 +130,7 @@ registerDomNodeMutatedUnique(() => getElements('ytd-rich-item-renderer'), async 
         classnames: classnames,
         text: label,
         onCreated: (button) => {
-            bindOnClick(button, async () => {
+            bindOnClickButton(button, async () => {
                 await addBufferOnElement(richItemRenderer, preAction)
                 console.log(`Copying [${buffer}]`)
                 copyTextToClipboard(buffer)
@@ -91,7 +145,7 @@ registerDomNodeMutatedUnique(() => getElements('ytd-rich-item-renderer'), async 
         classnames: ['eyvfl-button', 'eyvfl-export-button-interval'],
         text: '↔️📋',
         onCreated: (button) => {
-            bindOnClick(button, async () => {
+            bindOnClickButton(button, async () => {
                 buffer = ''
                 if (itemIdSet === null) {
                     itemIdSet = localItemId
