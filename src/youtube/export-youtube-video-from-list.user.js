@@ -12,7 +12,7 @@
 // @import{createElementExtended}
 // @import{bindOnClick}
 
-addStyle('.eyvfl-button { width: 44px; height: 30px; position: absolute; bottom: 0px; padding-inline-start: 3px; padding-inline-end: 3px; }')
+addStyle('.eyvfl-button { width: 47px; height: 30px; position: absolute; bottom: 0px; padding-inline-start: 3px; padding-inline-end: 3px; }')
 addStyle('.eyvfl-export-button { right: 0px; }')
 addStyle('.eyvfl-export-button2 { right: 50px; }')
 addStyle('.eyvfl-export-button-interval { right: 100px; }')
